@@ -7,12 +7,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class EventCollection
+public class Comments_EventsCollection
 {
     private List<Link> links;
     private long newestTimestamp;
     private long oldestTimestamp;
-    private List<Event> events = new ArrayList<>();
+    private List<Comments_Events> comments_events = new ArrayList<>();
 
     public List<Link> getLinks() {
         return links;
@@ -38,11 +38,11 @@ public class EventCollection
         this.oldestTimestamp = oldestTimestamp;
     }
 
-    public List<Event> getEvents() {
-        return events;
+    public List<Comments_Events> getComments_events() {
+        return comments_events;
     }
 
-    public void setEvents(List<Event> events) {
-        this.events = events;
+    public void setComments_events(List<Comments_Events> comments_events) {
+        this.comments_events = comments_events;
     }
 }

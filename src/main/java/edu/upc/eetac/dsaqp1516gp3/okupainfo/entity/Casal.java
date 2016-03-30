@@ -6,21 +6,19 @@ import javax.ws.rs.core.Link;
 import java.util.List;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class Event
+public class Casal
 {
     private List<Link> links;
     private String id;
-    private String creatorid;
-    private String title;
-    private String tipo;
+    private String loginid;
+    private String email;
+    private String fullname;
     private String description;
-    private String participantes;
     private float valoracion;
     private String localization;
     private double latitude;
     private double longitude;
-    private long creationTimestamp;
-    private long lastModified;
+    private String eventos;
 
     public List<Link> getLinks() {
         return links;
@@ -38,28 +36,28 @@ public class Event
         this.id = id;
     }
 
-    public String getCreatorid() {
-        return creatorid;
+    public String getLoginid() {
+        return loginid;
     }
 
-    public void setCreatorid(String creatorid) {
-        this.creatorid = creatorid;
+    public void setLoginid(String loginid) {
+        this.loginid = loginid;
     }
 
-    public String getTitle() {
-        return title;
+    public String getEmail() {
+        return email;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
+    public void setEmail(String email) {
+        this.email = email;
     }
 
-    public String getTipo() {
-        return tipo;
+    public String getFullname() {
+        return fullname;
     }
 
-    public void setTipo(String tipo) {
-        this.tipo = tipo;
+    public void setFullname(String fullname) {
+        this.fullname = fullname;
     }
 
     public String getDescription() {
@@ -68,14 +66,6 @@ public class Event
 
     public void setDescription(String description) {
         this.description = description;
-    }
-
-    public String getParticipantes() {
-        return participantes;
-    }
-
-    public void setParticipantes(String participantes) {
-        this.participantes = participantes;
     }
 
     public float getValoracion() {
@@ -110,19 +100,11 @@ public class Event
         this.longitude = longitude;
     }
 
-    public long getCreationTimestamp() {
-        return creationTimestamp;
+    public String getEventos() {
+        return eventos;
     }
 
-    public void setCreationTimestamp(long creationTimestamp) {
-        this.creationTimestamp = creationTimestamp;
-    }
-
-    public long getLastModified() {
-        return lastModified;
-    }
-
-    public void setLastModified(long lastModified) {
-        this.lastModified = lastModified;
+    public void setEventos(String eventos) {
+        this.eventos = eventos;
     }
 }
