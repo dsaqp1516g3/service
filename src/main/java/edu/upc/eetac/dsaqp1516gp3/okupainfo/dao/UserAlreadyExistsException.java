@@ -1,4 +1,6 @@
 package edu.upc.eetac.dsaqp1516gp3.okupainfo.dao;
 
-public class UserAlreadyExistsException {
-}
+import com.fasterxml.jackson.annotation.JsonInclude;
+
+@JsonInclude(JsonInclude.Include.NON_NULL)
+public class UserAlreadyExistsException extends Exception {}
