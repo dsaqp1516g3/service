@@ -14,7 +14,6 @@ public class Event
     private String title;
     private String tipo;
     private String description;
-    private String participantes;
     private float valoracion;
     private String localization;
     private double latitude;
@@ -70,13 +69,6 @@ public class Event
         this.description = description;
     }
 
-    public String getParticipantes() {
-        return participantes;
-    }
-
-    public void setParticipantes(String participantes) {
-        this.participantes = participantes;
-    }
 
     public float getValoracion() {
         return valoracion;

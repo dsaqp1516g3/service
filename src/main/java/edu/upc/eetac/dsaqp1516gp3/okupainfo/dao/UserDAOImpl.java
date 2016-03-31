@@ -2,14 +2,11 @@ package edu.upc.eetac.dsaqp1516gp3.okupainfo.dao;
 
 import edu.upc.eetac.dsaqp1516gp3.okupainfo.entity.User;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 
 public class UserDAOImpl implements UserDAO{
     @Override
-    public User createUser(String loginid, String password, String email, String fullname, String descripcion, String asistencia) throws SQLException, UserAlreadyExistsException
+    public User createUser(String loginid, String password, String email, String fullname, String descripcion) throws SQLException, UserAlreadyExistsException
     {
         Connection connection = null;
         PreparedStatement stmt = null;
@@ -32,63 +29,111 @@ public class UserDAOImpl implements UserDAO{
             connection.setAutoCommit(false);
 
             stmt.close();
+            stmt = connection.prepareStatement(UserDAOQuery.CREATE_USER);
+            stmt.setString(1, id);
+            stmt.setString(2, loginid);
+            stmt.setString(3, password);
+            stmt.setString(4, email);
+            stmt.setString(5, fullname);
+            stmt.setString(6, descripcion);
+            stmt.executeUpdate();
 
+            stmt.close();
+            stmt = connection.prepareStatement(UserDAOQuery.ASSIGN_ROLE_REGISTERED);
+            stmt.setString(1, id);
+            stmt.executeUpdate();
+
+            connection.commit();
         }
-        /*@Override
-        public User createUser(String loginid, String password, String email, String fullname) throws SQLException, UserAlreadyExistsException {
-            Connection connection = null;
-            PreparedStatement stmt = null;
-            String id = null;
-            try {
-                User user = getUserByLoginid(loginid);
-                if (user != null)
-                    throw new UserAlreadyExistsException();
-
-                connection = Database.getConnection();
-
-                stmt = connection.prepareStatement(UserDAOQuery.UUID);
-                ResultSet rs = stmt.executeQuery();
-                if (rs.next())
-                    id = rs.getString(1);
-                else
-                    throw new SQLException();
-
-                connection.setAutoCommit(false);
-
-                stmt.close();
-                stmt = connection.prepareStatement(UserDAOQuery.CREATE_USER);
-                stmt.setString(1, id);
-                stmt.setString(2, loginid);
-                stmt.setString(3, password);
-                stmt.setString(4, email);
-                stmt.setString(5, fullname);
-                stmt.executeUpdate();
-
-                stmt.close();
-                stmt = connection.prepareStatement(UserDAOQuery.ASSIGN_ROLE_REGISTERED);
-                stmt.setString(1, id);
-                stmt.executeUpdate();
-
-                connection.commit();
-            } catch (SQLException e) {
-                throw e;
-            } finally {
-                if (stmt != null) stmt.close();
-                if (connection != null) {
-                    connection.setAutoCommit(true);
-                    connection.close();
-                }
+        catch (SQLException e)
+        {
+            throw e;
+        }
+        finally
+        {
+            if (stmt != null) stmt.close();
+            if (connection != null)
+            {
+                connection.setAutoCommit(true);
+                connection.close();
             }
-            return getUserById(id);
-        }*/
-
+        }
+        return getUserById(id);
     }
 
     @Override
-    public User updateProfile(String id, String email, String fullname, String descripcion, String asistencia) throws SQLException {
-        return null;
+    public User updateProfile(String id, String email, String fullname, String descripcion) throws SQLException
+    {
+        User user = null;
+
+        Connection connection = null;
+        PreparedStatement stmt = null;
+        try
+        {
+            connection = Database.getConnection();
+
+            stmt = connection.prepareStatement(UserDAOQuery.UPDATE_USER);
+            stmt.setString(1, email);
+            stmt.setString(2, fullname);
+            stmt.setString(3, descripcion);
+
+            int rows = stmt.executeUpdate();
+            if (rows == 1)
+            {
+                user = getUserById(id);
+            }
+
+            stmt = connection.prepareStatement(UserDAOQuery.ASSIGN_ASSISTANCE);// en eventos buscammos la id de usuario e insertamos dentro de user_events
+            stmt.setString(1, id);
+            stmt.executeUpdate();
+            connection.commit();
+
+        }
+        catch(SQLException e)
+        {
+            throw e;
+        }
+        finally
+        {
+            if (stmt != null) stmt.close();
+            if (connection != null)
+            {
+                connection.setAutoCommit(true);
+                connection.close();
+            }
+        }
+        return user;
     }
 
+
+    /*
+    @Override
+    public User updateProfile(String id, String email, String fullname) throws SQLException {
+        User user = null;
+
+        Connection connection = null;
+        PreparedStatement stmt = null;
+        try {
+            connection = Database.getConnection();
+
+            stmt = connection.prepareStatement(UserDAOQuery.UPDATE_USER);
+            stmt.setString(1, email);
+            stmt.setString(2, fullname);
+            stmt.setString(3, id);
+
+            int rows = stmt.executeUpdate();
+            if (rows == 1)
+                user = getUserById(id);
+        } catch (SQLException e) {
+            throw e;
+        } finally {
+            if (stmt != null) stmt.close();
+            if (connection != null) connection.close();
+        }
+
+        return user;
+    }
+     */
     @Override
     public User getUserById(String id) throws SQLException {
         return null;
@@ -100,8 +145,23 @@ public class UserDAOImpl implements UserDAO{
     }
 
     @Override
+    public User getAllUsers() throws SQLException {
+        return null;
+    }
+
+    @Override
     public boolean deleteUser(String id) throws SQLException {
         return false;
+    }
+
+    @Override
+    public User getEventsById(String id) throws SQLException {
+        return null;
+    }
+
+    @Override
+    public User getEventsByLoginId(String loginid) throws SQLException {
+        return null;
     }
 
     @Override

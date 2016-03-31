@@ -14,7 +14,6 @@ public class User
     private String email;
     private String fullname;
     private String description;
-    private String asistencia;
 
     public List<Link> getLinks() {
         return links;
@@ -64,11 +63,4 @@ public class User
         this.description = description;
     }
 
-    public String getAsistencia() {
-        return asistencia;
-    }
-
-    public void setAsistencia(String asistencia) {
-        this.asistencia = asistencia;
-    }
 }

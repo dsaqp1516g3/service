@@ -18,7 +18,6 @@ public class Casal
     private String localization;
     private double latitude;
     private double longitude;
-    private String eventos;
 
     public List<Link> getLinks() {
         return links;
@@ -100,11 +99,4 @@ public class Casal
         this.longitude = longitude;
     }
 
-    public String getEventos() {
-        return eventos;
-    }
-
-    public void setEventos(String eventos) {
-        this.eventos = eventos;
-    }
 }
