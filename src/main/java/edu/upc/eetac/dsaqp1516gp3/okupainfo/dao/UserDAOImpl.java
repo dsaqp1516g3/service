@@ -1,9 +1,11 @@
 package edu.upc.eetac.dsaqp1516gp3.okupainfo.dao;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import edu.upc.eetac.dsaqp1516gp3.okupainfo.entity.User;
 
 import java.sql.*;
 
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class UserDAOImpl implements UserDAO{
     @Override
     public User createUser(String loginid, String password, String email, String fullname, String descripcion) throws SQLException, UserAlreadyExistsException
