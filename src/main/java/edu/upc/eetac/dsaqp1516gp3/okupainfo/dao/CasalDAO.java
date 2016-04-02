@@ -11,13 +11,11 @@ public interface CasalDAO {
 
     Casal UpdateProfile(String id, String email, String fullname, String description, String localization, String latitud, String longitud) throws SQLException;
 
-    //Casal updateValoracion(String id, float valoracion) throws SQLException;
+    Casal updateValoracion(String id, float valoracion) throws SQLException;
     //falta implementar-ho a CasalDAOImpl.java
 
-    //Casal UpdateLocation(String id, String localization, String latitud, String longitud) throws SQLException;
-    // ens cal la de UpdateLocation segur?
-
-    Casal updateAsistance(String id) throws SQLException;
+    Casal UpdateLocation(String id, String localization, String latitud, String longitud) throws SQLException;
+    // ens cal la de UpdateLocation segur? Si perque hem de saber on estar situat per pasarla la direccio a la API de google maps
 
     Casal getCasalById(String id) throws SQLException;
 

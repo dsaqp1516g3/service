@@ -63,7 +63,8 @@ public class CasalDAOImpl implements CasalDAO {
     }
 
     @Override
-    public Casal UpdateProfile(String id, String email, String fullname, String descripcion, String localization, String latitud, String longitud) throws SQLException {
+    public Casal UpdateProfile(String id, String email, String fullname, String descripcion, String localization, String latitud, String longitud) throws SQLException
+    {
         Casal casal = null;
 
         Connection connection = null;
@@ -81,36 +82,12 @@ public class CasalDAOImpl implements CasalDAO {
                 casal = getCasalById(id);
             }
 
-        } catch (SQLException e) {
-            throw e;
-        } finally {
-            if (stmt != null) stmt.close();
-            if (connection != null) {
-                connection.setAutoCommit(true);
-                connection.close();
-            }
         }
-        return casal;
-    }
-
-    @Override
-    public Casal updateAsistance(String id) throws SQLException
-    {
-        Casal casal = null;
-
-        Connection connection = null;
-        PreparedStatement stmt = null;
-        try
-        {
-            stmt = connection.prepareStatement(CasalDAOQuery.ASSIGN_ASSISTANCE);// en eventos buscammos la id de usuario e insertamos dentro de casal_events
-            stmt.setString(1, id);
-            stmt.executeUpdate();
-            connection.commit();
-
-        } catch (SQLException e)
+        catch (SQLException e)
         {
             throw e;
-        } finally
+        }
+        finally
         {
             if (stmt != null) stmt.close();
             if (connection != null)
@@ -120,11 +97,17 @@ public class CasalDAOImpl implements CasalDAO {
             }
         }
         return casal;
-
     }
 
+    @Override
+    public Casal updateValoracion(String id, float valoracion) throws SQLException {
+        return null;
+    }
 
-
+    @Override
+    public Casal UpdateLocation(String id, String localization, String latitud, String longitud) throws SQLException {
+        return null;
+    }
 
     @Override
     public Casal getCasalById(String id) throws SQLException
@@ -172,44 +155,14 @@ public class CasalDAOImpl implements CasalDAO {
     }
 
     @Override
-    public Casal getCasalByLoginid(String loginid) throws SQLException {
-        Casal casal = null;
-
-        Connection connection = null;
-        PreparedStatement stmt = null;
-        try
-        {
-            connection = Database.getConnection();
-
-
-            stmt = connection.prepareStatement(CasalDAOQuery.GET_CASAL_BY_CASALNAME);
-            stmt.setString(1, loginid);
-
-            ResultSet rs = stmt.executeQuery();
-            /*while (rs.next()) // Tiene que leer todos los usuarios y devolverlos, pero quizas no sera necesario
-            {
-                casal = new Casal();
-                casal.setId(rs.getString("id"));
-                casal.setLoginid(rs.getString("loginid"));
-                casal.setEmail(rs.getString("email"));
-                casal.setFullname(rs.getString("fullname"));
-                casal.setDescription(rs.getString("descripcion"));
-            }*/
-        }
-        catch (SQLException e)
-        {
-            throw e;
-        }
-        finally
-        {
-            if (stmt != null) stmt.close();
-            if (connection != null) connection.close();
-        }
-        return casal;
+    public Casal getCasalByLoginid(String loginid) throws SQLException
+    {
+        return null;
     }
 
     @Override
-    public Casal GetAllCasals() throws SQLException {
+    public Casal GetAllCasals() throws SQLException
+    {
         Casal casal = null;
 
         Connection connection = null;
@@ -219,7 +172,7 @@ public class CasalDAOImpl implements CasalDAO {
             connection = Database.getConnection();
 
             stmt = connection.prepareStatement(CasalDAOQuery.GET_ALL_CASALS);
-
+            /* Habria que crear un vector de casals donde añadir todos los casals y devolver este vector, ahora solo se esta devolviendo unor
             ResultSet rs = stmt.executeQuery();
             while(rs.next())
             {
@@ -230,8 +183,10 @@ public class CasalDAOImpl implements CasalDAO {
                 casal.setFullname(rs.getString("fullname"));
                 casal.setDescription(rs.getString("descripcion"));
             }
+            }*/
+
         }
-        catch (SQLException e)
+        catch(SQLException e)
         {
             throw e;
         }
@@ -240,8 +195,9 @@ public class CasalDAOImpl implements CasalDAO {
             if (stmt != null) stmt.close();
             if (connection != null) connection.close();
         }
-        return casal;
+        return null;
     }
+
 
     @Override
     public boolean deleteCasal(String id) throws SQLException {

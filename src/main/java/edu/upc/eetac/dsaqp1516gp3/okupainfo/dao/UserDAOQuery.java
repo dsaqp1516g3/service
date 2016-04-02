@@ -15,4 +15,5 @@ public interface UserDAOQuery
     String DELETE_USER = "delete from users where id=unhex(?)";
     String GET_PASSWORD = "select hex(password) as password from user where id=unhex(?)";
     String GET_ALL_USERS = "select *from users"; //Highly ineffective but it is a way to show all users in case it is needed
+    //Mirar si es posible hacer un select + insert para seleccionar la id del usuario y insertar la id del evento.
 }
