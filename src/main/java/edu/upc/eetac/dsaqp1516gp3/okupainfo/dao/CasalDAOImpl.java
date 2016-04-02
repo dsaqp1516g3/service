@@ -1,8 +1,7 @@
 package edu.upc.eetac.dsaqp1516gp3.okupainfo.dao;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import edu.upc.eetac.dsaqp1516gp3.okupainfo.entity.Casal;
-<<<<<<< HEAD
-import edu.upc.eetac.dsaqp1516gp3.okupainfo.entity.User;
 
 import java.math.BigInteger;
 import java.security.MessageDigest;
@@ -10,23 +9,18 @@ import java.security.NoSuchAlgorithmException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-=======
-
->>>>>>> origin/master
 import java.sql.SQLException;
 
-public class CasalDAOImpl implements CasalDAO{
+@JsonInclude(JsonInclude.Include.NON_NULL)
+public class CasalDAOImpl implements CasalDAO {
     @Override
-<<<<<<< HEAD
-    public Casal createCasal(String loginid, String password, String email, String fullname, String descripcion) throws SQLException, CasalAlreadyExistsException
-    {
+    public Casal createCasal(String loginid, String password, String email, String fullname, String descripcion) throws SQLException, CasalAlreadyExistsException {
         Connection connection = null;
         PreparedStatement stmt = null;
         String id = null;
-        try
-        {
+        try {
             Casal casal = getCasalByLoginid(loginid);
-            if (user != null)
+            if (casal != null)
                 throw new CasalAlreadyExistsException();
 
             connection = Database.getConnection();
@@ -41,7 +35,7 @@ public class CasalDAOImpl implements CasalDAO{
             connection.setAutoCommit(false);
 
             stmt.close();
-            stmt = connection.prepareStatement(CasalDAOQuery.CREATE_USER);
+            stmt = connection.prepareStatement(CasalDAOQuery.CREATE_CASAL);
             stmt.setString(1, id);
             stmt.setString(2, loginid);
             stmt.setString(3, password);
@@ -56,16 +50,11 @@ public class CasalDAOImpl implements CasalDAO{
             stmt.executeUpdate();
 
             connection.commit();
-        }
-        catch (SQLException e)
-        {
+        } catch (SQLException e) {
             throw e;
-        }
-        finally
-        {
+        } finally {
             if (stmt != null) stmt.close();
-            if (connection != null)
-            {
+            if (connection != null) {
                 connection.setAutoCommit(true);
                 connection.close();
             }
@@ -74,38 +63,54 @@ public class CasalDAOImpl implements CasalDAO{
     }
 
     @Override
-    public Casal updateProfile(String id, String email, String fullname, String descripcion) throws SQLException
-    {
-        Casal user = null;
+    public Casal UpdateProfile(String id, String email, String fullname, String descripcion, String localization, String latitud, String longitud) throws SQLException {
+        Casal casal = null;
 
         Connection connection = null;
         PreparedStatement stmt = null;
-        try
-        {
+        try {
             connection = Database.getConnection();
 
-            stmt = connection.prepareStatement(CasalDAOQuery.UPDATE_USER);
+            stmt = connection.prepareStatement(CasalDAOQuery.UPDATE_CASAL);
             stmt.setString(1, email);
             stmt.setString(2, fullname);
             stmt.setString(3, descripcion);
 
             int rows = stmt.executeUpdate();
-            if (rows == 1)
-            {
-                user = getCasalById(id);
+            if (rows == 1) {
+                casal = getCasalById(id);
             }
 
-            stmt = connection.prepareStatement(CasalDAOQuery.ASSIGN_ASSISTANCE);// en eventos buscammos la id de usuario e insertamos dentro de user_events
+        } catch (SQLException e) {
+            throw e;
+        } finally {
+            if (stmt != null) stmt.close();
+            if (connection != null) {
+                connection.setAutoCommit(true);
+                connection.close();
+            }
+        }
+        return casal;
+    }
+
+    @Override
+    public Casal updateAsistance(String id) throws SQLException
+    {
+        Casal casal = null;
+
+        Connection connection = null;
+        PreparedStatement stmt = null;
+        try
+        {
+            stmt = connection.prepareStatement(CasalDAOQuery.ASSIGN_ASSISTANCE);// en eventos buscammos la id de usuario e insertamos dentro de casal_events
             stmt.setString(1, id);
             stmt.executeUpdate();
             connection.commit();
 
-        }
-        catch(SQLException e)
+        } catch (SQLException e)
         {
             throw e;
-        }
-        finally
+        } finally
         {
             if (stmt != null) stmt.close();
             if (connection != null)
@@ -114,14 +119,17 @@ public class CasalDAOImpl implements CasalDAO{
                 connection.close();
             }
         }
-        return user;
+        return casal;
+
     }
+
+
 
 
     @Override
     public Casal getCasalById(String id) throws SQLException
     {
-        Casal user = null;
+        Casal casal = null;
 
         Connection connection = null;
         PreparedStatement stmt = null;
@@ -131,7 +139,7 @@ public class CasalDAOImpl implements CasalDAO{
             connection = Database.getConnection();
 
             // Prepara la consulta
-            stmt = connection.prepareStatement(CasalDAOQuery.GET_USER_BY_ID);
+            stmt = connection.prepareStatement(CasalDAOQuery.GET_CASAL_BY_ID);
             // Da valor a los parámetros de la consulta
             stmt.setString(1, id);
 
@@ -140,12 +148,12 @@ public class CasalDAOImpl implements CasalDAO{
             // Procesa los resultados
             if (rs.next())
             {
-                user = new Casal();
-                user.setId(rs.getString("id"));
-                user.setLoginid(rs.getString("loginid"));
-                user.setEmail(rs.getString("email"));
-                user.setFullname(rs.getString("fullname"));
-                user.setDescription(rs.getString("description"));
+                casal = new Casal();
+                casal.setId(rs.getString("id"));
+                casal.setLoginid(rs.getString("loginid"));
+                casal.setEmail(rs.getString("email"));
+                casal.setFullname(rs.getString("fullname"));
+                casal.setDescription(rs.getString("descripcion"));
             }
         }
         catch (SQLException e)
@@ -160,12 +168,12 @@ public class CasalDAOImpl implements CasalDAO{
             if (connection != null) connection.close();
         }
         // Devuelve el modelo
-        return user;
+        return casal;
     }
 
     @Override
     public Casal getCasalByLoginid(String loginid) throws SQLException {
-        Casal user = null;
+        Casal casal = null;
 
         Connection connection = null;
         PreparedStatement stmt = null;
@@ -174,18 +182,18 @@ public class CasalDAOImpl implements CasalDAO{
             connection = Database.getConnection();
 
 
-            stmt = connection.prepareStatement(CasalDAOQuery.GET_USER_BY_USERNAME);
+            stmt = connection.prepareStatement(CasalDAOQuery.GET_CASAL_BY_CASALNAME);
             stmt.setString(1, loginid);
 
             ResultSet rs = stmt.executeQuery();
             /*while (rs.next()) // Tiene que leer todos los usuarios y devolverlos, pero quizas no sera necesario
             {
-                user = new Casal();
-                user.setId(rs.getString("id"));
-                user.setLoginid(rs.getString("loginid"));
-                user.setEmail(rs.getString("email"));
-                user.setFullname(rs.getString("fullname"));
-                user.setDescription(rs.getString("description"));
+                casal = new Casal();
+                casal.setId(rs.getString("id"));
+                casal.setLoginid(rs.getString("loginid"));
+                casal.setEmail(rs.getString("email"));
+                casal.setFullname(rs.getString("fullname"));
+                casal.setDescription(rs.getString("descripcion"));
             }*/
         }
         catch (SQLException e)
@@ -197,12 +205,12 @@ public class CasalDAOImpl implements CasalDAO{
             if (stmt != null) stmt.close();
             if (connection != null) connection.close();
         }
-        return user;
+        return casal;
     }
 
     @Override
-    public Casal getAllCasals() throws SQLException {
-        Casal user = null;
+    public Casal GetAllCasals() throws SQLException {
+        Casal casal = null;
 
         Connection connection = null;
         PreparedStatement stmt = null;
@@ -210,17 +218,17 @@ public class CasalDAOImpl implements CasalDAO{
         {
             connection = Database.getConnection();
 
-            stmt = connection.prepareStatement(CasalDAOQuery.GET_ALL_USERS);
+            stmt = connection.prepareStatement(CasalDAOQuery.GET_ALL_CASALS);
 
             ResultSet rs = stmt.executeQuery();
             while(rs.next())
             {
-                user = new Casal();
-                user.setId(rs.getString("id"));
-                user.setLoginid(rs.getString("loginid"));
-                user.setEmail(rs.getString("email"));
-                user.setFullname(rs.getString("fullname"));
-                user.setDescription(rs.getString("description"));
+                casal = new Casal();
+                casal.setId(rs.getString("id"));
+                casal.setLoginid(rs.getString("loginid"));
+                casal.setEmail(rs.getString("email"));
+                casal.setFullname(rs.getString("fullname"));
+                casal.setDescription(rs.getString("descripcion"));
             }
         }
         catch (SQLException e)
@@ -232,7 +240,7 @@ public class CasalDAOImpl implements CasalDAO{
             if (stmt != null) stmt.close();
             if (connection != null) connection.close();
         }
-        return user;
+        return casal;
     }
 
     @Override
@@ -243,7 +251,7 @@ public class CasalDAOImpl implements CasalDAO{
         {
             connection = Database.getConnection();
 
-            stmt = connection.prepareStatement(UserDAOQuery.DELETE_USER);
+            stmt = connection.prepareStatement(CasalDAOQuery.DELETE_CASAL);
             stmt.setString(1, id);
 
             int rows = stmt.executeUpdate();
@@ -261,13 +269,13 @@ public class CasalDAOImpl implements CasalDAO{
     }
 
     /*@Override
-    public User getEventsById(String id) throws SQLException
+    public Casal getEventsById(String id) throws SQLException
     {
 
     }
 
     @Override
-    public User getEventsByLoginId(String loginid) throws SQLException {
+    public Casal getEventsByLoginId(String loginid) throws SQLException {
         return null;
     }*/
 
@@ -279,7 +287,7 @@ public class CasalDAOImpl implements CasalDAO{
         {
             connection = Database.getConnection();
 
-            stmt = connection.prepareStatement(UserDAOQuery.GET_PASSWORD);
+            stmt = connection.prepareStatement(CasalDAOQuery.GET_PASSWORD);
             stmt.setString(1, id);
 
             ResultSet rs = stmt.executeQuery();
@@ -307,49 +315,5 @@ public class CasalDAOImpl implements CasalDAO{
             if (stmt != null) stmt.close();
             if (connection != null) connection.close();
         }
-=======
-    public Casal createCasal(String loginid, String password, String email, String fullname, String description, float valoracion, String localization, String latitud, String longitud) throws SQLException, CasalAlreadyExistsException {
-        return null;
-    }
-
-    @Override
-    public Casal UpdateProfile(String id, String email, String fullname, String description, String localization, String latitud, String longitud) throws SQLException {
-        return null;
-    }
-
-    @Override
-    public Casal UpdateValoracion(String id, float valoracion) throws SQLException {
-        return null;
-    }
-
-    @Override
-    public Casal UpdtateLocation(String id, String localization, String latitud, String longitud) throws SQLException {
-        return null;
-    }
-
-    @Override
-    public Casal GetCasalById(String id) throws SQLException {
-        return null;
-    }
-
-    @Override
-    public Casal GetCasalByLoginId(String loginid) throws SQLException {
-        return null;
-    }
-
-    @Override
-    public Casal GetAllCasals() throws SQLException {
-        return null;
-    }
-
-    @Override
-    public boolean deleteCasal(String id) throws SQLException {
-        return false;
-    }
-
-    @Override
-    public boolean checkPassword(String id, String password) throws SQLException {
-        return false;
->>>>>>> origin/master
     }
 }
