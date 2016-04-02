@@ -10,6 +10,7 @@ public interface UserDAO
 {
     User createUser(String loginid, String password, String email, String fullname, String descripcion) throws SQLException, UserAlreadyExistsException;
     User updateProfile(String id, String email, String fullname, String descripcion) throws SQLException;
+    User updateAsistance(String id)throws SQLException;
     User getUserById(String id) throws SQLException;
     User getUserByLoginid(String loginid) throws SQLException;
     User getAllUsers() throws SQLException;
