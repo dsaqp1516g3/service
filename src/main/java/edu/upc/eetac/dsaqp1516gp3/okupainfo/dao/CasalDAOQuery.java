@@ -5,15 +5,15 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public interface CasalDAOQuery
 {
-    //oju, cal fer les sql queries adaptades a casal
     String UUID = "select REPLACE(UUID(),'-','')";
-    String CREATE_CASAL = "insert into users((id, loginid, password, email, fullname, description) values (UNHEX(?), ?, UNHEX(MD5(?)), ?, ?, ?);";
-    String UPDATE_CASAL = "update users set email=?, fullname=?, description=? where id=unhex(?)";
-    String ASSIGN_ROLE_REGISTERED = "insert into user_roles(userid,role) values (UNHEX(?), 'registered)";
-    String ASSIGN_ASSISTANCE = "insert into user_events(userid,eventoid) values (UNHEX(?), UNHEX(?)"; //Falta descubrir como implementarlo
-    String GET_CASAL_BY_ID = "select hex(u.id) as id, u.loginid, u.email, u.fullname, u.descripcion from users u where id=unhex(?)";
-    String GET_CASAL_BY_CASALNAME = "select hex(u.id) as id, u.loginid, u.email, u.fullname, u.description from users u where u.loginid=?";
-    String DELETE_CASAL = "delete from users where id=unhex(?)";
-    String GET_PASSWORD = "select hex(password) as password from user where id=unhex(?)";
-    String GET_ALL_CASALS = "select *from users"; //Highly ineffective but it is a way to show all users in case it is needed
+    String CREATE_CASAL = "insert into casals((id, loginid, password, email, fullname, description,valoracion, localization, latitud, longitud) values (UNHEX(?), ?, UNHEX(MD5(?)), ?, ?, ?,NULL,?,NULL,NULL);";
+    String UPDATE_CASAL = "update casals set email=?, fullname=?, description=? where id=unhex(?)";
+    //String ASSIGN_ROLE_REGISTERED = "insert into user_roles(casalid,role) values (UNHEX(?), 'creador')"; /*Como implementarlo si la tabla es users_roles?*/
+    String UPDATE_LOCATION = "update casals set location=?, latitud=?, longitud=? where id=unhex(?)";
+    String UPDATE_VALORACION = "update casals set valoracion=? where id=unhex(?)";
+    String GET_CASAL_BY_ID = "select hex(c.id) as id, c.loginid, c.email, c.fullname, c.descripcion from casals c where id=unhex(?)";
+    String GET_CASAL_BY_LOGIN_ID = "select hex(u.id) as id, c.loginid, c.email, c.fullname, c.description from casals c where c.loginid=?";
+    String DELETE_CASAL = "delete from casals where id=unhex(?)";
+    String GET_PASSWORD = "select hex(password) as password from casals where id=unhex(?)";
+    String GET_ALL_CASALS = "select *from casals"; //Highly ineffective but it is a way to show all casals in case it is needed
 }

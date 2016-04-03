@@ -44,10 +44,10 @@ public class CasalDAOImpl implements CasalDAO {
             stmt.setString(6, descripcion);
             stmt.executeUpdate();
 
-            stmt.close();
+            /*stmt.close();
             stmt = connection.prepareStatement(CasalDAOQuery.ASSIGN_ROLE_REGISTERED);
             stmt.setString(1, id);
-            stmt.executeUpdate();
+            stmt.executeUpdate();*/
 
             connection.commit();
         } catch (SQLException e) {
@@ -198,7 +198,6 @@ public class CasalDAOImpl implements CasalDAO {
         return null;
     }
 
-
     @Override
     public boolean deleteCasal(String id) throws SQLException {
         Connection connection = null;
@@ -223,17 +222,6 @@ public class CasalDAOImpl implements CasalDAO {
             if (connection != null) connection.close();
         }
     }
-
-    /*@Override
-    public Casal getEventsById(String id) throws SQLException
-    {
-
-    }
-
-    @Override
-    public Casal getEventsByLoginId(String loginid) throws SQLException {
-        return null;
-    }*/
 
     @Override
     public boolean checkPassword(String id, String password) throws SQLException {
