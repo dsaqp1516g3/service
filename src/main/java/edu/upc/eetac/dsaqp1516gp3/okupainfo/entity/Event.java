@@ -69,7 +69,6 @@ public class Event
         this.description = description;
     }
 
-
     public float getValoracion() {
         return valoracion;
     }
@@ -78,8 +77,8 @@ public class Event
         this.valoracion = valoracion;
     }
 
-    public String getLocalization() {
-        return localization;
+    public String getLocalization(String localization) {
+        return this.localization;
     }
 
     public void setLocalization(String localization) {

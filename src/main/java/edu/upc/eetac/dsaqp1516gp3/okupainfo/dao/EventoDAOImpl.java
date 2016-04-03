@@ -4,7 +4,8 @@ import edu.upc.eetac.dsaqp1516gp3.okupainfo.entity.Event;
 
 import java.sql.SQLException;
 
-public class EventoDAOImpl implements EventoDAO{
+public class EventoDAOImpl implements EventoDAO
+{
     @Override
     public Event createEvent(String creatorid, String title, String tipo, String descripcion, float valoracion, String localiaztion, String longitud, String latitud) throws SQLException {
         return null;
@@ -36,12 +37,7 @@ public class EventoDAOImpl implements EventoDAO{
     }
 
     @Override
-    public Event GetEventByParticipante(String id) throws SQLException {
-        return null;
-    }
-
-    @Override
-    public Event GetParticipanteByEvent(String id) throws SQLException {
+    public Event getEventsByUserId(String userid) throws SQLException {
         return null;
     }
 

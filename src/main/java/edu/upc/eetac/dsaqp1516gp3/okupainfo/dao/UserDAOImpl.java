@@ -14,11 +14,13 @@ import java.sql.SQLException;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class UserDAOImpl implements UserDAO {
     @Override
-    public User createUser(String loginid, String password, String email, String fullname, String descripcion) throws SQLException, UserAlreadyExistsException {
+    public User createUser(String loginid, String password, String email, String fullname, String descripcion) throws SQLException, UserAlreadyExistsException
+    {
         Connection connection = null;
         PreparedStatement stmt = null;
         String id = null;
-        try {
+        try
+        {
             User user = getUserByLoginid(loginid);
             if (user != null)
                 throw new UserAlreadyExistsException();
@@ -50,11 +52,16 @@ public class UserDAOImpl implements UserDAO {
             stmt.executeUpdate();
 
             connection.commit();
-        } catch (SQLException e) {
+        }
+        catch (SQLException e)
+        {
             throw e;
-        } finally {
+        }
+        finally
+        {
             if (stmt != null) stmt.close();
-            if (connection != null) {
+            if (connection != null)
+            {
                 connection.setAutoCommit(true);
                 connection.close();
             }
@@ -63,12 +70,14 @@ public class UserDAOImpl implements UserDAO {
     }
 
     @Override
-    public User updateProfile(String id, String email, String fullname, String descripcion) throws SQLException {
+    public User updateProfile(String id, String email, String fullname, String descripcion) throws SQLException
+    {
         User user = null;
 
         Connection connection = null;
         PreparedStatement stmt = null;
-        try {
+        try
+        {
             connection = Database.getConnection();
 
             stmt = connection.prepareStatement(UserDAOQuery.UPDATE_USER);
@@ -77,15 +86,21 @@ public class UserDAOImpl implements UserDAO {
             stmt.setString(3, descripcion);
 
             int rows = stmt.executeUpdate();
-            if (rows == 1) {
+            if (rows == 1)
+            {
                 user = getUserById(id);
             }
 
-        } catch (SQLException e) {
+        }
+        catch (SQLException e)
+        {
             throw e;
-        } finally {
+        }
+        finally
+        {
             if (stmt != null) stmt.close();
-            if (connection != null) {
+            if (connection != null)
+            {
                 connection.setAutoCommit(true);
                 connection.close();
             }
@@ -108,10 +123,12 @@ public class UserDAOImpl implements UserDAO {
             stmt.executeUpdate();
             connection.commit();
 
-        } catch (SQLException e)
+        }
+        catch (SQLException e)
         {
             throw e;
-        } finally
+        }
+        finally
         {
             if (stmt != null) stmt.close();
             if (connection != null)
@@ -121,11 +138,7 @@ public class UserDAOImpl implements UserDAO {
             }
         }
         return user;
-
     }
-
-
-
 
     @Override
     public User getUserById(String id) throws SQLException
@@ -173,7 +186,8 @@ public class UserDAOImpl implements UserDAO {
     }
 
     @Override
-    public User getUserByLoginid(String loginid) throws SQLException {
+    public User getUserByLoginid(String loginid) throws SQLException
+    {
         User user = null;
 
         Connection connection = null;
@@ -187,42 +201,7 @@ public class UserDAOImpl implements UserDAO {
             stmt.setString(1, loginid);
 
             ResultSet rs = stmt.executeQuery();
-            /*while (rs.next()) // Tiene que leer todos los usuarios y devolverlos, pero quizas no sera necesario
-            {
-                user = new User();
-                user.setId(rs.getString("id"));
-                user.setLoginid(rs.getString("loginid"));
-                user.setEmail(rs.getString("email"));
-                user.setFullname(rs.getString("fullname"));
-                user.setDescription(rs.getString("description"));
-            }*/
-        }
-        catch (SQLException e)
-        {
-            throw e;
-        }
-        finally
-        {
-            if (stmt != null) stmt.close();
-            if (connection != null) connection.close();
-        }
-        return user;
-    }
-
-    @Override
-    public User getAllUsers() throws SQLException {
-        User user = null;
-
-        Connection connection = null;
-        PreparedStatement stmt = null;
-        try
-        {
-            connection = Database.getConnection();
-
-            stmt = connection.prepareStatement(UserDAOQuery.GET_ALL_USERS);
-
-            ResultSet rs = stmt.executeQuery();
-        while(rs.next())
+            if (rs.next())
             {
                 user = new User();
                 user.setId(rs.getString("id"));
@@ -245,7 +224,80 @@ public class UserDAOImpl implements UserDAO {
     }
 
     @Override
-    public boolean deleteUser(String id) throws SQLException {
+    public User getAllUsers() throws SQLException
+
+    {
+        User user = null;
+
+        Connection connection = null;
+        PreparedStatement stmt = null;
+        try
+        {
+            connection = Database.getConnection();
+
+            stmt = connection.prepareStatement(UserDAOQuery.GET_ALL_USERS);
+
+            ResultSet rs = stmt.executeQuery();
+            /*while(rs.next()) Se necesita crear un vector con todos los usuarios y devolver este vector
+            {
+                user = new User();
+                user.setId(rs.getString("id"));
+                user.setLoginid(rs.getString("loginid"));
+                user.setEmail(rs.getString("email"));
+                user.setFullname(rs.getString("fullname"));
+                user.setDescription(rs.getString("description"));
+            }*/
+        }
+        catch (SQLException e)
+        {
+            throw e;
+        }
+        finally
+        {
+            if (stmt != null) stmt.close();
+            if (connection != null) connection.close();
+        }
+        return user;
+    }
+
+    @Override
+    public User getUsersByEventoId(String eventoid) throws SQLException {
+        User user = null;
+
+        Connection connection = null;
+        PreparedStatement stmt = null;
+        try
+        {
+            connection = Database.getConnection();
+
+            stmt = connection.prepareStatement(UserDAOQuery.GET_USERS_BY_EVENT_ID);
+            stmt.setString(2,eventoid);
+
+            ResultSet rs = stmt.executeQuery();
+            if(rs.next())
+            {
+                user.setId(rs.getString("id"));
+                user.setLoginid(rs.getString("loginid"));
+                user.setEmail(rs.getString("email"));
+                user.setFullname(rs.getString("fullname"));
+                user.setDescription(rs.getString("description"));
+            }
+        }
+        catch (SQLException e)
+        {
+            throw e;
+        }
+        finally
+        {
+            if (stmt != null) stmt.close();
+            if (connection != null) connection.close();
+        }
+        return user;
+    }
+
+    @Override
+    public boolean deleteUser(String id) throws SQLException
+    {
         Connection connection = null;
         PreparedStatement stmt = null;
         try
@@ -269,19 +321,9 @@ public class UserDAOImpl implements UserDAO {
         }
     }
 
-    /*@Override
-    public User getEventsById(String id) throws SQLException
+    @Override
+    public boolean checkPassword(String id, String password) throws SQLException
     {
-
-    }
-
-    @Override
-    public User getEventsByLoginId(String loginid) throws SQLException {
-        return null;
-    }*/
-
-    @Override
-    public boolean checkPassword(String id, String password) throws SQLException {
         Connection connection = null;
         PreparedStatement stmt = null;
         try
