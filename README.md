@@ -11,7 +11,7 @@ convencions per picar el codi (codestyle)
 Noms utilitzats repetidament
 -
 quan es faci servir 'okupainfo' es fa tot en **minúscules** en general
-```
+```java
 okupainfo
 ```
 si el cas q es fa servir és amb majúscula la 1a, només la 1a:
@@ -22,7 +22,7 @@ Okupainfo
 ClassNames:
 -----------
 primera lletra en majúscules
-```
+```java
 public class OkupainfoMediaType
 {
 }
@@ -31,7 +31,7 @@ public class OkupainfoMediaType
 Interfaces
 ----------
 Interface names should be capitalized like class names.
-```
+```java
 interface RasterDelegate;
 interface Storing;
 ```
@@ -39,7 +39,7 @@ interface Storing;
 Mètodes
 -
 verb amb lowercase + la resta de paraules amb 1a lletra majúscula
-```
+```java
 getUsers();
 User getUserById(String id) throws SQLException;
 User getUserByLoginid(String loginid) throws SQLException;
@@ -50,7 +50,7 @@ User getUsersByEventoId(String eventoid) throws SQLException;
 Variàbles
 ---------
 firstletter amb lowercase, si són vàries paraules ajuntades, a partir de la 2a paraula es posa la inicial amb majúscula
-```
+```java
 var listaUsers;
 var aixoEsUnExempleDeVariableLlegiblePeroLlarg;
 ```
@@ -59,7 +59,7 @@ var aixoEsUnExempleDeVariableLlegiblePeroLlarg;
 Constants
 ---------
 tot uppercase letters, i les paraules separades per underscores (barrabaixa)
-```
+```java
 public final static String OKUPAINFO_AUTH_TOKEN = "x";
     public final static String OKUPAINFO_USER = "x";
     public final static String OKUPAINFO_CASAL = "x";
