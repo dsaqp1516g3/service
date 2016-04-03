@@ -37,7 +37,8 @@ public class EventoDAOImpl implements EventoDAO
     }
 
     @Override
-    public Event getEventsByUserId(String userid) throws SQLException {
+    public Event getEventsByUserId(String userid) throws SQLException /*Mirar getUserByAuthToken porque parece ser parecido*/
+    {
         return null;
     }
 

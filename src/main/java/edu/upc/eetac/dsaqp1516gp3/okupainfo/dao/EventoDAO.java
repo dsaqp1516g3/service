@@ -15,5 +15,4 @@ public interface EventoDAO
     Event getEventsByUserId(String userid) throws SQLException;// Pasamos la Id del ususario y en la tabla users_events nos devuelve los eventos
     Event GetAllEvents()throws SQLException;
     boolean deleteCasal(String id) throws SQLException;
-
 }
