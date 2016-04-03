@@ -25,8 +25,12 @@ public class AuthorizedRequestFilter implements ContainerRequestFilter{
         final boolean secure = requestContext.getUriInfo().getAbsolutePath().getScheme().equals("https");
 
         String token = requestContext.getHeaderString("X-Auth-Token");
-        if (token == null)
-            throw new WebApplicationException(Response.Status.UNAUTHORIZED);
+
+        if(Authorized.getInstance().isAuthorized(requestContext))
+            return;
+        /*if (token == null)
+            throw new WebApplicationException(Response.Status.UNAUTHORIZED);*/
+
 
         try {
             final UserInfo principal = (new AuthTokenDAOImpl()).getUserByAuthToken(token);
