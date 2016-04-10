@@ -12,7 +12,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class CasalDAOImpl implements CasalDAO {
+public class CasalDAOImpl implements CasalDAO
+{
     @Override
     public Casal createCasal(String loginid, String password, String email, String fullname, String descripcion) throws SQLException, CasalAlreadyExistsException {
         Connection connection = null;
@@ -63,7 +64,7 @@ public class CasalDAOImpl implements CasalDAO {
     }
 
     @Override
-    public Casal UpdateProfile(String id, String email, String fullname, String descripcion, String localization, String latitud, String longitud) throws SQLException
+    public Casal UpdateProfile(String id, String email, String fullname, String descripcion) throws SQLException
     {
         Casal casal = null;
 
@@ -100,13 +101,77 @@ public class CasalDAOImpl implements CasalDAO {
     }
 
     @Override
-    public Casal updateValoracion(String id, float valoracion) throws SQLException {
-        return null;
+    public Casal updateValoracion(String id, float valoracion) throws SQLException
+    {
+        Casal casal = null;
+
+        Connection connection = null;
+        PreparedStatement stmt = null;
+        try
+        {
+            connection = Database.getConnection();
+
+            stmt = connection.prepareStatement(CasalDAOQuery.UPDATE_VALORACION);
+            stmt.setString(1, String.valueOf(valoracion));
+
+            int rows = stmt.executeUpdate();
+            if (rows == 1)
+            {
+                casal = getCasalById(id);
+            }
+        }
+        catch (SQLException e)
+        {
+            throw e;
+        }
+        finally
+        {
+            if (stmt != null) stmt.close();
+            if (connection != null)
+            {
+                connection.setAutoCommit(true);
+                connection.close();
+            }
+        }
+        return casal;
     }
 
     @Override
-    public Casal UpdateLocation(String id, String localization, String latitud, String longitud) throws SQLException {
-        return null;
+    public Casal UpdateLocation(String id, String localization, String latitud, String longitud) throws SQLException
+    {
+        Casal casal = null;
+
+        Connection connection = null;
+        PreparedStatement stmt = null;
+        try
+        {
+            connection = Database.getConnection();
+
+            stmt = connection.prepareStatement(CasalDAOQuery.UPDATE_LOCATION);
+            stmt.setString(1, localization);
+            stmt.setString(2, latitud);
+            stmt.setString(3, longitud);
+
+            int rows = stmt.executeUpdate();
+            if (rows == 1)
+            {
+                casal = getCasalById(id);
+            }
+        }
+        catch (SQLException e)
+        {
+            throw e;
+        }
+        finally
+        {
+            if (stmt != null) stmt.close();
+            if (connection != null)
+            {
+                connection.setAutoCommit(true);
+                connection.close();
+            }
+        }
+        return casal;
     }
 
     @Override
@@ -157,7 +222,38 @@ public class CasalDAOImpl implements CasalDAO {
     @Override
     public Casal getCasalByLoginid(String loginid) throws SQLException
     {
-        return null;
+        Casal casal = null;
+
+        Connection connection = null;
+        PreparedStatement stmt = null;
+        try
+        {
+            connection = Database.getConnection();
+
+            stmt = connection.prepareStatement(CasalDAOQuery.GET_CASAL_BY_LOGIN_ID);
+            stmt.setString(1, loginid);
+
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next())
+            {
+                casal = new Casal();
+                casal.setId(rs.getString("id"));
+                casal.setLoginid(rs.getString("loginid"));
+                casal.setEmail(rs.getString("email"));
+                casal.setFullname(rs.getString("fullname"));
+                casal.setDescription(rs.getString("descripcion"));
+            }
+        }
+        catch (SQLException e)
+        {
+            throw e;
+        }
+        finally
+        {
+            if (stmt != null) stmt.close();
+            if (connection != null) connection.close();
+        }
+        return casal;
     }
 
     @Override
