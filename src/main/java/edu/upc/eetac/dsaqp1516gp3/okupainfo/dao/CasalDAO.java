@@ -8,7 +8,7 @@ import java.sql.SQLException;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public interface CasalDAO
 {
-    Casal createCasal(String loginid, String password, String email, String fullname, String descripcion) throws SQLException, CasalAlreadyExistsException;
+    Casal createCasal(String loginid, String password, String email, String fullname, String descripcion, String localization) throws SQLException, CasalAlreadyExistsException;
     Casal UpdateProfile(String id, String email, String fullname, String description) throws SQLException;
     Casal updateValoracion(String id, float valoracion) throws SQLException;
     Casal UpdateLocation(String id, String localization, String latitud, String longitud) throws SQLException;// ens cal la de UpdateLocation segur? Si perque hem de saber on estar situat per pasarla la direccio a la API de google maps

@@ -6,7 +6,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 public interface CasalDAOQuery
 {
     String UUID = "select REPLACE(UUID(),'-','')";
-    String CREATE_CASAL = "insert into casals((id, loginid, password, email, fullname, description,valoracion, localization, latitud, longitud) values (UNHEX(?), ?, UNHEX(MD5(?)), ?, ?, ?,NULL,?,NULL,NULL);";
+    String CREATE_CASAL = "insert into casals (id, loginid, password, email, fullname, description, valoracion, localization, latitud, longitud) values (UNHEX(?), ?, UNHEX(MD5(?)), ?, ?, ?,NULL,?,NULL,NULL);";
     String UPDATE_CASAL = "update casals set email=?, fullname=?, description=? where id=unhex(?)";
     //String ASSIGN_ROLE_REGISTERED = "insert into user_roles(casalid,role) values (UNHEX(?), 'creador')"; /*Como implementarlo si la tabla es users_roles?*/
     String UPDATE_LOCATION = "update casals set location=?, latitud=?, longitud=? where id=unhex(?)";

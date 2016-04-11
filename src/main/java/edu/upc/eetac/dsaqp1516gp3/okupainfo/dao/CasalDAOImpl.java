@@ -15,7 +15,7 @@ import java.sql.SQLException;
 public class CasalDAOImpl implements CasalDAO
 {
     @Override
-    public Casal createCasal(String loginid, String password, String email, String fullname, String descripcion) throws SQLException, CasalAlreadyExistsException {
+    public Casal createCasal(String loginid, String password, String email, String fullname, String descripcion, String localization) throws SQLException, CasalAlreadyExistsException {
         Connection connection = null;
         PreparedStatement stmt = null;
         String id = null;
@@ -37,12 +37,16 @@ public class CasalDAOImpl implements CasalDAO
 
             stmt.close();
             stmt = connection.prepareStatement(CasalDAOQuery.CREATE_CASAL);
+            /*
+            insert into casals (id,     loginid, password,    email, fullname, description, valoracion, localization, latitud, longitud)
+                        values (UNHEX(?), ?,    UNHEX(MD5(?)), ?,        ?,          ?,         NULL,       ?,          NULL,   NULL);*/
             stmt.setString(1, id);
             stmt.setString(2, loginid);
             stmt.setString(3, password);
             stmt.setString(4, email);
             stmt.setString(5, fullname);
             stmt.setString(6, descripcion);
+            stmt.setString(7, localization);
             stmt.executeUpdate();
 
             /*stmt.close();
