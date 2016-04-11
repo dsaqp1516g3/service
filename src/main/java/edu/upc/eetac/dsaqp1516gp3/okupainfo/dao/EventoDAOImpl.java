@@ -1,5 +1,6 @@
 package edu.upc.eetac.dsaqp1516gp3.okupainfo.dao;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import edu.upc.eetac.dsaqp1516gp3.okupainfo.entity.Event;
 
 import java.sql.Connection;
@@ -7,15 +8,17 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class EventoDAOImpl implements EventoDAO
 {
     @Override
-    public Event createEvent(String creatorid, String title, String tipo, String descripcion, float valoracion, String localiaztion, String longitud, String latitud) throws SQLException {
+    public Event createEvent(String creatorid, String title, String tipo, String descripcion, float valoracion, String localiaztion, String longitud, String latitud) throws SQLException
+    {
         Connection connection = null;
         PreparedStatement stmt = null;
         String id = null;
-        try {
-            Event event = GetEventByCreatorId(creatorid);
+        try
+        {
             connection = Database.getConnection();
 
             stmt = connection.prepareStatement(EventoDAOQuery.UUID);
@@ -42,7 +45,8 @@ public class EventoDAOImpl implements EventoDAO
         catch (SQLException e)
         {
             throw e;
-        } finally
+        }
+        finally
         {
             if (stmt != null) stmt.close();
             if (connection != null)
@@ -51,7 +55,7 @@ public class EventoDAOImpl implements EventoDAO
                 connection.close();
             }
         }
-        return GetEventByCreatorId(creatorid);
+        return GetEventById(id);
     }
 
     @Override

@@ -6,7 +6,8 @@ import edu.upc.eetac.dsaqp1516gp3.okupainfo.entity.Casal;
 import java.sql.SQLException;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public interface CasalDAO {
+public interface CasalDAO
+{
     Casal createCasal(String loginid, String password, String email, String fullname, String descripcion) throws SQLException, CasalAlreadyExistsException;
     Casal UpdateProfile(String id, String email, String fullname, String description) throws SQLException;
     Casal updateValoracion(String id, float valoracion) throws SQLException;

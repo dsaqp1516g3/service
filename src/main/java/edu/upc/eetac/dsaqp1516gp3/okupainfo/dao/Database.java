@@ -1,5 +1,6 @@
 package edu.upc.eetac.dsaqp1516gp3.okupainfo.dao;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 
@@ -11,6 +12,7 @@ import java.util.Properties;
 import java.util.PropertyResourceBundle;
 import java.util.ResourceBundle;
 
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class Database
 {
     private static Database instance = null;
