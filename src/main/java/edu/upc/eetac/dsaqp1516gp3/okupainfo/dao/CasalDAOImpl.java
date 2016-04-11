@@ -299,7 +299,8 @@ public class CasalDAOImpl implements CasalDAO
     }
 
     @Override
-    public boolean deleteCasal(String id) throws SQLException {
+    public boolean deleteCasal(String id) throws SQLException
+    {
         Connection connection = null;
         PreparedStatement stmt = null;
         try
@@ -324,7 +325,8 @@ public class CasalDAOImpl implements CasalDAO
     }
 
     @Override
-    public boolean checkPassword(String id, String password) throws SQLException {
+    public boolean checkPassword(String id, String password) throws SQLException
+    {
         Connection connection = null;
         PreparedStatement stmt = null;
         try
