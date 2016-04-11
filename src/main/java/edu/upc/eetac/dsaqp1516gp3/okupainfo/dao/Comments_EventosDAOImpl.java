@@ -54,8 +54,8 @@ public class Comments_EventosDAOImpl implements Comments_EventosDAO
     }
 
     @Override
-    public Comments_Events updateComment(String id, String content) throws SQLException {
-
+    public Comments_Events updateComment(String id, String content) throws SQLException
+    {
         Comments_Events comments_events = null;
 
         Connection connection = null;
@@ -90,27 +90,142 @@ public class Comments_EventosDAOImpl implements Comments_EventosDAO
     }
 
     @Override
-    public Comments_Events getCommentById(String id) throws SQLException {
+    public Comments_Events getCommentById(String id) throws SQLException
+    {
+        Comments_Events comments_events = null;
+
+        Connection connection = null;
+        PreparedStatement stmt = null;
+        try
+        {
+            connection = Database.getConnection();
+
+            stmt = connection.prepareStatement(Comments_EventosDAOQuery.GET_COMMENT_BY_ID);
+            stmt.setString(1,id);
+
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next())
+            {
+                comments_events = new Comments_Events();
+                comments_events.setId(rs.getString("id"));
+                comments_events.setCreatorid(rs.getString("creatorid"));
+                comments_events.setEventoid(rs.getString("eventoid"));
+                comments_events.setContent(rs.getString("content"));
+            }
+        }
+        catch (SQLException e)
+        {
+            throw e;
+        }
+        finally
+        {
+            if (stmt != null) stmt.close();
+            if (connection != null) connection.close();
+        }
+        return comments_events;
+    }
+
+    @Override
+    public Comments_Events getCommentByEventoId(String eventoid) throws SQLException
+    {
+        Comments_Events comments_events = null;
+
+        Connection connection = null;
+        PreparedStatement stmt = null;
+        try
+        {
+            connection = Database.getConnection();
+
+            stmt = connection.prepareStatement(Comments_EventosDAOQuery.GET_COMMENT_BY_EVENTID);
+            stmt.setString(1,eventoid);
+
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next())
+            {
+                comments_events = new Comments_Events();
+                comments_events.setId(rs.getString("id"));
+                comments_events.setCreatorid(rs.getString("creatorid"));
+                comments_events.setEventoid(rs.getString("eventoid"));
+                comments_events.setContent(rs.getString("content"));
+            }
+        }
+        catch (SQLException e)
+        {
+            throw e;
+        }
+        finally
+        {
+            if (stmt != null) stmt.close();
+            if (connection != null) connection.close();
+        }
+        return comments_events;
+    }
+
+    @Override
+    public Comments_Events getCommentByCreatorId(String creatorid) throws SQLException
+    {
+        Comments_Events comments_events = null;
+
+        Connection connection = null;
+        PreparedStatement stmt = null;
+        try
+        {
+            connection = Database.getConnection();
+
+            stmt = connection.prepareStatement(Comments_EventosDAOQuery.GET_COMMENT_BY_CREATORID);
+            stmt.setString(1,creatorid);
+
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next())
+            {
+                comments_events = new Comments_Events();
+                comments_events.setId(rs.getString("id"));
+                comments_events.setCreatorid(rs.getString("creatorid"));
+                comments_events.setEventoid(rs.getString("eventoid"));
+                comments_events.setContent(rs.getString("content"));
+            }
+        }
+        catch (SQLException e)
+        {
+            throw e;
+        }
+        finally
+        {
+            if (stmt != null) stmt.close();
+            if (connection != null) connection.close();
+        }
+        return comments_events;
+    }
+
+    @Override
+    public Comments_Events getAllComments() throws SQLException
+    {
         return null;
     }
 
     @Override
-    public Comments_Events getCommentByEventoId(String eventoid) throws SQLException {
-        return null;
-    }
+    public boolean deleteComment(String id) throws SQLException
+    {
+        Connection connection = null;
+        PreparedStatement stmt = null;
+        try
+        {
+            connection = Database.getConnection();
 
-    @Override
-    public Comments_Events getCommentByCreatorId(String creatorid) throws SQLException {
-        return null;
-    }
+            stmt = connection.prepareStatement(Comments_EventosDAOQuery.DELETE_COMMENT);
+            stmt.setString(1, id);
 
-    @Override
-    public Comments_Events getAllComments() throws SQLException {
-        return null;
-    }
-
-    @Override
-    public boolean deleteComment(String id) throws SQLException {
-        return false;
+            int rows = stmt.executeUpdate();
+            return (rows == 1);
+        }
+        catch (SQLException e)
+        {
+            throw e;
+        }
+        finally
+        {
+            if (stmt != null) stmt.close();
+            if (connection != null) connection.close();
+        }
     }
 }

@@ -15,6 +15,6 @@ public interface CasalDAO
     Casal getCasalById(String id) throws SQLException;
     Casal getCasalByLoginid(String loginid) throws SQLException;
     Casal GetAllCasals() throws SQLException;
-    public boolean deleteCasal(String id) throws SQLException;
-    public boolean checkPassword(String id, String password) throws SQLException;
+    boolean deleteCasal(String id) throws SQLException;
+    boolean checkPassword(String id, String password) throws SQLException;
 }
