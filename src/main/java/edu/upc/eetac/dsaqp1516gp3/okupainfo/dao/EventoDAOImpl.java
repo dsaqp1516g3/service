@@ -55,11 +55,11 @@ public class EventoDAOImpl implements EventoDAO
                 connection.close();
             }
         }
-        return GetEventById(id);
+        return getEventById(id);
     }
 
     @Override
-    public Event UpdateProfile(String id, String title, String tipo, String description) throws SQLException
+    public Event updateProfile(String id, String title, String tipo, String description) throws SQLException
     {
         Event event = null;
 
@@ -77,7 +77,7 @@ public class EventoDAOImpl implements EventoDAO
             int rows = stmt.executeUpdate();
             if (rows == 1)
             {
-                event = GetEventById(id);
+                event = getEventById(id);
             }
         }
         catch (SQLException e)
@@ -97,7 +97,7 @@ public class EventoDAOImpl implements EventoDAO
     }
 
     @Override
-    public Event UpdateValoracion(String id, float valoracion) throws SQLException
+    public Event updateValoracion(String id, float valoracion) throws SQLException
     {
         Event event = null;
 
@@ -113,7 +113,7 @@ public class EventoDAOImpl implements EventoDAO
             int rows = stmt.executeUpdate();
             if (rows == 1)
             {
-                event = GetEventById(id);
+                event = getEventById(id);
             }
         }
         catch (SQLException e)
@@ -133,7 +133,7 @@ public class EventoDAOImpl implements EventoDAO
     }
 
     @Override
-    public Event UpdateLocation(String id, String localization, String longitud, String latitud) throws SQLException
+    public Event updateLocation(String id, String localization, String longitud, String latitud) throws SQLException
     {
         Event event = null;
 
@@ -151,7 +151,7 @@ public class EventoDAOImpl implements EventoDAO
             int rows = stmt.executeUpdate();
             if (rows == 1)
             {
-                event = GetEventById(id);
+                event = getEventById(id);
             }
         }
         catch (SQLException e)
@@ -171,7 +171,7 @@ public class EventoDAOImpl implements EventoDAO
     }
 
     @Override
-    public Event GetEventById(String id) throws SQLException {
+    public Event getEventById(String id) throws SQLException {
         Event event = null;
 
         Connection connection = null;
@@ -215,7 +215,7 @@ public class EventoDAOImpl implements EventoDAO
     }
 
     @Override
-    public Event GetEventByCreatorId(String creatorid) throws SQLException {
+    public Event getEventByCreatorId(String creatorid) throws SQLException {
         Event event = null;
 
         Connection connection = null;
@@ -290,7 +290,7 @@ public class EventoDAOImpl implements EventoDAO
 
 
     @Override
-    public Event GetAllEvents() throws SQLException {
+    public Event getAllEvents() throws SQLException {
         return null;
     }
 

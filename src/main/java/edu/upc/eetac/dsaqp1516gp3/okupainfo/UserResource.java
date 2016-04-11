@@ -15,8 +15,8 @@ import java.net.URISyntaxException;
 import java.sql.SQLException;
 
 @Path("users")
-public class UserResource {
-
+public class UserResource
+{
     @POST
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     @Produces(OkupaInfoMediaType.OKUPAINFO_AUTH_TOKEN)
@@ -95,7 +95,7 @@ public class UserResource {
     }
 
     @Path("/{id}")
-    @RolesAllowed("[admin, registered]")/*admin y registered son el mismo mirar como hacer funcionar este filtro o si es necesario*/
+    @RolesAllowed("[admin, registered]")/*admin estara por encima de registered y de casal, administrara por encima de todos y habrá solo 3*/
     @DELETE
     public void deleteUser(@PathParam("id") String id)
     {

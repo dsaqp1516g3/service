@@ -9,12 +9,12 @@ import java.sql.SQLException;
 public interface CasalDAO
 {
     Casal createCasal(String loginid, String password, String email, String fullname, String descripcion, String localization) throws SQLException, CasalAlreadyExistsException;
-    Casal UpdateProfile(String id, String email, String fullname, String description) throws SQLException;
+    Casal updateProfile(String id, String email, String fullname, String description) throws SQLException;
     Casal updateValoracion(String id, float valoracion) throws SQLException;
-    Casal UpdateLocation(String id, String localization, String latitud, String longitud) throws SQLException;// ens cal la de UpdateLocation segur? Si perque hem de saber on estar situat per pasarla la direccio a la API de google maps
+    Casal updateLocation(String id, String localization, String latitud, String longitud) throws SQLException;// ens cal la de UpdateLocation segur? Si perque hem de saber on estar situat per pasarla la direccio a la API de google maps
     Casal getCasalById(String id) throws SQLException;
     Casal getCasalByLoginid(String loginid) throws SQLException;
-    Casal GetAllCasals() throws SQLException;
+    Casal getAllCasals() throws SQLException;
     boolean deleteCasal(String id) throws SQLException;
     boolean checkPassword(String id, String password) throws SQLException;
 }

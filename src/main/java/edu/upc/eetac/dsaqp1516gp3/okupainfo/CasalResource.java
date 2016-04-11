@@ -7,17 +7,16 @@ import edu.upc.eetac.dsaqp1516gp3.okupainfo.dao.CasalDAOImpl;
 import edu.upc.eetac.dsaqp1516gp3.okupainfo.entity.AuthToken;
 import edu.upc.eetac.dsaqp1516gp3.okupainfo.entity.Casal;
 
+import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.*;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriInfo;
+import javax.ws.rs.core.*;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.sql.SQLException;
 
 @Path("casals")
-public class CasalResource {
+public class CasalResource
+{
     @POST
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     @Produces(OkupaInfoMediaType.OKUPAINFO_AUTH_TOKEN)
@@ -44,5 +43,99 @@ public class CasalResource {
         URI uri = new URI(uriInfo.getAbsolutePath().toString() + "/" + casal.getId());
         return Response.created(uri).type(OkupaInfoMediaType.OKUPAINFO_AUTH_TOKEN).entity(authenticationToken).build();
     }
-    
+
+    @Path("/{id}")
+    @GET
+    @Produces(OkupaInfoMediaType.OKUPAINFO_CASAL)
+    public Casal getCasal(@PathParam("id") String id)
+    {
+        Casal casal;
+        try
+        {
+            casal = (new CasalDAOImpl().getCasalById(id));
+        }
+        catch (SQLException e)
+        {
+            throw new InternalServerErrorException(e.getMessage());
+        }
+        if (casal == null)
+            throw  new NotFoundException("Casal with id = " + id + "doesn't exist");
+        return casal;
+    }
+
+    @Context
+    private SecurityContext securityContext;
+    @Path("/{id}")
+    @RolesAllowed("[admin, casal]")
+    @PUT
+    @Consumes(OkupaInfoMediaType.OKUPAINFO_CASAL);
+    @Produces(OkupaInfoMediaType.OKUPAINFO_CASAL);
+    public Casal updateCasal(@PathParam("id") String id, Casal casal)
+    {
+        if (casal == null)
+            throw new BadRequestException("Entity is null");
+        if(!id.equals(casal.getId()))
+            throw new BadRequestException("Path parameter id and entity parameter id doesn't match");
+
+        /*String casalid = securityContext.getCasalPrincipal().getName();
+        if(!casalid.equals(id))
+            throw new ForbiddenException("operation not allowed");*/ // Falta añadir seguridad de auth al casalid desde el AuthorizedRequestFilter
+
+        CasalDAO casalDAO = new CasalDAOImpl();
+        try
+        {
+            casal = casalDAO.updateProfile(casalid, casal.getEmail(), casal.getFullname(), casal.getDescription());
+            if(casal == null)
+                throw new NotFoundException("Casal with id = " + id + " doesn't exist");
+        }
+        catch (SQLException e)
+        {
+            throw new InternalServerErrorException();
+        }
+        return casal;
+
+    }
+
+
+    @Path("/{id}")
+    @RolesAllowed("[admin, casal]")
+    @PUT
+    @Consumes(OkupaInfoMediaType.OKUPAINFO_CASAL);
+    @Produces(OkupaInfoMediaType.OKUPAINFO_CASAL);
+    public Casal updateValoracion(@PathParam("id") String id, Casal casal)
+    {
+
+    }
+
+
+    @Path("/{id}")
+    @RolesAllowed("[admin, casal]")
+    @PUT
+    @Consumes(OkupaInfoMediaType.OKUPAINFO_CASAL);
+    @Produces(OkupaInfoMediaType.OKUPAINFO_CASAL);
+    public Casal updateLocation(@PathParam("id") String id, Casal casal)
+    {
+
+    }
+
+    @Path("({id}")
+    @RolesAllowed("[admin, casal]")
+    @DELETE
+    public void deleteCasal(@PathParam("id") String id)
+    {
+        /*String casalid = securityContext.getCasalPrincipal().getName();
+        if(!casalid.equals(id))
+            throw new ForbiddenException("operation not allowed");*/ // Falta añadir seguridad de auth al casalid desde el AuthorizedRequestFilter
+
+        CasalDAO casalDAO = new CasalDAOImpl();
+        try
+        {
+            if(!casalDAO.deleteCasal(id))
+                throw new NotFoundException("Casal with id = " + id + " doesn't exist");
+        }
+        catch (SQLException e)
+        {
+            throw new InternalServerErrorException();
+        }
+    }
 }

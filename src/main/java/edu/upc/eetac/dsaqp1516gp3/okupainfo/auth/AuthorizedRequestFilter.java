@@ -37,6 +37,7 @@ public class AuthorizedRequestFilter implements ContainerRequestFilter
         try
         {
             final UserInfo principal = (new AuthTokenDAOImpl()).getUserByAuthToken(token);
+            /*final CasalInfo principal = (new AuthTokenDAOImpl()).getUserByAuthToken(token);*/
             if(principal==null)
                 throw new WebApplicationException("auth token doesn't exists", Response.Status.UNAUTHORIZED);
             requestContext.setSecurityContext(new SecurityContext()
@@ -45,6 +46,8 @@ public class AuthorizedRequestFilter implements ContainerRequestFilter
                 public Principal getUserPrincipal() {
                     return principal;
                 }
+
+                /*public Principal getCasalPrincipal() { return principal; }*/
 
                 @Override
                 public boolean isUserInRole(String s)
