@@ -11,6 +11,7 @@ public interface UserDAOQuery
     String ASSIGN_ROLE_REGISTERED = "insert into user_roles(userid,role) values (UNHEX(?), 'registered)";
     String ASSIGN_ASSISTANCE = "insert into users_events(userid,eventoid) values (UNHEX(?), UNHEX(?)"; //Falta descubrir como implementarlo
     String GET_USER_BY_ID = "select hex(u.id) as id, u.loginid, u.email, u.fullname, u.descripcion from users u where id=unhex(?)";
+    String GET_ID_BY_USER = "select hex(u.id) as id, u.loginid from users u where u.loginid=unhex(?)";
     String GET_USER_BY_USERNAME = "select hex(u.id) as id, u.loginid, u.email, u.fullname, u.description from users u where u.loginid=?";
     String DELETE_USER = "delete from users where id=unhex(?)";
     String GET_PASSWORD = "select hex(password) as password from users where id=unhex(?)";

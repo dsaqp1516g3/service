@@ -12,6 +12,7 @@ public interface UserDAO
     User updateProfile(String id, String email, String fullname, String descripcion) throws SQLException;
     User updateAsistance(String id, String eventoid)throws SQLException;
     User getUserById(String id) throws SQLException;
+    User getIdByUser(String loginid) throws SQLException;
     User getUserByLoginid(String loginid) throws SQLException;
     User getAllUsers() throws SQLException;
     User getUsersByEventoId(String eventoid) throws SQLException;

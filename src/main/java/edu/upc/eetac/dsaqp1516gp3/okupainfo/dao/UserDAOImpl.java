@@ -186,6 +186,49 @@ public class UserDAOImpl implements UserDAO {
     }
 
     @Override
+    public User getIdByUser(String loginid) throws SQLException
+    {
+        User user = null;
+
+        Connection connection = null;
+        PreparedStatement stmt = null;
+        try
+        {
+            // Obtiene la conexión del DataSource
+            connection = Database.getConnection();
+
+            // Prepara la consulta
+            stmt = connection.prepareStatement(UserDAOQuery.GET_ID_BY_USER);
+            // Da valor a los parámetros de la consulta
+            stmt.setString(1, loginid);
+
+            // Ejecuta la consulta
+            ResultSet rs = stmt.executeQuery();
+            // Procesa los resultados
+            if (rs.next())
+            {
+                user = new User();
+                user.setId(rs.getString("id"));
+                user.setLoginid(rs.getString("loginid"));
+            }
+        }
+        catch (SQLException e)
+        {
+            // Relanza la excepción
+            throw e;
+        }
+        finally
+        {
+            // Libera la conexión
+            if (stmt != null) stmt.close();
+            if (connection != null) connection.close();
+        }
+        // Devuelve el modelo
+        return user;
+    }
+
+
+    @Override
     public User getUserByLoginid(String loginid) throws SQLException
     {
         User user = null;
