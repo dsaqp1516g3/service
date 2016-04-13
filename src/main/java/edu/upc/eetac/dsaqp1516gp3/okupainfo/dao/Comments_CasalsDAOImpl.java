@@ -54,7 +54,7 @@ public class Comments_CasalsDAOImpl implements Comments_CasalsDAO
     }
 
     @Override
-    public Comments_Casals updateComment(String id, String content) throws SQLException
+    public Comments_Casals updateComment(String id,String creatorid, String content) throws SQLException
     {
         Comments_Casals comments_casals = null;
 
@@ -212,7 +212,7 @@ public class Comments_CasalsDAOImpl implements Comments_CasalsDAO
         {
             connection = Database.getConnection();
 
-            stmt = connection.prepareStatement(Comments_EventosDAOQuery.DELETE_COMMENT);
+            stmt = connection.prepareStatement(Comments_CasalsDAOQuery.DELETE_COMMENT);
             stmt.setString(1, id);
 
             int rows = stmt.executeUpdate();

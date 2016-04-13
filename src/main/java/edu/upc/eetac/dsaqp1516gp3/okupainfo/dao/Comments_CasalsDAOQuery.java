@@ -7,7 +7,7 @@ public interface Comments_CasalsDAOQuery
 {
     String UUID = "select REPLACE(UUID(),'-','')";
     String CREATE_COMMENT = "insert into comments_casals((id, creatorid, casalid, content) values (UNHEX(?), UNHEX(?), ?, ?)";
-    String UPDATE_COMMENT = "update comments_casals set content=? where id=unhex(?)";
+    String UPDATE_COMMENT = "update comments_casals set content=? where id=unhex(?) & creatorid=unhex(?)";
     String GET_COMMENT_BY_ID = "select hex(cc.id) as id, cc.creatorid, cc.casalid, cc.content from cc where id=unhex(?)";
     String GET_COMMENT_BY_CASALID = "select hex(cc.id) as id, cc.creatorid, cc.casalid, cc.content from cc where casalid=?";
     String GET_COMMENT_BY_CREATORID = "select hex(cc.id) as id, cc.creatorid, cc.casalid, cc.content from cc where creatorid=?";

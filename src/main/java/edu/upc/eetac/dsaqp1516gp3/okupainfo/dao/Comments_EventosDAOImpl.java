@@ -54,7 +54,7 @@ public class Comments_EventosDAOImpl implements Comments_EventosDAO
     }
 
     @Override
-    public Comments_Events updateComment(String id, String content) throws SQLException
+    public Comments_Events updateComment(String id,String creatorid, String content) throws SQLException
     {
         Comments_Events comments_events = null;
 
