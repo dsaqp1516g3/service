@@ -29,6 +29,7 @@ public class CasalResource
         AuthToken authenticationToken;
         try
         {
+            /*Aqui atacamos a la API externa para obtener las longitudes y latitudes*/
             casal = casalDAO.createCasal(loginid, password, email, fullname, descripcion, localization);
             authenticationToken = (new AuthTokenDAOImpl()).createAuthToken(casal.getId());
         }

@@ -9,12 +9,12 @@ import java.util.List;
 public class Casal
 {
     private List<Link> links;
-    private String id;
-    private String loginid;
+    private String casalsid;
+    private String adminid;
     private String email;
-    private String fullname;
+    private String name;
     private String description;
-    private float valoracion;
+    private Boolean validadet;
     private String localization;
     private double latitude;
     private double longitude;
@@ -27,20 +27,20 @@ public class Casal
         this.links = links;
     }
 
-    public String getId() {
-        return id;
+    public String getCasalsid() {
+        return casalsid;
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public void setCasalsid(String casalsid) {
+        this.casalsid = casalsid;
     }
 
-    public String getLoginid() {
-        return loginid;
+    public String getAdminid() {
+        return adminid;
     }
 
-    public void setLoginid(String loginid) {
-        this.loginid = loginid;
+    public void setAdminid(String adminid) {
+        this.adminid = adminid;
     }
 
     public String getEmail() {
@@ -51,12 +51,12 @@ public class Casal
         this.email = email;
     }
 
-    public String getFullname() {
-        return fullname;
+    public String getName() {
+        return name;
     }
 
-    public void setFullname(String fullname) {
-        this.fullname = fullname;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getDescription() {
@@ -67,12 +67,12 @@ public class Casal
         this.description = description;
     }
 
-    public float getValoracion() {
-        return valoracion;
+    public Boolean getValidadet() {
+        return validadet;
     }
 
-    public void setValoracion(float valoracion) {
-        this.valoracion = valoracion;
+    public void setValidadet(Boolean validadet) {
+        this.validadet = validadet;
     }
 
     public String getLocalization() {
@@ -98,5 +98,4 @@ public class Casal
     public void setLongitude(double longitude) {
         this.longitude = longitude;
     }
-
 }

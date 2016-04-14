@@ -8,13 +8,26 @@ import java.sql.SQLException;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public interface CasalDAO
 {
-    Casal createCasal(String loginid, String password, String email, String fullname, String descripcion, String localization) throws SQLException, CasalAlreadyExistsException;
-    Casal updateProfile(String id, String email, String fullname, String description) throws SQLException;
-    Casal updateValoracion(String id, float valoracion) throws SQLException;
-    Casal updateLocation(String id, String localization, String latitud, String longitud) throws SQLException;// ens cal la de UpdateLocation segur? Si perque hem de saber on estar situat per pasarla la direccio a la API de google maps
-    Casal getCasalById(String id) throws SQLException;
-    Casal getCasalByLoginid(String loginid) throws SQLException;
+    Casal createCasal(String adminid, String email, String name, String description, String localization, double latitude,double longitude, boolean validado) throws SQLException, CasalAlreadyExistsException;
+    Casal updateProfile(String casalid, String email, String name, String description) throws SQLException;
+    Casal updateLocation(String casalid, String localization, String latitud, String longitud) throws SQLException;
+    Casal getCasalByCasalid(String casalid) throws SQLException;
+    Casal getCasalByEmail(String email) throws SQLException;
+    Casal getValidatedCasals() throws SQLException;
+    Casal getNoValidatedCasals() throws SQLException;
     Casal getAllCasals() throws SQLException;
-    boolean deleteCasal(String id) throws SQLException;
-    boolean checkPassword(String id, String password) throws SQLException;
+    boolean deleteCasal(String casalid) throws SQLException;
 }
+
+/*
+    String UUID = "select REPLACE(UUID(),'-','')";
+    String CREATE_CASAL = "insert into casals (casalsid, adminid, email, name, description, localization, latitud, longitud) values (UNHEX(REPLACE(UUID(),'-','')), UNHEX(?), ?, ?, ?, ?, ?, ?)";
+    String UPDATE_CASAL = "update casals set email=?, fullname=?, description=? where casalsid=unhex(?)";
+    String UPDATE_LOCATION = "update casals set location=?, latitud=?, longitud=? where casalsid=unhex(?)";
+    String GET_CASAL_BY_CASALID = "select hex(c.casalid) as casalid, c.loginid, c.email, c.fullname, c.descripcion from casals c where casalid=unhex(?)";
+    String GET_CASAL_BY_EMAIL = "select hex(c.casalid) as casalid, c.loginid, c.email, c.fullname, c.description from casals c where c.email=?";
+    String GET_VALIDATED_CASALS = "select casalsid, adminid, email, name, description, localization where validado=TRUE";
+    String GET_NO_VALIDATED_CASALS = "select casalsid, adminid, email, name, description, localization where validado=FALSE";
+    String DELETE_CASAL = "delete from casals where id=unhex(?)";
+    String GET_ALL_CASALS = "select *from casals";
+ */

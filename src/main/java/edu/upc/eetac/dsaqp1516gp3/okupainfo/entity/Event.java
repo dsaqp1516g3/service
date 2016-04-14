@@ -10,11 +10,9 @@ public class Event
 {
     private List<Link> links;
     private String id;
-    private String creatorid;
+    private String casalsid;
     private String title;
-    private String tipo;
     private String description;
-    private float valoracion;
     private String localization;
     private double latitude;
     private double longitude;
@@ -37,12 +35,12 @@ public class Event
         this.id = id;
     }
 
-    public String getCreatorid() {
-        return creatorid;
+    public String getcasalsid() {
+        return casalsid;
     }
 
-    public void setCreatorid(String creatorid) {
-        this.creatorid = creatorid;
+    public void setcasalsid(String casalsid) {
+        this.casalsid = casalsid;
     }
 
     public String getTitle() {
@@ -53,13 +51,6 @@ public class Event
         this.title = title;
     }
 
-    public String getTipo() {
-        return tipo;
-    }
-
-    public void setTipo(String tipo) {
-        this.tipo = tipo;
-    }
 
     public String getDescription() {
         return description;
@@ -67,14 +58,6 @@ public class Event
 
     public void setDescription(String description) {
         this.description = description;
-    }
-
-    public float getValoracion() {
-        return valoracion;
-    }
-
-    public void setValoracion(float valoracion) {
-        this.valoracion = valoracion;
     }
 
     public String getLocalization(String localization) {
