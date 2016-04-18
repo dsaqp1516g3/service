@@ -117,7 +117,7 @@ public class CasalDAOImpl implements CasalDAO
 
 
     @Override
-    public Casal updateLocation(String casalid, String localization, String latitude, String longitude) throws SQLException
+    public Casal updateLocation(String casalid, String localization, Double latitude, Double longitude) throws SQLException
     {
 
         Casal casal = null;
@@ -130,8 +130,8 @@ public class CasalDAOImpl implements CasalDAO
 
             stmt = connection.prepareStatement(CasalDAOQuery.UPDATE_LOCATION);
             stmt.setString(1, localization);
-            stmt.setString(2, latitude);
-            stmt.setString(3, longitude);
+            stmt.setDouble(2, latitude);
+            stmt.setDouble(3, longitude);
 
             int rows = stmt.executeUpdate();
             if (rows == 1)
