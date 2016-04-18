@@ -9,7 +9,7 @@ import java.util.List;
 public class Casal
 {
     private List<Link> links;
-    private String casalsid;
+    private String casalid;
     private String adminid;
     private String email;
     private String name;
@@ -27,12 +27,12 @@ public class Casal
         this.links = links;
     }
 
-    public String getCasalsid() {
-        return casalsid;
+    public String getCasalid() {
+        return casalid;
     }
 
-    public void setCasalsid(String casalsid) {
-        this.casalsid = casalsid;
+    public void setCasalid(String casalid) {
+        this.casalid = casalid;
     }
 
     public String getAdminid() {
