@@ -5,6 +5,7 @@ import edu.upc.eetac.dsaqp1516gp3.okupainfo.dao.Comments_CasalsDAO;
 import edu.upc.eetac.dsaqp1516gp3.okupainfo.dao.Comments_CasalsDAOImpl;
 import edu.upc.eetac.dsaqp1516gp3.okupainfo.entity.AuthToken;
 import edu.upc.eetac.dsaqp1516gp3.okupainfo.entity.Comments_Casals;
+import edu.upc.eetac.dsaqp1516gp3.okupainfo.entity.Comments_CasalsCollection;
 
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -50,8 +51,8 @@ public class Comments_CasalsResource {
 
     @GET
     @Produces(OkupaInfoMediaType.OKUPAINFO_COMMENTS_CASALS_COLLECTION)
-    public Comments_Casals getAllComments() {
-        Comments_Casals Comments_CasalsCollection = null;
+    public Comments_CasalsCollection getAllComments() {
+        Comments_CasalsCollection Comments_CasalsCollection = null;
         Comments_CasalsDAO Comments_CasalsDAO = new Comments_CasalsDAOImpl();
         try {
             Comments_CasalsCollection = Comments_CasalsDAO.getAllComments();

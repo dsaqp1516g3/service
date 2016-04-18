@@ -2,6 +2,7 @@ package edu.upc.eetac.dsaqp1516gp3.okupainfo.dao;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import edu.upc.eetac.dsaqp1516gp3.okupainfo.entity.Comments_Casals;
+import edu.upc.eetac.dsaqp1516gp3.okupainfo.entity.Comments_CasalsCollection;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -198,10 +199,41 @@ public class Comments_CasalsDAOImpl implements Comments_CasalsDAO
     }
 
     @Override
-    public Comments_Casals getAllComments() throws SQLException
+    public Comments_CasalsCollection getAllComments() throws SQLException
     {
-        return null;
+
+       /* private String id;
+        private String creatorid;
+        private String casalid;
+        private String Content;
+        private long creationTimestamp;*/
+
+        Comments_CasalsCollection Comments_CasalsCollection = new Comments_CasalsCollection();
+
+        Connection connection = null;
+        PreparedStatement stmt = null;
+        try {
+            connection = Database.getConnection();
+            stmt = connection.prepareStatement(CasalDAOQuery.GET_ALL_CASALS);
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                Comments_Casals Comments_Casals = new Comments_Casals();
+                Comments_Casals.setId(rs.getString("id"));
+                Comments_Casals.setCreatorid(rs.getString("creatorid"));
+                Comments_Casals.setCasalid(rs.getString("casalid"));
+                Comments_Casals.setContent(rs.getString("content"));
+                Comments_Casals.setCreationTimestamp(rs.getLong("description"));
+                Comments_CasalsCollection.getComments_casals().add(Comments_Casals);
+            }
+        } catch (SQLException e) {
+            throw e;
+        } finally {
+            if (stmt != null) stmt.close();
+            if (connection != null) connection.close();
+        }
+        return Comments_CasalsCollection;
     }
+
 
     @Override
     public boolean deleteComment(String id) throws SQLException

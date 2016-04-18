@@ -2,6 +2,7 @@ package edu.upc.eetac.dsaqp1516gp3.okupainfo.dao;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import edu.upc.eetac.dsaqp1516gp3.okupainfo.entity.Comments_Events;
+import edu.upc.eetac.dsaqp1516gp3.okupainfo.entity.Comments_EventsCollection;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -198,10 +199,40 @@ public class Comments_EventosDAOImpl implements Comments_EventosDAO
     }
 
     @Override
-    public Comments_Events getAllComments() throws SQLException
+    public Comments_EventsCollection getAllComments() throws SQLException
     {
-        return null;
+    /* private String id;
+    private String creatorid;
+    private String eventoid;
+    private String Content;
+    private long creationTimestamp;*/
+
+        Comments_EventsCollection Comments_EventsCollection = new Comments_EventsCollection();
+
+            Connection connection = null;
+            PreparedStatement stmt = null;
+            try {
+                connection = Database.getConnection();
+                stmt = connection.prepareStatement(CasalDAOQuery.GET_ALL_CASALS);
+                ResultSet rs = stmt.executeQuery();
+                while (rs.next()) {
+                    Comments_Events Comments_Events = new Comments_Events();
+                    Comments_Events.setId(rs.getString("id"));
+                    Comments_Events.setCreatorid(rs.getString("creatorid"));
+                    Comments_Events.setEventoid(rs.getString("eventoid"));
+                    Comments_Events.setContent(rs.getString("content"));
+                    Comments_Events.setCreationTimestamp(rs.getLong("description"));
+                    Comments_EventsCollection.getComments_events().add(Comments_Events);
+                }
+            } catch (SQLException e) {
+                throw e;
+            } finally {
+                if (stmt != null) stmt.close();
+                if (connection != null) connection.close();
+            }
+            return Comments_EventsCollection;
     }
+
 
     @Override
     public boolean deleteComment(String id) throws SQLException

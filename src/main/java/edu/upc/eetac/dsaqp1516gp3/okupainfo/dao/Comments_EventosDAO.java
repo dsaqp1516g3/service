@@ -2,6 +2,7 @@ package edu.upc.eetac.dsaqp1516gp3.okupainfo.dao;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import edu.upc.eetac.dsaqp1516gp3.okupainfo.entity.Comments_Events;
+import edu.upc.eetac.dsaqp1516gp3.okupainfo.entity.Comments_EventsCollection;
 
 import java.sql.SQLException;
 
@@ -13,7 +14,7 @@ public interface Comments_EventosDAO
     Comments_Events getCommentById(String id) throws SQLException;
     Comments_Events getCommentByEventoId(String eventoid) throws SQLException;
     Comments_Events getCommentByCreatorId(String creatorid) throws SQLException;
-    Comments_Events getAllComments() throws SQLException;
+    Comments_EventsCollection getAllComments() throws SQLException;
     boolean deleteComment(String id) throws SQLException;
 }
 
