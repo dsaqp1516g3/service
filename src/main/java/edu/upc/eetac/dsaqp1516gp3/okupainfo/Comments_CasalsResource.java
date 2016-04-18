@@ -36,29 +36,29 @@ public class Comments_CasalsResource {
     public Response createComment(@FormParam("creatorid") String creatorid, @FormParam("casalid") String casalid, @FormParam("content") String content, @Context UriInfo uriInfo) throws URISyntaxException {
         if (creatorid == null || casalid == null || content == null)
             throw new BadRequestException("all parameters are mandatory");
-        Comments_CasalsDAO stingDAO = new Comments_CasalsDAOImpl();
-        Comments_Casals sting = null;
+        Comments_CasalsDAO Comments_CasalsDAO = new Comments_CasalsDAOImpl();
+        Comments_Casals Comments_Casals = null;
         AuthToken authenticationToken = null;
         try {
-            sting = stingDAO.createComment(creatorid, casalid, content);
+            Comments_Casals = Comments_CasalsDAO.createComment(creatorid, casalid, content);
         } catch (SQLException e) {
             throw new InternalServerErrorException();
         }
-        URI uri = new URI(uriInfo.getAbsolutePath().toString() + "/" + sting.getId());
-        return Response.created(uri).type(OkupaInfoMediaType.OKUPAINFO_COMMENTS_CASALS).entity(sting).build();
+        URI uri = new URI(uriInfo.getAbsolutePath().toString() + "/" + Comments_Casals.getId());
+        return Response.created(uri).type(OkupaInfoMediaType.OKUPAINFO_COMMENTS_CASALS).entity(Comments_Casals).build();
     }
 
     @GET
     @Produces(OkupaInfoMediaType.OKUPAINFO_COMMENTS_CASALS_COLLECTION)
     public Comments_Casals getAllComments() {
-        Comments_Casals stingCollection = null;
-        Comments_CasalsDAO stingDAO = new Comments_CasalsDAOImpl();
+        Comments_Casals Comments_CasalsCollection = null;
+        Comments_CasalsDAO Comments_CasalsDAO = new Comments_CasalsDAOImpl();
         try {
-            stingCollection = stingDAO.getAllComments();
+            Comments_CasalsCollection = Comments_CasalsDAO.getAllComments();
         } catch (SQLException e) {
             throw new InternalServerErrorException();
         }
-        return stingCollection;
+        return Comments_CasalsCollection;
     }
 
 
@@ -66,16 +66,16 @@ public class Comments_CasalsResource {
     @GET
     @Produces(OkupaInfoMediaType.OKUPAINFO_COMMENTS_CASALS)
     public Comments_Casals getCommentById(@PathParam("id") String id) {
-        Comments_Casals sting = null;
-        Comments_CasalsDAO stingDAO = new Comments_CasalsDAOImpl();
+        Comments_Casals Comments_Casals = null;
+        Comments_CasalsDAO Comments_CasalsDAO = new Comments_CasalsDAOImpl();
         try {
-            sting = stingDAO.getCommentById(id);
-            if (sting == null)
+            Comments_Casals = Comments_CasalsDAO.getCommentById(id);
+            if (Comments_Casals == null)
                 throw new NotFoundException("No existe un comentario con id = " + id + " en este casal");
         } catch (SQLException e) {
             throw new InternalServerErrorException();
         }
-        return sting;
+        return Comments_Casals;
     }
 
 
@@ -84,17 +84,17 @@ public class Comments_CasalsResource {
     @Produces(OkupaInfoMediaType.OKUPAINFO_COMMENTS_CASALS)
     public Comments_Casals getCommentByCasalId(@PathParam("casalid") String casalid) {
 
-        Comments_Casals sting = null;
-        Comments_CasalsDAO stingDAO = new Comments_CasalsDAOImpl();
+        Comments_Casals Comments_Casals = null;
+        Comments_CasalsDAO Comments_CasalsDAO = new Comments_CasalsDAOImpl();
         try {
-            sting = stingDAO.getCommentByCasalId(casalid);
-            if (sting == null)
+            Comments_Casals = Comments_CasalsDAO.getCommentByCasalId(casalid);
+            if (Comments_Casals == null)
                 throw new NotFoundException("El Casal " + casalid + " no tiene ningun comentario");
 
         } catch (SQLException e) {
             throw new InternalServerErrorException();
         }
-        return sting;
+        return Comments_Casals;
     }
 
     @Path("/{creatorid}")
@@ -102,17 +102,17 @@ public class Comments_CasalsResource {
     @Produces(OkupaInfoMediaType.OKUPAINFO_COMMENTS_CASALS)
     public Comments_Casals getCommentByCreatorId(@PathParam("creatorid") String creatorid) {
 
-        Comments_Casals sting = null;
-        Comments_CasalsDAO stingDAO = new Comments_CasalsDAOImpl();
+        Comments_Casals Comments_Casals = null;
+        Comments_CasalsDAO Comments_CasalsDAO = new Comments_CasalsDAOImpl();
         try {
-            sting = stingDAO.getCommentByCreatorId(creatorid);
-            if (sting == null)
+            Comments_Casals = Comments_CasalsDAO.getCommentByCreatorId(creatorid);
+            if (Comments_Casals == null)
                 throw new NotFoundException("El usuario " + creatorid + " no tiene ningun comentario");
 
         } catch (SQLException e) {
             throw new InternalServerErrorException();
         }
-        return sting;
+        return Comments_Casals;
     }
 
 
@@ -122,29 +122,29 @@ public class Comments_CasalsResource {
     @PUT
     @Consumes(OkupaInfoMediaType.OKUPAINFO_COMMENTS_CASALS)
     @Produces(OkupaInfoMediaType.OKUPAINFO_COMMENTS_CASALS)
-    public Comments_Casals updateComment(@PathParam("id") String id, @PathParam("content") String content, Comments_Casals sting) {
-        if(sting == null)
+    public Comments_Casals updateComment(@PathParam("id") String id, @PathParam("creatorid") String creatorid, @PathParam("content") String content, Comments_Casals Comments_Casals) {
+        if(Comments_Casals == null)
             throw new BadRequestException("entity is null");
-        if(!id.equals(sting.getId()))
+        if(!id.equals(Comments_Casals.getId()))
             throw new BadRequestException("path parameter id and entity parameter id doesn't match");
 
-        Comments_CasalsDAO stingDAO = new Comments_CasalsDAOImpl();
+        Comments_CasalsDAO Comments_CasalsDAO = new Comments_CasalsDAOImpl();
         try {
-            sting = stingDAO.updateComment(id, sting.getContent());
-            if(sting == null)
+            Comments_Casals = Comments_CasalsDAO.updateComment(id,Comments_Casals.getCreatorid(), Comments_Casals.getContent());
+            if(Comments_Casals == null)
                 throw new NotFoundException("El comentario con la id "+id+" no existe");
         } catch (SQLException e) {
             throw new InternalServerErrorException();
         }
-        return sting;
+        return Comments_Casals;
     }
 
     @Path("/{id}")
     @DELETE
     public void deleteComment(@PathParam("id") String id) {
-        Comments_CasalsDAO stingDAO = new Comments_CasalsDAOImpl();
+        Comments_CasalsDAO Comments_CasalsDAO = new Comments_CasalsDAOImpl();
         try {
-            if(!stingDAO.deleteComment(id))
+            if(!Comments_CasalsDAO.deleteComment(id))
                 throw new NotFoundException("El comentario con la id "+id+" no existe");
         } catch (SQLException e) {
             throw new InternalServerErrorException();
