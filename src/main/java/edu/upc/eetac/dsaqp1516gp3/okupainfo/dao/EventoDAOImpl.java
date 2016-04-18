@@ -2,17 +2,28 @@ package edu.upc.eetac.dsaqp1516gp3.okupainfo.dao;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import edu.upc.eetac.dsaqp1516gp3.okupainfo.entity.Event;
+import edu.upc.eetac.dsaqp1516gp3.okupainfo.entity.EventCollection;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+  /*    Event createEvent(String casalid, String title, String description, String localization, String latitude, String longitude)throws SQLException;
+        Event updateProfile(String id, String title, String description)throws SQLException;
+        Event updateLocation(String id, String localization, String latitude, String longitude)throws SQLException;
+        Event getEventById(String id)throws SQLException;//de la tabla eventos
+        Event getEventByCreatorId(String creatorid)throws SQLException;
+        Event getEventsByUserId(String userid) throws SQLException;// Pasamos la Id del ususario y en la tabla users_events nos devuelve los eventos
+        Event getAllEvents()throws SQLException;
+        boolean deleteEvent(String id) throws SQLException;*/
+
+
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class EventoDAOImpl implements EventoDAO
 {
     @Override
-    public Event createEvent(String creatorid, String title, String tipo, String descripcion, float valoracion, String localiaztion, String longitud, String latitud) throws SQLException
+    public Event createEvent(String casalid, String title, String description,  String localization, Double latitude, Double longitude) throws SQLException
     {
         Connection connection = null;
         PreparedStatement stmt = null;
@@ -33,10 +44,9 @@ public class EventoDAOImpl implements EventoDAO
             stmt.close();
             stmt = connection.prepareStatement(EventoDAOQuery.CREATE_EVENT);
             stmt.setString(1, id);
-            stmt.setString(2, creatorid);
+            stmt.setString(2, casalid);
             stmt.setString(3, title);
-            stmt.setString(4, tipo);
-            stmt.setString(5, descripcion);
+            stmt.setString(4, description);
             stmt.executeUpdate();
 
             connection.commit();
@@ -59,7 +69,7 @@ public class EventoDAOImpl implements EventoDAO
     }
 
     @Override
-    public Event updateProfile(String id, String title, String tipo, String description) throws SQLException
+    public Event updateProfile(String id, String title, String description) throws SQLException
     {
         Event event = null;
 
@@ -71,8 +81,7 @@ public class EventoDAOImpl implements EventoDAO
 
             stmt = connection.prepareStatement(EventoDAOQuery.UPDATE_EVENT);
             stmt.setString(1, title);
-            stmt.setString(2, tipo);
-            stmt.setString(3, description);
+            stmt.setString(2, description);
 
             int rows = stmt.executeUpdate();
             if (rows == 1)
@@ -96,44 +105,9 @@ public class EventoDAOImpl implements EventoDAO
         return event;
     }
 
-    @Override
-    public Event updateValoracion(String id, float valoracion) throws SQLException
-    {
-        Event event = null;
-
-        Connection connection = null;
-        PreparedStatement stmt = null;
-        try
-        {
-            connection = Database.getConnection();
-
-            stmt = connection.prepareStatement(EventoDAOQuery.UPDATE_VALORACION);
-            stmt.setString(1, String.valueOf(valoracion));
-
-            int rows = stmt.executeUpdate();
-            if (rows == 1)
-            {
-                event = getEventById(id);
-            }
-        }
-        catch (SQLException e)
-        {
-            throw e;
-        }
-        finally
-        {
-            if (stmt != null) stmt.close();
-            if (connection != null)
-            {
-                connection.setAutoCommit(true);
-                connection.close();
-            }
-        }
-        return event;
-    }
 
     @Override
-    public Event updateLocation(String id, String localization, String longitud, String latitud) throws SQLException
+    public Event updateLocation(String id, String localization, Double latitude, Double longitude) throws SQLException
     {
         Event event = null;
 
@@ -145,8 +119,8 @@ public class EventoDAOImpl implements EventoDAO
 
             stmt = connection.prepareStatement(EventoDAOQuery.UPDATE_LOCATION);
             stmt.setString(1, localization);
-            stmt.setString(2, longitud);
-            stmt.setString(3, latitud);
+            stmt.setDouble(2, latitude);
+            stmt.setDouble(3, longitude);
 
             int rows = stmt.executeUpdate();
             if (rows == 1)
@@ -193,10 +167,9 @@ public class EventoDAOImpl implements EventoDAO
             {
                 event = new Event();
                 event.setId(rs.getString("id"));
-                event.setCreatorid(rs.getString("creatorid"));
+                event.setCasalid(rs.getString("casalid"));
                 event.setTitle(rs.getString("title"));
-                event.setTipo(rs.getString("tipo"));
-                event.setDescription(rs.getString("descripcion"));
+                event.setDescription(rs.getString("description"));
             }
         }
         catch (SQLException e)
@@ -232,10 +205,9 @@ public class EventoDAOImpl implements EventoDAO
             {
                 event = new Event();
                 event.setId(rs.getString("id"));
-                event.setCreatorid(rs.getString("creatorid"));
+                event.setCasalid(rs.getString("casalid"));
                 event.setTitle(rs.getString("title"));
-                event.setTipo(rs.getString("tipo"));
-                event.setDescription(rs.getString("descripcion"));
+                event.setDescription(rs.getString("description"));
             }
         }
         catch (SQLException e)
@@ -268,11 +240,11 @@ public class EventoDAOImpl implements EventoDAO
             ResultSet rs = stmt.executeQuery();
             if(rs.next())
             {
+                event = new Event();
                 event.setId(rs.getString("id"));
-                event.setCreatorid(rs.getString("creatorid"));
+                event.setCasalid(rs.getString("casalid"));
                 event.setTitle(rs.getString("title"));
-                event.setTipo(rs.getString("tipo"));
-                event.setDescription(rs.getString("descripcion"));
+                event.setDescription(rs.getString("description"));
             }
 
         }
@@ -290,12 +262,37 @@ public class EventoDAOImpl implements EventoDAO
 
 
     @Override
-    public Event getAllEvents() throws SQLException {
-        return null;
+    public EventCollection getAllEvents() throws SQLException {
+        EventCollection eventCollection = new EventCollection();
+
+        Connection connection = null;
+        PreparedStatement stmt = null;
+        try {
+            connection = Database.getConnection();
+            stmt = connection.prepareStatement(EventoDAOQuery.GET_ALL_EVENTS);
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                Event events = new Event();
+                events.setId(rs.getString("id"));
+                events.setCasalid(rs.getString("casalid"));
+                events.setTitle(rs.getString("title"));
+                events.setDescription(rs.getString("description"));
+                events.setLocalization(rs.getString("localization"));
+                events.setLatitude(rs.getDouble("latitude"));
+                events.setLongitude(rs.getDouble("longitude"));
+                eventCollection.getEvents().add(events);
+            }
+        } catch (SQLException e) {
+            throw e;
+        } finally {
+            if (stmt != null) stmt.close();
+            if (connection != null) connection.close();
+        }
+        return eventCollection;
     }
 
     @Override
-    public boolean deleteCasal(String id) throws SQLException
+    public boolean deleteEvent(String id) throws SQLException
     {
         Connection connection = null;
         PreparedStatement stmt = null;

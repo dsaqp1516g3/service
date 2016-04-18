@@ -10,7 +10,7 @@ public class Event
 {
     private List<Link> links;
     private String id;
-    private String casalsid;
+    private String casalid;
     private String title;
     private String description;
     private String localization;
@@ -35,12 +35,12 @@ public class Event
         this.id = id;
     }
 
-    public String getcasalsid() {
-        return casalsid;
+    public String getCasalid() {
+        return casalid;
     }
 
-    public void setcasalsid(String casalsid) {
-        this.casalsid = casalsid;
+    public void setCasalid(String casalsid) {
+        this.casalid = casalid;
     }
 
     public String getTitle() {
