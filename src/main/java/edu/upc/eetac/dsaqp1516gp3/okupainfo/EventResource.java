@@ -69,7 +69,7 @@ public class EventResource
     }
 
 
-    @Path("/{id}")
+    @Path("/{creatorid}")
      @GET
      @Produces(OkupaInfoMediaType.OKUPAINFO_EVENTS)
      public Event getEventByCreatorId(@PathParam("creatorid") String creatorid)
@@ -90,7 +90,7 @@ public class EventResource
 
 
 
-    @Path("/{id}")
+    @Path("/{userid}")
      @GET
      @Produces(OkupaInfoMediaType.OKUPAINFO_EVENTS)
      public Event getEventsByUserId(@PathParam("userid") String userid)

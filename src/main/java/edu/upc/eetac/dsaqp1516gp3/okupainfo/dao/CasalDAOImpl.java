@@ -179,10 +179,10 @@ public class CasalDAOImpl implements CasalDAO
             {
                 casal = new Casal();
                 casal.setCasalid(rs.getString("casalid"));
-                casal.setAdminid(rs.getString("loginid"));
+                casal.setAdminid(rs.getString("adminid"));
                 casal.setEmail(rs.getString("email"));
-                casal.setName(rs.getString("fullname"));
-                casal.setDescription(rs.getString("descripcion"));
+                casal.setName(rs.getString("name"));
+                casal.setDescription(rs.getString("description"));
             }
         }
         catch (SQLException e)
@@ -224,10 +224,10 @@ public class CasalDAOImpl implements CasalDAO
             {
                 casal = new Casal();
                 casal.setCasalid(rs.getString("casalid"));
-                casal.setAdminid(rs.getString("loginid"));
+                casal.setAdminid(rs.getString("adminid"));
                 casal.setEmail(rs.getString("email"));
-                casal.setName(rs.getString("fullname"));
-                casal.setDescription(rs.getString("descripcion"));
+                casal.setName(rs.getString("name"));
+                casal.setDescription(rs.getString("description"));
             }
         }
         catch (SQLException e)
