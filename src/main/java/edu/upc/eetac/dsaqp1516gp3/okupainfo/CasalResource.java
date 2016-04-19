@@ -157,7 +157,7 @@ public class CasalResource
 
 
 
-    @Path("({id}")
+    @Path("/{casalid}")
     @RolesAllowed("[admin, casal]")
     @DELETE
     public void deleteCasal(@PathParam("casalid") String casalid)
