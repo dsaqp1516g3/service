@@ -63,10 +63,25 @@ public class EventResource
         return Event;
     }
 
+<<<<<<< HEAD
     @Path("/{id}")
     @GET
     @Produces(OkupaInfoMediaType.OKUPAINFO_EVENTS)//No coge bien los parametros pasados?????
     public Event getEventByCreatorId(@PathParam("casalid") String casalid)
+=======
+
+    @Path("/{creatorid}")
+     @GET
+     @Produces(OkupaInfoMediaType.OKUPAINFO_EVENTS)
+     public Event getEventByCreatorId(@PathParam("creatorid") String creatorid)
+{
+    Event Event;
+    try
+    {
+        Event = (new EventoDAOImpl().getEventByCreatorId(creatorid));
+    }
+    catch (SQLException e)
+>>>>>>> origin/master
     {
         Event Event;
         try
@@ -82,11 +97,27 @@ public class EventResource
         return Event;
     }
 
+<<<<<<< HEAD
     @Path("/{id}")
     @GET
     @Produces(OkupaInfoMediaType.OKUPAINFO_EVENTS_COLLECTION)
     public Event getEventsByUserId(@PathParam("userid") String userid) {
         // Hay que hacer un return de una colección de Eventos
+=======
+    @Path("/{userid}")
+     @GET
+     @Produces(OkupaInfoMediaType.OKUPAINFO_EVENTS)
+     public Event getEventsByUserId(@PathParam("userid") String userid)
+{
+    Event Event;
+    try
+    {
+        Event = (new EventoDAOImpl().getEventsByUserId(userid));
+    }
+    catch (SQLException e)
+    {
+        throw new InternalServerErrorException(e.getMessage());
+>>>>>>> origin/master
     }
 
     @Path("/{id}")

@@ -64,7 +64,7 @@ public class CasalResource
         return Response.created(uri).type(OkupaInfoMediaType.OKUPAINFO_AUTH_TOKEN).entity(authenticationToken).build();
     }
 
-    @Path("/{id}")
+    @Path("/{casalid}")
     @GET
     @Produces(OkupaInfoMediaType.OKUPAINFO_CASAL)
     public Casal getCasalByCasalid(@PathParam("casalid") String casalid)
@@ -84,7 +84,7 @@ public class CasalResource
     }
 
 
-    @Path("/{id}")
+    @Path("/{email}")
     @GET
     @Produces(OkupaInfoMediaType.OKUPAINFO_CASAL)
     public Casal getCasalByEmail(@PathParam("email") String email)
@@ -108,7 +108,7 @@ public class CasalResource
     private SecurityContext securityContext;
     @Path("/{id}")
     @RolesAllowed("[admin, casal]")*/
-    @Path("/{id}")
+    @Path("/{casalid}")
     @PUT
     @Consumes(OkupaInfoMediaType.OKUPAINFO_CASAL)
     @Produces(OkupaInfoMediaType.OKUPAINFO_CASAL)
@@ -134,7 +134,7 @@ public class CasalResource
     private SecurityContext securityContext;
     @Path("/{id}")
     @RolesAllowed("[admin, casal]")*/
-    @Path("/{id}")
+    @Path("/{casalid}")
     @PUT
     @Consumes(OkupaInfoMediaType.OKUPAINFO_CASAL)
     @Produces(OkupaInfoMediaType.OKUPAINFO_CASAL)
@@ -157,7 +157,7 @@ public class CasalResource
 
 
 
-    @Path("({id}")
+    @Path("/{casalid}")
     @RolesAllowed("[admin, casal]")
     @DELETE
     public void deleteCasal(@PathParam("casalid") String casalid)
