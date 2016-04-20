@@ -13,7 +13,7 @@ public interface EventoDAO
     Event updateProfile(String id, String title, String description)throws SQLException;
     Event updateLocation(String id, String localization, Double latitude, Double longitude)throws SQLException;
     Event getEventById(String id) throws SQLException;//Nos devuelve el evento que tenga la ID que introducimos
-    Event getEventByCreatorId(String casalid)throws SQLException;// Nos devuelve el evento segun el creador que introduzcamos
+    EventCollection getEventsByCreatorId(String casalid, long timestamp, boolean before)throws SQLException;// Nos devuelve los eventos segun el creador que introduzcamos, 1 casal varios eventos puede crear
     EventCollection getEventsByUserId(String userid, long timestamp, boolean before) throws SQLException;// Pasamos la Id del ususario y en la tabla users_events nos devuelve los eventos
     EventCollection getAllEvents(long timestamp, boolean before)throws SQLException;
     boolean deleteEvent(String id) throws SQLException;

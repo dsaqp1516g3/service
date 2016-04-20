@@ -12,8 +12,8 @@ public interface Comments_EventosDAO
     Comments_Events createComment(String creatorid, String eventoid, String content) throws SQLException;
     Comments_Events updateComment(String id, String creatorid, String content) throws SQLException;
     Comments_Events getCommentById(String id) throws SQLException;
-    Comments_Events getCommentByEventoId(String eventoid) throws SQLException;
-    Comments_Events getCommentByCreatorId(String creatorid) throws SQLException;
+    Comments_EventsCollection getCommentByEventoId(String eventoid) throws SQLException;
+    Comments_EventsCollection getCommentByCreatorId(String creatorid, long timestamp, boolean before) throws SQLException;
     Comments_EventsCollection getAllComments() throws SQLException;
     boolean deleteComment(String id) throws SQLException;
 }

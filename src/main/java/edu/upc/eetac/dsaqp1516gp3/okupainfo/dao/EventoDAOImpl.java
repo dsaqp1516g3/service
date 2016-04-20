@@ -174,27 +174,44 @@ public class EventoDAOImpl implements EventoDAO
     }
 
     @Override
-    public Event getEventByCreatorId(String casalid) throws SQLException {
-        Event event = null;
+    public EventCollection getEventsByCreatorId(String casalid, long timestamp, boolean before) throws SQLException {
+
+        EventCollection eventCollection = new EventCollection();
 
         Connection connection = null;
         PreparedStatement stmt = null;
         try
         {
             connection = Database.getConnection();
-
-            stmt = connection.prepareStatement(EventoDAOQuery.GET_EVENT_BY_CREATOR_ID);
-            stmt.setString(1, casalid);
+            if(before)
+            {
+                stmt = connection.prepareStatement(EventoDAOQuery.GET_EVENT_BY_CREATOR_ID);
+            }
+            else
+                stmt = connection.prepareStatement(EventoDAOQuery.GET_EVENTS_AFTER);
+            stmt.setTimestamp(1, new Timestamp(timestamp));
+            stmt.setString(2, casalid);
 
             ResultSet rs = stmt.executeQuery();
+            boolean first = true;
             if (rs.next())
             {
-                event = new Event();
+                Event event = new Event();
                 event.setId(rs.getString("id"));
                 event.setCasalid(rs.getString("casalid"));
                 event.setTitle(rs.getString("title"));
                 event.setDescription(rs.getString("description"));
+                eventCollection.getEvents().add(event);
+                event.setCreationTimestamp(rs.getTimestamp("creation_timestamp").getTime());
+                event.setLastModified(rs.getTimestamp("last_modified").getTime());
+                if (first)
+                {
+                    eventCollection.setNewestTimestamp(event.getLastModified());
+                    first = false;
+                }
+                eventCollection.setOldestTimestamp(event.getLastModified());
             }
+
         }
         catch (SQLException e)
         {
@@ -205,7 +222,7 @@ public class EventoDAOImpl implements EventoDAO
             if (stmt != null) stmt.close();
             if (connection != null) connection.close();
         }
-        return event;
+        return eventCollection;
     }
 
     @Override

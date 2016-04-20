@@ -12,8 +12,8 @@ public interface Comments_CasalsDAO
     Comments_Casals createComment(String creatorid, String casalid, String content) throws SQLException;
     Comments_Casals updateComment(String id, String creatorid, String content) throws SQLException;
     Comments_Casals getCommentById(String id) throws SQLException;
-    Comments_Casals getCommentByCasalId(String casalid) throws SQLException;
-    Comments_Casals getCommentByCreatorId(String creatorid) throws SQLException;
+    Comments_CasalsCollection getCommentByCasalId(String casalid) throws SQLException;
+    Comments_CasalsCollection getCommentByCreatorId(String creatorid) throws SQLException;
     Comments_CasalsCollection getAllComments() throws SQLException;
     boolean deleteComment(String id) throws SQLException;
 }

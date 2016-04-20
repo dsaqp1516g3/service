@@ -62,31 +62,68 @@ public class EventResource
 
     @Path("/{id}")
     @GET
-    @Produces(OkupaInfoMediaType.OKUPAINFO_EVENTS)//No coge bien los parametros pasados?????
-    public Event getEventByCreatorId(@PathParam("casalid") String casalid)
+    @Produces(OkupaInfoMediaType.OKUPAINFO_EVENTS)//Miramos la asistencia de un usuario a varios eventos
+    public Event getEventsByUserId(@PathParam("userid") String userid,@QueryParam("timestamp") long timestamp, @DefaultValue("true") @QueryParam("before") boolean before, @Context Request request)
     {
-        Event Event;
+        CacheControl cacheControl = new CacheControl();
+        EventoDAO eventoDAO = new EventoDAOImpl();
+        EventCollection eventCollection;
+        Event event;
+
         try
         {
-            Event = (new EventoDAOImpl().getEventByCreatorId(casalid));
+            if (before && timestamp == 0) timestamp = System.currentTimeMillis();
+            eventCollection = eventoDAO.getAllEvents(timestamp, before);
+            event = eventoDAO.getEventsByUserId(userid, timestamp,before);
+            if (event == null)
+                throw new NotFoundException("Event with userid = " + userid + " doesn't exist");
+
+            // Calculate the ETag on last modified date of user resource
+            EntityTag eTag = new EntityTag(Long.toString(event.getLastModified()));
+
+            // Verify if it matched with etag available in http request
+            Response.ResponseBuilder rb = request.evaluatePreconditions(eTag);
+
+            // If ETag matches the rb will be non-null;
+            // Use the rb to return the response without any further processing
+            if (rb != null) {
+                return rb.cacheControl(cacheControl).tag(eTag).build();
+            }
+
+            // If rb is null then either it is first time request; or resource is
+            // modified
+            // Get the updated representation and return with Etag attached to it
+            rb = Response.ok(event).cacheControl(cacheControl).tag(eTag);
+            return rb.build();
         }
         catch (SQLException e)
         {
             throw new InternalServerErrorException(e.getMessage());
         }
         if (Event == null)
-            throw new NotFoundException("Event with creatorid = " + casalid + "doesn't exist");
+            throw new NotFoundException("Event with userid = " + userid + "doesn't exist");
         return Event;
     }
+
     @Path("/{id}")
     @GET
     @Produces(OkupaInfoMediaType.OKUPAINFO_EVENTS_COLLECTION)
-
-
-    public Event getEventsByUserId(@PathParam("userid") String userid)
+    public EventCollection getEventsByCreatorId(@PathParam("userid") String userid,@QueryParam("timestamp") long timestamp, @DefaultValue("true") @QueryParam("before") boolean before)
     {
-// Hay que hacer un return de una colección de Eventos
+        EventCollection eventCollection;
+        EventoDAO eventoDAO = new EventoDAOImpl();
+
+        try
+        {
+            if (before && timestamp == 0) timestamp = System.currentTimeMillis();
+            eventCollection = eventoDAO.getAllEvents(timestamp, before);
+        }
+        catch (SQLException e) {
+            throw new InternalServerErrorException();
+        }
+        return eventCollection;
     }
+
 
     @Path("/{id}")
     @PUT
@@ -156,7 +193,7 @@ public class EventResource
             throw new InternalServerErrorException();
         }
     }
-    
+
     @GET
     @Produces(OkupaInfoMediaType.OKUPAINFO_EVENTS_COLLECTION)
     public EventCollection getAllEvents(@QueryParam("timestamp") long timestamp, @DefaultValue("true") @QueryParam("before") boolean before)
