@@ -1,19 +1,16 @@
 package edu.upc.eetac.dsaqp1516gp3.okupainfo;
-
 import edu.upc.eetac.dsaqp1516gp3.okupainfo.dao.AuthTokenDAOImpl;
 import edu.upc.eetac.dsaqp1516gp3.okupainfo.dao.EventoDAO;
 import edu.upc.eetac.dsaqp1516gp3.okupainfo.dao.EventoDAOImpl;
 import edu.upc.eetac.dsaqp1516gp3.okupainfo.entity.AuthToken;
 import edu.upc.eetac.dsaqp1516gp3.okupainfo.entity.Event;
 import edu.upc.eetac.dsaqp1516gp3.okupainfo.entity.EventCollection;
-
 import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.sql.SQLException;
-
 @Path("eventos")
 public class EventResource
 {
@@ -32,7 +29,7 @@ public class EventResource
         AuthToken authenticationToken;
         try
         {
-            /*Aqui atacamos a la API externa para obtener las longitudes y latitudes*/
+/*Aqui atacamos a la API externa para obtener las longitudes y latitudes*/
             Event = EventoDAO.createEvent(casalid, title, description, localization, latitude, longitude);
             authenticationToken = (new AuthTokenDAOImpl()).createAuthToken(Event.getId());
         }
@@ -63,25 +60,10 @@ public class EventResource
         return Event;
     }
 
-<<<<<<< HEAD
     @Path("/{id}")
     @GET
     @Produces(OkupaInfoMediaType.OKUPAINFO_EVENTS)//No coge bien los parametros pasados?????
     public Event getEventByCreatorId(@PathParam("casalid") String casalid)
-=======
-
-    @Path("/{creatorid}")
-     @GET
-     @Produces(OkupaInfoMediaType.OKUPAINFO_EVENTS)
-     public Event getEventByCreatorId(@PathParam("creatorid") String creatorid)
-{
-    Event Event;
-    try
-    {
-        Event = (new EventoDAOImpl().getEventByCreatorId(creatorid));
-    }
-    catch (SQLException e)
->>>>>>> origin/master
     {
         Event Event;
         try
@@ -96,28 +78,14 @@ public class EventResource
             throw new NotFoundException("Event with creatorid = " + casalid + "doesn't exist");
         return Event;
     }
-
-<<<<<<< HEAD
     @Path("/{id}")
     @GET
     @Produces(OkupaInfoMediaType.OKUPAINFO_EVENTS_COLLECTION)
-    public Event getEventsByUserId(@PathParam("userid") String userid) {
-        // Hay que hacer un return de una colección de Eventos
-=======
-    @Path("/{userid}")
-     @GET
-     @Produces(OkupaInfoMediaType.OKUPAINFO_EVENTS)
-     public Event getEventsByUserId(@PathParam("userid") String userid)
-{
-    Event Event;
-    try
+
+
+    public Event getEventsByUserId(@PathParam("userid") String userid)
     {
-        Event = (new EventoDAOImpl().getEventsByUserId(userid));
-    }
-    catch (SQLException e)
-    {
-        throw new InternalServerErrorException(e.getMessage());
->>>>>>> origin/master
+// Hay que hacer un return de una colección de Eventos
     }
 
     @Path("/{id}")
@@ -129,11 +97,9 @@ public class EventResource
             throw new BadRequestException("entity is null");
         if (!id.equals(event.getId()))
             throw new BadRequestException("path parameter id and entity parameter id doesn't match");
-
         String userid = securityContext.getUserPrincipal().getName();
         if(!userid.equals(event.getCasalid()))
             throw new ForbiddenException("operation not allowed");
-
         EventoDAO EventoDAO = new EventoDAOImpl();
         try
         {
@@ -157,11 +123,9 @@ public class EventResource
             throw new BadRequestException("entity is null");
         if (!id.equals(event.getId()))
             throw new BadRequestException("path parameter id and entity parameter id doesn't match");
-
         String userid = securityContext.getUserPrincipal().getName();
         if(!userid.equals(event.getCasalid()))
             throw new ForbiddenException("operation not allowed");
-
         EventoDAO eventoDAO = new EventoDAOImpl();
         try
         {
@@ -192,7 +156,7 @@ public class EventResource
             throw new InternalServerErrorException();
         }
     }
-
+    
     @GET
     @Produces(OkupaInfoMediaType.OKUPAINFO_EVENTS_COLLECTION)
     public EventCollection getAllEvents(@QueryParam("timestamp") long timestamp, @DefaultValue("true") @QueryParam("before") boolean before)
