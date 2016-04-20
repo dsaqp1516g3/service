@@ -4,9 +4,6 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import edu.upc.eetac.dsaqp1516gp3.okupainfo.entity.Casal;
 import edu.upc.eetac.dsaqp1516gp3.okupainfo.entity.CasalCollection;
 
-import java.math.BigInteger;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -15,20 +12,8 @@ import java.sql.SQLException;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class CasalDAOImpl implements CasalDAO
 {
-    /*private List<Link> links;
-    private String casalid;
-    private String adminid;
-    private String email;
-    private String name;
-    private String description;
-    private Boolean validadet;
-    private String localization;
-    private double latitude;
-    private double longitude;
-    */
-
     @Override
-    public Casal createCasal(String adminid, String email, String name, String description, String localization, double latitude,double longitude, boolean validadet) throws SQLException, CasalAlreadyExistsException {
+    public Casal createCasal(String adminid, String email, String name, String description, String localization, double latitude,double longitude, boolean validated) throws SQLException, CasalAlreadyExistsException {
         Connection connection = null;
         PreparedStatement stmt = null;
         String casalid = null;
@@ -75,8 +60,6 @@ public class CasalDAOImpl implements CasalDAO
         return getCasalByCasalid(casalid);
     }
 
-
-
     @Override
     public Casal updateProfile(String casalid, String email, String name, String description) throws SQLException
     {
@@ -113,8 +96,6 @@ public class CasalDAOImpl implements CasalDAO
         }
         return casal;
     }
-
-
 
     @Override
     public Casal updateLocation(String casalid, String localization, Double latitude, Double longitude) throws SQLException
@@ -258,16 +239,19 @@ public class CasalDAOImpl implements CasalDAO
     }
 
     @Override
-    public CasalCollection getAllCasals() throws SQLException {
+    public CasalCollection getAllCasals() throws SQLException
+    {
         CasalCollection casalCollection = new CasalCollection();
 
         Connection connection = null;
         PreparedStatement stmt = null;
-        try {
+        try
+        {
             connection = Database.getConnection();
             stmt = connection.prepareStatement(CasalDAOQuery.GET_ALL_CASALS);
             ResultSet rs = stmt.executeQuery();
-            while (rs.next()) {
+            while (rs.next())
+            {
                 Casal casal = new Casal();
                 casal.setCasalid(rs.getString("casalid"));
                 casal.setAdminid(rs.getString("adminid"));
@@ -276,15 +260,18 @@ public class CasalDAOImpl implements CasalDAO
                 casal.setDescription(rs.getString("description"));
                 casalCollection.getCasals().add(casal);
             }
-        } catch (SQLException e) {
+        }
+        catch (SQLException e)
+        {
             throw e;
-        } finally {
+        }
+        finally
+        {
             if (stmt != null) stmt.close();
             if (connection != null) connection.close();
         }
         return casalCollection;
     }
-
 
     @Override
     public boolean deleteCasal(String id) throws SQLException
@@ -311,6 +298,4 @@ public class CasalDAOImpl implements CasalDAO
             if (connection != null) connection.close();
         }
     }
-
-
 }

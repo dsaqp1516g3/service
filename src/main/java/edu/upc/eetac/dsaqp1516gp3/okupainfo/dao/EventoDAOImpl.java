@@ -4,20 +4,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import edu.upc.eetac.dsaqp1516gp3.okupainfo.entity.Event;
 import edu.upc.eetac.dsaqp1516gp3.okupainfo.entity.EventCollection;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-
-  /*    Event createEvent(String casalid, String title, String description, String localization, String latitude, String longitude)throws SQLException;
-        Event updateProfile(String id, String title, String description)throws SQLException;
-        Event updateLocation(String id, String localization, String latitude, String longitude)throws SQLException;
-        Event getEventById(String id)throws SQLException;//de la tabla eventos
-        Event getEventByCreatorId(String creatorid)throws SQLException;
-        Event getEventsByUserId(String userid) throws SQLException;// Pasamos la Id del ususario y en la tabla users_events nos devuelve los eventos
-        Event getAllEvents()throws SQLException;
-        boolean deleteEvent(String id) throws SQLException;*/
-
+import java.sql.*;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class EventoDAOImpl implements EventoDAO
@@ -105,7 +92,6 @@ public class EventoDAOImpl implements EventoDAO
         return event;
     }
 
-
     @Override
     public Event updateLocation(String id, String localization, Double latitude, Double longitude) throws SQLException
     {
@@ -188,7 +174,7 @@ public class EventoDAOImpl implements EventoDAO
     }
 
     @Override
-    public Event getEventByCreatorId(String creatorid) throws SQLException {
+    public Event getEventByCreatorId(String casalid) throws SQLException {
         Event event = null;
 
         Connection connection = null;
@@ -198,7 +184,7 @@ public class EventoDAOImpl implements EventoDAO
             connection = Database.getConnection();
 
             stmt = connection.prepareStatement(EventoDAOQuery.GET_EVENT_BY_CREATOR_ID);
-            stmt.setString(1, creatorid);
+            stmt.setString(1, casalid);
 
             ResultSet rs = stmt.executeQuery();
             if (rs.next())
@@ -223,9 +209,9 @@ public class EventoDAOImpl implements EventoDAO
     }
 
     @Override
-    public Event getEventsByUserId(String userid) throws SQLException /*Mirar getUserByAuthToken porque parece ser parecido*/
+    public EventCollection getEventsByUserId(String userid,long timestamp, boolean before) throws SQLException
     {
-        Event event = null;
+        EventCollection eventCollection = new EventCollection();
 
         Connection connection = null;
         PreparedStatement stmt = null;
@@ -233,20 +219,34 @@ public class EventoDAOImpl implements EventoDAO
         try
         {
             connection = Database.getConnection();
-
-            stmt = connection.prepareStatement(EventoDAOQuery.GET_EVENTS_BY_USER_ID);
-            stmt.setString(1, userid);
+            if(before)
+            {
+                stmt = connection.prepareStatement(EventoDAOQuery.GET_EVENTS_BY_USER_ID);
+            }
+             else
+            stmt = connection.prepareStatement(EventoDAOQuery.GET_EVENTS_AFTER);
+            stmt.setTimestamp(1, new Timestamp(timestamp));
+            stmt.setString(2, userid);
 
             ResultSet rs = stmt.executeQuery();
-            if(rs.next())
+            boolean first = true;
+            while(rs.next())
             {
-                event = new Event();
+                Event event = new Event();
                 event.setId(rs.getString("id"));
                 event.setCasalid(rs.getString("casalid"));
                 event.setTitle(rs.getString("title"));
                 event.setDescription(rs.getString("description"));
+                eventCollection.getEvents().add(event);
+                event.setCreationTimestamp(rs.getTimestamp("creation_timestamp").getTime());
+                event.setLastModified(rs.getTimestamp("last_modified").getTime());
+                if (first)
+                {
+                    eventCollection.setNewestTimestamp(event.getLastModified());
+                    first = false;
+                }
+                eventCollection.setOldestTimestamp(event.getLastModified());
             }
-
         }
         catch (SQLException e)
         {
@@ -257,34 +257,49 @@ public class EventoDAOImpl implements EventoDAO
             if (stmt != null) stmt.close();
             if (connection != null) connection.close();
         }
-        return event;
+        return eventCollection;
     }
 
-
     @Override
-    public EventCollection getAllEvents() throws SQLException {
+    public EventCollection getAllEvents(long timestamp, boolean before) throws SQLException {
         EventCollection eventCollection = new EventCollection();
 
         Connection connection = null;
         PreparedStatement stmt = null;
-        try {
-            connection = Database.getConnection();
-            stmt = connection.prepareStatement(EventoDAOQuery.GET_ALL_EVENTS);
+        try
+        {
+            if(before)
+                stmt = connection.prepareStatement(EventoDAOQuery.GET_ALL_EVENTS);
+            else
+                stmt = connection.prepareStatement(EventoDAOQuery.GET_EVENTS_AFTER);
+            stmt.setTimestamp(1, new Timestamp(timestamp));
+
             ResultSet rs = stmt.executeQuery();
-            while (rs.next()) {
-                Event events = new Event();
-                events.setId(rs.getString("id"));
-                events.setCasalid(rs.getString("casalid"));
-                events.setTitle(rs.getString("title"));
-                events.setDescription(rs.getString("description"));
-                events.setLocalization(rs.getString("localization"));
-                events.setLatitude(rs.getDouble("latitude"));
-                events.setLongitude(rs.getDouble("longitude"));
-                eventCollection.getEvents().add(events);
+            boolean first = true;
+            while (rs.next())
+            {
+                Event event = new Event();
+                event.setId(rs.getString("id"));
+                event.setCasalid(rs.getString("casalid"));
+                event.setTitle(rs.getString("title"));
+                event.setDescription(rs.getString("description"));
+                event.setLocalization(rs.getString("localization"));
+                event.setLatitude(rs.getDouble("latitude"));
+                event.setLongitude(rs.getDouble("longitude"));
+                if (first) {
+                    eventCollection.setNewestTimestamp(event.getLastModified());
+                    first = false;
+                }
+                eventCollection.setOldestTimestamp(event.getLastModified());
+                eventCollection.getEvents().add(event);
             }
-        } catch (SQLException e) {
+        }
+        catch (SQLException e)
+        {
             throw e;
-        } finally {
+        }
+        finally
+        {
             if (stmt != null) stmt.close();
             if (connection != null) connection.close();
         }

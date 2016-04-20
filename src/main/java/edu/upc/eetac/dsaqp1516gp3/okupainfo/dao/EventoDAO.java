@@ -12,18 +12,9 @@ public interface EventoDAO
     Event createEvent(String casalid, String title, String description, String localization, Double latitude, Double longitude)throws SQLException;
     Event updateProfile(String id, String title, String description)throws SQLException;
     Event updateLocation(String id, String localization, Double latitude, Double longitude)throws SQLException;
-    Event getEventById(String id)throws SQLException;//de la tabla eventos
-    Event getEventByCreatorId(String creatorid)throws SQLException;
-    Event getEventsByUserId(String userid) throws SQLException;// Pasamos la Id del ususario y en la tabla users_events nos devuelve los eventos
-    EventCollection getAllEvents()throws SQLException;
+    Event getEventById(String id) throws SQLException;//Nos devuelve el evento que tenga la ID que introducimos
+    Event getEventByCreatorId(String casalid)throws SQLException;// Nos devuelve el evento segun el creador que introduzcamos
+    EventCollection getEventsByUserId(String userid, long timestamp, boolean before) throws SQLException;// Pasamos la Id del ususario y en la tabla users_events nos devuelve los eventos
+    EventCollection getAllEvents(long timestamp, boolean before)throws SQLException;
     boolean deleteEvent(String id) throws SQLException;
 }
-/*id BINARY(16) NOT NULL,
-	casalsid BINARY(16) NOT NULL,
- 	title VARCHAR(100) NOT NULL,
-	descripcion VARCHAR(500) NOT NULL,
-	localization VARCHAR(264)NOT NULL,
-	latitud DOUBLE DEFAULT 0,
-	longitud DOUBLE DEFAULT 0,
-	last_modified TIMESTAMP NOT NULL,
-	creation_timestamp DATETIME not null default current_timestamp,*/

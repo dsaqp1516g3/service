@@ -7,8 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class EventCollection
-{
+public class EventCollection {
     private List<Link> links;
     private long newestTimestamp;
     private long oldestTimestamp;

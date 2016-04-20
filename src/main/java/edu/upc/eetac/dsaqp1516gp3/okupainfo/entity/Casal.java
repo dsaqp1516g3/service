@@ -14,7 +14,7 @@ public class Casal
     private String email;
     private String name;
     private String description;
-    private Boolean validadet;
+    private Boolean validated;
     private String localization;
     private double latitude;
     private double longitude;
@@ -68,11 +68,11 @@ public class Casal
     }
 
     public Boolean getValidadet() {
-        return validadet;
+        return validated;
     }
 
     public void setValidadet(Boolean validadet) {
-        this.validadet = validadet;
+        this.validated = validadet;
     }
 
     public String getLocalization() {
