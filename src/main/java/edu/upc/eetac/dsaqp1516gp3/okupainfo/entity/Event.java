@@ -99,4 +99,5 @@ public class Event
     public void setLastModified(long lastModified) {
         this.lastModified = lastModified;
     }
+
 }
