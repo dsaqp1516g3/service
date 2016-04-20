@@ -65,7 +65,7 @@ public class EventResource
     @Produces(OkupaInfoMediaType.OKUPAINFO_EVENTS)//Miramos la asistencia de un usuario a varios eventos
     public Event getEventsByUserId(@PathParam("userid") String userid,@QueryParam("timestamp") long timestamp, @DefaultValue("true") @QueryParam("before") boolean before, @Context Request request)
     {
-        CacheControl cacheControl = new CacheControl();
+        /*CacheControl cacheControl = new CacheControl();
         EventoDAO eventoDAO = new EventoDAOImpl();
         EventCollection eventCollection;
         Event event;
@@ -102,7 +102,9 @@ public class EventResource
         }
         if (Event == null)
             throw new NotFoundException("Event with userid = " + userid + "doesn't exist");
-        return Event;
+        return Event;*/
+
+        return null;
     }
 
     @Path("/{id}")
