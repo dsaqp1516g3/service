@@ -227,15 +227,73 @@ public class CasalDAOImpl implements CasalDAO
     }
 
     @Override
-    public Casal getValidatedCasals() throws SQLException
+    public CasalCollection getValidatedCasals() throws SQLException
     {
-        return null;
+        CasalCollection casalCollection = new CasalCollection();
+
+        Connection connection = null;
+        PreparedStatement stmt = null;
+        try
+        {
+            connection = Database.getConnection();
+            stmt = connection.prepareStatement(CasalDAOQuery.GET_VALIDATED_CASALS);
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next())
+            {
+                Casal casal = new Casal();
+                casal.setCasalid(rs.getString("casalid"));
+                casal.setAdminid(rs.getString("adminid"));
+                casal.setEmail(rs.getString("email"));
+                casal.setName(rs.getString("name"));
+                casal.setDescription(rs.getString("description"));
+                casalCollection.getCasals().add(casal);
+            }
+        }
+        catch (SQLException e)
+        {
+            throw e;
+        }
+        finally
+        {
+            if (stmt != null) stmt.close();
+            if (connection != null) connection.close();
+        }
+        return casalCollection;
     }
 
     @Override
-    public Casal getNoValidatedCasals() throws SQLException
+    public CasalCollection getNoValidatedCasals() throws SQLException
     {
-        return null;
+        CasalCollection casalCollection = new CasalCollection();
+
+        Connection connection = null;
+        PreparedStatement stmt = null;
+        try
+        {
+            connection = Database.getConnection();
+            stmt = connection.prepareStatement(CasalDAOQuery.GET_NO_VALIDATED_CASALS);
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next())
+            {
+                Casal casal = new Casal();
+                casal.setCasalid(rs.getString("casalid"));
+                casal.setAdminid(rs.getString("adminid"));
+                casal.setEmail(rs.getString("email"));
+                casal.setName(rs.getString("name"));
+                casal.setDescription(rs.getString("description"));
+                casalCollection.getCasals().add(casal);
+            }
+        }
+        catch (SQLException e)
+        {
+            throw e;
+        }
+        finally
+        {
+            if (stmt != null) stmt.close();
+            if (connection != null) connection.close();
+        }
+        return casalCollection;
     }
 
     @Override

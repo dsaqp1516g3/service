@@ -22,6 +22,9 @@ import javax.annotation.security.RolesAllowed;
 @Path("casals")
 public class CasalResource
 {
+    @Context
+    private SecurityContext securityContext;
+
     @POST
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     @Produces(OkupaInfoMediaType.OKUPAINFO_AUTH_TOKEN)
@@ -51,35 +54,37 @@ public class CasalResource
         return Response.created(uri).type(OkupaInfoMediaType.OKUPAINFO_AUTH_TOKEN).entity(authenticationToken).build();
     }
 
-    /*@Context
-    private SecurityContext securityContext;
-    @Path("/{id}")
-    @RolesAllowed("[admin, casal]")*/
+    @RolesAllowed("[admin, casal]")
     @Path("/{casalid}")
     @PUT
     @Consumes(OkupaInfoMediaType.OKUPAINFO_CASAL)
     @Produces(OkupaInfoMediaType.OKUPAINFO_CASAL)
-    public Casal updateProfile(@PathParam("casalid") String casalid, @PathParam("email") String email, @PathParam("name") String name, @PathParam("description") String description, Casal casal) {
+    public Casal updateProfile(@PathParam("casalid") String casalid, @PathParam("email") String email, @PathParam("name") String name, @PathParam("description") String description, Casal casal)
+    {
         if(casal == null)
             throw new BadRequestException("entity is null");
         if(!casalid.equals(casal.getCasalid()))
             throw new BadRequestException("path parameter id and entity parameter id doesn't match");
 
+        String userid = securityContext.getUserPrincipal().getName();
+        if(!userid.equals(casalid))
+                throw new ForbiddenException("operation not allowed");
+
         CasalDAO casalDAO = new CasalDAOImpl();
-        try {
+        try
+        {
             casal = casalDAO.updateProfile(casalid, casal.getEmail(), casal.getName(), casal.getDescription());
             if(casal == null)
-                throw new NotFoundException("El casal con la id "+casalid+" no existe");
-        } catch (SQLException e) {
+                throw new NotFoundException("El casal con la id " + casalid + " no existe");
+        }
+        catch (SQLException e)
+        {
             throw new InternalServerErrorException();
         }
         return casal;
     }
 
-    /*@Context
-    private SecurityContext securityContext;
-    @Path("/{id}")
-    @RolesAllowed("[admin, casal]")*/
+    @RolesAllowed("[admin, casal]")
     @Path("/{casalid}")
     @PUT
     @Consumes(OkupaInfoMediaType.OKUPAINFO_CASAL)
@@ -90,12 +95,19 @@ public class CasalResource
         if(!casalid.equals(casal.getCasalid()))
             throw new BadRequestException("path parameter id and entity parameter id doesn't match");
 
+        String userid = securityContext.getUserPrincipal().getName();
+        if(!userid.equals(casalid))
+            throw new ForbiddenException("operation not allowed");
+
         CasalDAO casalDAO = new CasalDAOImpl();
-        try {
+        try
+        {
             casal = casalDAO.updateLocation(casalid, casal.getLocalization(), casal.getLatitude(), casal.getLongitude());
             if(casal == null)
-                throw new NotFoundException("El casal con la id "+casalid+" no existe");
-        } catch (SQLException e) {
+                throw new NotFoundException("El casal con la id " + casalid + " no existe");
+        }
+        catch (SQLException e)
+        {
             throw new InternalServerErrorException();
         }
         return casal;
@@ -139,36 +151,47 @@ public class CasalResource
         return casal;
     }
 
-    @Path("/{id}")
+    @Path("/{validated}")
     @GET
     @Produces(OkupaInfoMediaType.OKUPAINFO_CASAL)
     public CasalCollection getValidatedCasals()
     {
-        CasalCollection casalCollection = null;
+        CasalCollection casalCollection;
         CasalDAO casalDAO = new CasalDAOImpl();
         try
         {
-            casal =
+            casalCollection = casalDAO.getValidatedCasals();
         }
+        catch (SQLException e)
+        {
+            throw new InternalServerErrorException();
+        }
+        return casalCollection;
     }
 
-    @Path("/{id}")
+    @Path("/{novalidated}")
     @GET
     @Produces(OkupaInfoMediaType.OKUPAINFO_CASAL)
     public CasalCollection getNoValidatedCasals()
     {
-        CasalCollection casalCollection = null;
+        CasalCollection casalCollection;
         CasalDAO casalDAO = new CasalDAOImpl();
         try
         {
-            casal =
+            casalCollection = casalDAO.getNoValidatedCasals();
         }
+        catch (SQLException e)
+        {
+            throw new InternalServerErrorException();
+        }
+        return casalCollection;
     }
 
     @GET
     @Produces(OkupaInfoMediaType.OKUPAINFO_CASAL)
-    public CasalCollection getAllCasals() {
-        CasalCollection CasalCollection = null;
+    public CasalCollection getAllCasals()
+    {
+        CasalCollection CasalCollection;
         CasalDAO casalDAO = new CasalDAOImpl();
         try
         {
@@ -186,9 +209,9 @@ public class CasalResource
     @DELETE
     public void deleteCasal(@PathParam("casalid") String casalid)
     {
-        /*String casalid = securityContext.getCasalPrincipal().getName();
-        if(!casalid.equals(id))
-            throw new ForbiddenException("operation not allowed");*/ // Falta añadir seguridad de auth al casalid desde el AuthorizedRequestFilter
+        String userid = securityContext.getUserPrincipal().getName();
+        if(!userid.equals(casalid))
+            throw new ForbiddenException("operation not allowed");
 
         CasalDAO casalDAO = new CasalDAOImpl();
         try

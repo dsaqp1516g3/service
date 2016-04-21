@@ -14,8 +14,8 @@ public interface CasalDAO
     Casal updateLocation(String casalid, String localization, Double latitude, Double longitude) throws SQLException;
     Casal getCasalByCasalid(String casalid) throws SQLException;
     Casal getCasalByEmail(String email) throws SQLException;
-    Casal getValidatedCasals() throws SQLException;
-    Casal getNoValidatedCasals() throws SQLException;
+    CasalCollection getValidatedCasals() throws SQLException;
+    CasalCollection getNoValidatedCasals() throws SQLException;
     CasalCollection getAllCasals() throws SQLException;
     boolean deleteCasal(String casalid) throws SQLException;
 }
