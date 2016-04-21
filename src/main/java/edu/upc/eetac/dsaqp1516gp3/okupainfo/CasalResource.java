@@ -19,19 +19,6 @@ import java.net.URISyntaxException;
 import java.sql.SQLException;
 import javax.annotation.security.RolesAllowed;
 
-/*
-        Casal createCasal(String adminid, String email, String name, String description, String localization, double latitude,double longitude, boolean validadet) throws SQLException, CasalAlreadyExistsException;
-        Casal updateProfile(String casalid, String email, String name, String description) throws SQLException;
-        Casal updateLocation(String casalid, String localization, String latitude, String longitude) throws SQLException;
-        Casal getCasalByCasalid(String casalid) throws SQLException;
-        Casal getCasalByEmail(String email) throws SQLException;
-        Casal getValidatedCasals() throws SQLException;
-        Casal getNoValidatedCasals() throws SQLException;
-        CasalCollection getAllCasals() throws SQLException;
-        boolean deleteCasal(String casalid) throws SQLException;
-*/
-
-
 @Path("casals")
 public class CasalResource
 {
@@ -64,46 +51,6 @@ public class CasalResource
         return Response.created(uri).type(OkupaInfoMediaType.OKUPAINFO_AUTH_TOKEN).entity(authenticationToken).build();
     }
 
-    @Path("/{casalid}")
-    @GET
-    @Produces(OkupaInfoMediaType.OKUPAINFO_CASAL)
-    public Casal getCasalByCasalid(@PathParam("casalid") String casalid)
-    {
-        Casal casal;
-        try
-        {
-            casal = (new CasalDAOImpl().getCasalByCasalid(casalid));
-        }
-        catch (SQLException e)
-        {
-            throw new InternalServerErrorException(e.getMessage());
-        }
-        if (casal == null)
-            throw  new NotFoundException("Casal with id = " + casalid + "doesn't exist");
-        return casal;
-    }
-
-
-    @Path("/{email}")
-    @GET
-    @Produces(OkupaInfoMediaType.OKUPAINFO_CASAL)
-    public Casal getCasalByEmail(@PathParam("email") String email)
-    {
-        Casal casal;
-        try
-        {
-            casal = (new CasalDAOImpl().getCasalByEmail(email));
-        }
-        catch (SQLException e)
-        {
-            throw new InternalServerErrorException(e.getMessage());
-        }
-        if (casal == null)
-            throw  new NotFoundException("Casal with email = " + email + "doesn't exist");
-        return casal;
-    }
-
-//String casalid, String email, String name, String description)
     /*@Context
     private SecurityContext securityContext;
     @Path("/{id}")
@@ -129,7 +76,6 @@ public class CasalResource
         return casal;
     }
 
-    //String casalid, String localization, String latitude, String longitude
     /*@Context
     private SecurityContext securityContext;
     @Path("/{id}")
@@ -155,7 +101,85 @@ public class CasalResource
         return casal;
     }
 
+    @Path("/{casalid}")
+    @GET
+    @Produces(OkupaInfoMediaType.OKUPAINFO_CASAL)
+    public Casal getCasalByCasalid(@PathParam("casalid") String casalid)
+    {
+        Casal casal;
+        try
+        {
+            casal = (new CasalDAOImpl().getCasalByCasalid(casalid));
+        }
+        catch (SQLException e)
+        {
+            throw new InternalServerErrorException(e.getMessage());
+        }
+        if (casal == null)
+            throw  new NotFoundException("Casal with id = " + casalid + "doesn't exist");
+        return casal;
+    }
 
+    @Path("/{id}")
+    @GET
+    @Produces(OkupaInfoMediaType.OKUPAINFO_CASAL)
+    public Casal getCasalByEmail(@PathParam("email") String email)
+    {
+        Casal casal;
+        try
+        {
+            casal = (new CasalDAOImpl().getCasalByEmail(email));
+        }
+        catch (SQLException e)
+        {
+            throw new InternalServerErrorException(e.getMessage());
+        }
+        if (casal == null)
+            throw  new NotFoundException("Casal with email = " + email + "doesn't exist");
+        return casal;
+    }
+
+    @Path("/{id}")
+    @GET
+    @Produces(OkupaInfoMediaType.OKUPAINFO_CASAL)
+    public CasalCollection getValidatedCasals()
+    {
+        CasalCollection casalCollection = null;
+        CasalDAO casalDAO = new CasalDAOImpl();
+        try
+        {
+            casal =
+        }
+    }
+
+    @Path("/{id}")
+    @GET
+    @Produces(OkupaInfoMediaType.OKUPAINFO_CASAL)
+    public CasalCollection getNoValidatedCasals()
+    {
+        CasalCollection casalCollection = null;
+        CasalDAO casalDAO = new CasalDAOImpl();
+        try
+        {
+            casal =
+        }
+    }
+
+    @GET
+    @Produces(OkupaInfoMediaType.OKUPAINFO_CASAL)
+    public CasalCollection getAllCasals() {
+        CasalCollection CasalCollection = null;
+        CasalDAO casalDAO = new CasalDAOImpl();
+        try
+        {
+            CasalCollection = casalDAO.getAllCasals();
+        }
+        catch (SQLException e)
+        {
+            throw new InternalServerErrorException();
+        }
+        return CasalCollection;
+    }
 
     @Path("/{casalid}")
     @RolesAllowed("[admin, casal]")
@@ -177,30 +201,6 @@ public class CasalResource
             throw new InternalServerErrorException();
         }
     }
-
-    @GET
-    @Produces(OkupaInfoMediaType.OKUPAINFO_CASAL)
-    public CasalCollection getAllCasals() {
-        CasalCollection CasalCollection = null;
-        CasalDAO stingDAO = new CasalDAOImpl();
-        try {
-            CasalCollection = stingDAO.getAllCasals();
-        } catch (SQLException e) {
-            throw new InternalServerErrorException();
-        }
-        return CasalCollection;
-    }
-
-    /* @Path("/{id}")
-    @RolesAllowed("[admin, casal]")
-    @PUT
-    @Consumes(OkupaInfoMediaType.OKUPAINFO_CASAL);
-    @Produces(OkupaInfoMediaType.OKUPAINFO_CASAL);
-    public Casal updateValoracion(@PathParam("id") String id, Casal casal)
-    {
-
-    }*/
-
 }
 
 
