@@ -16,8 +16,10 @@ public class Event
     private String localization;
     private double latitude;
     private double longitude;
+    private long eventdate;
     private long creationTimestamp;
     private long lastModified;
+
 
     public List<Link> getLinks() {
         return links;
@@ -51,7 +53,6 @@ public class Event
         this.title = title;
     }
 
-
     public String getDescription() {
         return description;
     }
@@ -60,8 +61,8 @@ public class Event
         this.description = description;
     }
 
-    public String getLocalization(String localization) {
-        return this.localization;
+    public String getLocalization() {
+        return localization;
     }
 
     public void setLocalization(String localization) {
@@ -82,6 +83,14 @@ public class Event
 
     public void setLongitude(double longitude) {
         this.longitude = longitude;
+    }
+
+    public long getEventdate() {
+        return eventdate;
+    }
+
+    public void setEventdate(long eventdate) {
+        this.eventdate = eventdate;
     }
 
     public long getCreationTimestamp() {

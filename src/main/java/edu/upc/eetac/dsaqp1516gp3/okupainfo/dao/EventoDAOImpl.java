@@ -10,7 +10,7 @@ import java.sql.*;
 public class EventoDAOImpl implements EventoDAO
 {
     @Override
-    public Event createEvent(String casalid, String title, String description,  String localization, Double latitude, Double longitude) throws SQLException
+    public Event createEvent(String casalid, String title, String description,  String localization, double latitude, double longitude, double eventdate) throws SQLException
     {
         Connection connection = null;
         PreparedStatement stmt = null;
@@ -34,6 +34,10 @@ public class EventoDAOImpl implements EventoDAO
             stmt.setString(2, casalid);
             stmt.setString(3, title);
             stmt.setString(4, description);
+            stmt.setString(5, localization);
+            stmt.setString(6, String.valueOf(latitude));
+            stmt.setString(7, String.valueOf(longitude));
+            stmt.setString(5, String.valueOf(eventdate));
             stmt.executeUpdate();
 
             connection.commit();
@@ -56,7 +60,7 @@ public class EventoDAOImpl implements EventoDAO
     }
 
     @Override
-    public Event updateProfile(String id, String title, String description) throws SQLException
+    public Event updateProfile(String id, String title, String description, double eventdate) throws SQLException
     {
         Event event = null;
 
@@ -69,6 +73,7 @@ public class EventoDAOImpl implements EventoDAO
             stmt = connection.prepareStatement(EventoDAOQuery.UPDATE_EVENT);
             stmt.setString(1, title);
             stmt.setString(2, description);
+            stmt.setString(3, String.valueOf(eventdate));
 
             int rows = stmt.executeUpdate();
             if (rows == 1)
@@ -93,7 +98,7 @@ public class EventoDAOImpl implements EventoDAO
     }
 
     @Override
-    public Event updateLocation(String id, String localization, Double latitude, Double longitude) throws SQLException
+    public Event updateLocation(String id, String localization, double latitude, double longitude) throws SQLException
     {
         Event event = null;
 
@@ -156,6 +161,7 @@ public class EventoDAOImpl implements EventoDAO
                 event.setCasalid(rs.getString("casalid"));
                 event.setTitle(rs.getString("title"));
                 event.setDescription(rs.getString("description"));
+                event.setEventdate(rs.getLong("eventdate"));
             }
         }
         catch (SQLException e)
@@ -201,6 +207,7 @@ public class EventoDAOImpl implements EventoDAO
                 event.setCasalid(rs.getString("casalid"));
                 event.setTitle(rs.getString("title"));
                 event.setDescription(rs.getString("description"));
+                event.setEventdate(rs.getLong("eventdate"));
                 eventCollection.getEvents().add(event);
                 event.setCreationTimestamp(rs.getTimestamp("creation_timestamp").getTime());
                 event.setLastModified(rs.getTimestamp("last_modified").getTime());
@@ -211,7 +218,6 @@ public class EventoDAOImpl implements EventoDAO
                 }
                 eventCollection.setOldestTimestamp(event.getLastModified());
             }
-
         }
         catch (SQLException e)
         {
@@ -254,6 +260,7 @@ public class EventoDAOImpl implements EventoDAO
                 event.setCasalid(rs.getString("casalid"));
                 event.setTitle(rs.getString("title"));
                 event.setDescription(rs.getString("description"));
+                event.setEventdate(rs.getLong("eventdate"));
                 eventCollection.getEvents().add(event);
                 event.setCreationTimestamp(rs.getTimestamp("creation_timestamp").getTime());
                 event.setLastModified(rs.getTimestamp("last_modified").getTime());
@@ -303,6 +310,7 @@ public class EventoDAOImpl implements EventoDAO
                 event.setLocalization(rs.getString("localization"));
                 event.setLatitude(rs.getDouble("latitude"));
                 event.setLongitude(rs.getDouble("longitude"));
+                event.setEventdate(rs.getLong("eventdate"));
                 if (first) {
                     eventCollection.setNewestTimestamp(event.getLastModified());
                     first = false;
