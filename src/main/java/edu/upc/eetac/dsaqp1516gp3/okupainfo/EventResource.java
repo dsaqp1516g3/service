@@ -115,7 +115,7 @@ public class EventResource
     @Path("/{id}")
     @GET
     @Produces(OkupaInfoMediaType.OKUPAINFO_EVENTS_COLLECTION)
-    public EventCollection getEventsByCreatorId(@PathParam("userid") String userid,@QueryParam("timestamp") long timestamp, @DefaultValue("true") @QueryParam("before") boolean before)
+    public EventCollection getEventsByCreatorId(@PathParam("userid") String casalid,@QueryParam("timestamp") long timestamp, @DefaultValue("true") @QueryParam("before") boolean before)
     {
         EventCollection eventCollection;
         EventoDAO eventoDAO = new EventoDAOImpl();
@@ -123,7 +123,7 @@ public class EventResource
         try
         {
             if (before && timestamp == 0) timestamp = System.currentTimeMillis();
-            eventCollection = eventoDAO.getAllEvents(timestamp, before);
+            eventCollection = eventoDAO.getEventsByCreatorId(casalid, timestamp, before);
         }
         catch (SQLException e) {
             throw new InternalServerErrorException();
@@ -134,9 +134,21 @@ public class EventResource
     @Path("/{id}")
     @GET
     @Produces(OkupaInfoMediaType.OKUPAINFO_EVENTS)//Miramos la asistencia de un usuario a varios eventos
-    public Event getEventsByUserId(@PathParam("userid") String userid,@QueryParam("timestamp") long timestamp, @DefaultValue("true") @QueryParam("before") boolean before, @Context Request request)
+    public EventCollection getEventsByUserId(@PathParam("userid") String userid,@QueryParam("timestamp") long timestamp, @DefaultValue("true") @QueryParam("before") boolean before, @Context Request request)
     {
-        return null;
+
+        EventCollection eventCollection;
+        EventoDAO eventoDAO = new EventoDAOImpl();
+
+        try
+        {
+            if (before && timestamp == 0) timestamp = System.currentTimeMillis();
+            eventCollection = eventoDAO.getEventsByUserId(userid, timestamp, before);
+        }
+        catch (SQLException e) {
+            throw new InternalServerErrorException();
+        }
+        return eventCollection;
     }
 
     @GET
