@@ -11,7 +11,7 @@ public interface EventoDAOQuery
     String UPDATE_LOCATION = "update events set localization=?, latitude=?, longitude=? where id=unhex(?)";
     String GET_EVENT_BY_ID = "select hex(e.id) as id, e.casalid, e.title, e.description, e.localization from events e where id=unhex(?)";
     String GET_EVENT_BY_CREATOR_ID = "select hex(e.id) as id, e.casalid, e.title, e.description, e.localization from events e where creatorid=?";
-    String GET_EVENTS_BY_USER_ID = "select hex(e.id) as eventid, e.casalid, e.title, e.description, e.localization from users u, events e, users_events uv where uv.userid=unhex(?) and u.id=uv.userid";
+    String GET_EVENTS_BY_USER_ID = "select hex(e.id) as eventid, e.casalid, e.title, e.description, e.localization, e.eventdate from users u, events e, users_events uv where uv.userid=unhex(?) and u.id=uv.userid and uv.eventoid=e.id order by e.eventdate";
     String GET_ALL_EVENTS = "select *from events";
     String GET_EVENTS_AFTER = "select hex(id) as id, hex(casalid) as casalid, title, description, creation_timestamp, last_modified from events where creation_timestamp > ? order by creation_timestamp desc limit 5";
     String DELETE_EVENT = "delete from events where id=unhex(?)";
