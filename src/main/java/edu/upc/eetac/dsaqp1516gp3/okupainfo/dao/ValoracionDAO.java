@@ -17,6 +17,10 @@ public interface ValoracionDAO {
     Valoracion getValoracionById(String id) throws SQLException;
     Valoracion getValoracionByCasalid(String casalid) throws SQLException;
     Valoracion getValoracionByLoginid(String loginid) throws SQLException;
+    ValoracionCollection getAllValoraciones() throws SQLException;
+    ValoracionCollection getValoracionesByCasalId(String casalid) throws SQLException;
+    ValoracionCollection getValoracionesByLoginid(String loginid) throws SQLException;
+    boolean deleteValoracion(String id) throws SQLException;
 
 
 }

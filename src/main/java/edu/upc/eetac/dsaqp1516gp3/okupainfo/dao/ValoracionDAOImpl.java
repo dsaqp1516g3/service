@@ -219,6 +219,134 @@ public class ValoracionDAOImpl implements ValoracionDAO
         return Valoracion;
     }
 
+    @Override
+    public ValoracionCollection getAllValoraciones() throws SQLException
+    {
+        ValoracionCollection ValoracionCollection = null;
+
+        Connection connection = null;
+        PreparedStatement stmt = null;
+        try
+        {
+            connection = Database.getConnection();
+            stmt = connection.prepareStatement(ValoracionDAOQuery.GET_ALL_VALORACIONES);
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next())
+            {
+                Valoracion Valoracion = new Valoracion();
+                Valoracion.setId(rs.getString("id"));
+                Valoracion.setLoginid(rs.getString("loginid"));
+                Valoracion.setCasalid(rs.getString("casalid"));
+                Valoracion.setValoracion(rs.getString("valoracion"));
+                ValoracionCollection.getValoracion().add(Valoracion);
+            }
+        }
+        catch (SQLException e)
+        {
+            throw e;
+        }
+        finally
+        {
+            if (stmt != null) stmt.close();
+            if (connection != null) connection.close();
+        }
+        return ValoracionCollection;
+    }
+
+    @Override
+    public ValoracionCollection getValoracionesByCasalId(String casalid) throws SQLException {
+        ValoracionCollection ValoracionCollection = null;
+
+        Connection connection = null;
+        PreparedStatement stmt = null;
+        try
+        {
+            connection = Database.getConnection();
+            stmt = connection.prepareStatement(ValoracionDAOQuery.GET_VALORACIONES_BY_CASALID);
+            stmt.setString(1, casalid);
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next())
+            {
+                Valoracion Valoracion = new Valoracion();
+                Valoracion.setId(rs.getString("id"));
+                Valoracion.setLoginid(rs.getString("loginid"));
+                Valoracion.setCasalid(rs.getString("casalid"));
+                Valoracion.setValoracion(rs.getString("valoracion"));
+                ValoracionCollection.getValoracion().add(Valoracion);
+            }
+        }
+        catch (SQLException e)
+        {
+            throw e;
+        }
+        finally
+        {
+            if (stmt != null) stmt.close();
+            if (connection != null) connection.close();
+        }
+        return ValoracionCollection;
+    }
+
+    @Override
+    public ValoracionCollection getValoracionesByLoginid(String loginid) throws SQLException {
+        ValoracionCollection ValoracionCollection = null;
+
+        Connection connection = null;
+        PreparedStatement stmt = null;
+        try
+        {
+            connection = Database.getConnection();
+            stmt = connection.prepareStatement(ValoracionDAOQuery.GET_VALORACIONES_BY_LOGINID);
+            stmt.setString(1, loginid);
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next())
+            {
+                Valoracion Valoracion = new Valoracion();
+                Valoracion.setId(rs.getString("id"));
+                Valoracion.setLoginid(rs.getString("loginid"));
+                Valoracion.setCasalid(rs.getString("casalid"));
+                Valoracion.setValoracion(rs.getString("valoracion"));
+                ValoracionCollection.getValoracion().add(Valoracion);
+            }
+        }
+        catch (SQLException e)
+        {
+            throw e;
+        }
+        finally
+        {
+            if (stmt != null) stmt.close();
+            if (connection != null) connection.close();
+        }
+        return ValoracionCollection;
+    }
+
+
+    @Override
+    public boolean deleteValoracion(String id) throws SQLException
+    {
+        Connection connection = null;
+        PreparedStatement stmt = null;
+        try
+        {
+            connection = Database.getConnection();
+
+            stmt = connection.prepareStatement(ValoracionDAOQuery.DELETE_VALORACION);
+            stmt.setString(1, id);
+
+            int rows = stmt.executeUpdate();
+            return (rows == 1);
+        }
+        catch (SQLException e)
+        {
+            throw e;
+        }
+        finally
+        {
+            if (stmt != null) stmt.close();
+            if (connection != null) connection.close();
+        }
+    }
 
 
 }
