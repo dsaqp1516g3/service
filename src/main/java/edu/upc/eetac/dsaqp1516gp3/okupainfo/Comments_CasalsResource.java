@@ -51,11 +51,12 @@ public class Comments_CasalsResource {
 
     @GET
     @Produces(OkupaInfoMediaType.OKUPAINFO_COMMENTS_CASALS_COLLECTION)
-    public Comments_CasalsCollection getAllComments() {
+    public Comments_CasalsCollection getAllComments(@QueryParam("timestamp") long timestamp, @DefaultValue("true") @QueryParam("before") boolean before) {
         Comments_CasalsCollection Comments_CasalsCollection = null;
         Comments_CasalsDAO Comments_CasalsDAO = new Comments_CasalsDAOImpl();
         try {
-            Comments_CasalsCollection = Comments_CasalsDAO.getAllComments();
+            if (before && timestamp == 0) timestamp = System.currentTimeMillis();
+            Comments_CasalsCollection = Comments_CasalsDAO.getAllComments(timestamp, before);
         } catch (SQLException e) {
             throw new InternalServerErrorException();
         }
@@ -83,41 +84,38 @@ public class Comments_CasalsResource {
     @Path("/{casalid}")
     @GET
     @Produces(OkupaInfoMediaType.OKUPAINFO_COMMENTS_CASALS)
-    public Comments_Casals getCommentByCasalId(@PathParam("casalid") String casalid) {
+    public Comments_CasalsCollection getCommentByCasalId(@PathParam("casalid") String casalid, @QueryParam("timestamp") long timestamp, @DefaultValue("true") @QueryParam("before") boolean before) {
 
-        Comments_Casals Comments_Casals = null;
+        Comments_CasalsCollection Comments_CasalsCollection = null;
         Comments_CasalsDAO Comments_CasalsDAO = new Comments_CasalsDAOImpl();
         try {
-            Comments_Casals = Comments_CasalsDAO.getCommentByCasalId(casalid);
-            if (Comments_Casals == null)
-                throw new NotFoundException("El Casal " + casalid + " no tiene ningun comentario");
-
-        } catch (SQLException e) {
+            if (before && timestamp == 0) timestamp = System.currentTimeMillis();
+            Comments_CasalsCollection = Comments_CasalsDAO.getCommentByCasalId(casalid, timestamp, before);
+        }
+        catch (SQLException e)
+        {
             throw new InternalServerErrorException();
         }
-        return Comments_Casals;
+        return Comments_CasalsCollection;
     }
 
     @Path("/{creatorid}")
     @GET
     @Produces(OkupaInfoMediaType.OKUPAINFO_COMMENTS_CASALS)
-    public Comments_Casals getCommentByCreatorId(@PathParam("creatorid") String creatorid) {
+    public Comments_CasalsCollection getCommentByCreatorId(@PathParam("creatorid") String creatorid, @QueryParam("timestamp") long timestamp, @DefaultValue("true") @QueryParam("before") boolean before) {
 
-        Comments_Casals Comments_Casals = null;
+        Comments_CasalsCollection Comments_CasalsCollection = null;
         Comments_CasalsDAO Comments_CasalsDAO = new Comments_CasalsDAOImpl();
         try {
-            Comments_Casals = Comments_CasalsDAO.getCommentByCreatorId(creatorid);
-            if (Comments_Casals == null)
-                throw new NotFoundException("El usuario " + creatorid + " no tiene ningun comentario");
-
-        } catch (SQLException e) {
+            if (before && timestamp == 0) timestamp = System.currentTimeMillis();
+            Comments_CasalsCollection = Comments_CasalsDAO.getCommentByCreatorId(creatorid, timestamp, before);
+            }
+        catch (SQLException e)
+        {
             throw new InternalServerErrorException();
         }
-        return Comments_Casals;
+        return Comments_CasalsCollection;
     }
-
-
-
 
     @Path("/{id}")
     @PUT
