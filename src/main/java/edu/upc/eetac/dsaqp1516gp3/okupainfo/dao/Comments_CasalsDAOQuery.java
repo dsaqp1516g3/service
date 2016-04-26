@@ -12,6 +12,6 @@ public interface Comments_CasalsDAOQuery
     String GET_COMMENT_BY_CASALID = "select hex(cc.id) as id, cc.creatorid, cc.casalid, cc.content from cc where casalid=?";
     String GET_COMMENT_BY_CREATORID = "select hex(cc.id) as id, cc.creatorid, cc.casalid, cc.content from cc where creatorid=?";
     String GET_ALL_COMMENTS = "select *from comments_casals";
-    String GET_COMMENT_CASALS_AFTER = "select hex(id) as id, hex(creatorid) as creatorid, hex(casalid) as casalid, content, creation_timestamp, last_modified from events where creation_timestamp > ? order by creation_timestamp desc limit 5";
+    String GET_COMMENT_CASALS_AFTER = "select hex(id) as id, hex(creatorid) as creatorid, hex(eventoid) as eventoid, content, creation_timestamp, last_modified from events where creation_timestamp > ? order by creation_timestamp desc limit 5";
     String DELETE_COMMENT = "delete from comments_casals where id=unhex(?)";
 }

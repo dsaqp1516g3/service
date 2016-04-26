@@ -12,5 +12,6 @@ public interface Comments_EventosDAOQuery
     String GET_COMMENT_BY_EVENTID = "select hex(ce.id) as id, ce.creatorid, ce.eventoid, ce.content from ce where eventoid=?";
     String GET_COMMENT_BY_CREATORID = "select hex(ce.id) as id, ce.creatorid, ce.eventoid, ce.content from ce where creatorid=?";
     String GET_ALL_COMMENTS = "select *from comments_events";
+    String GET_COMMENT_EVENTS_AFTER = "select hex(id) as id, hex(creatorid) as creatorid, hex(casalid) as casalid, content, creation_timestamp, last_modified from events where creation_timestamp > ? order by creation_timestamp desc limit 5";
     String DELETE_COMMENT = "delete from comments_events where id=unhex(?)";
 }
