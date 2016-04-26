@@ -7,6 +7,7 @@ import edu.upc.eetac.dsaqp1516gp3.okupainfo.entity.AuthToken;
 import edu.upc.eetac.dsaqp1516gp3.okupainfo.entity.Comments_Casals;
 import edu.upc.eetac.dsaqp1516gp3.okupainfo.entity.Comments_CasalsCollection;
 
+import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.Context;
@@ -117,6 +118,7 @@ public class Comments_CasalsResource {
         return Comments_CasalsCollection;
     }
 
+
     @Path("/{id}")
     @PUT
     @Consumes(OkupaInfoMediaType.OKUPAINFO_COMMENTS_CASALS)
@@ -138,6 +140,7 @@ public class Comments_CasalsResource {
         return Comments_Casals;
     }
 
+    @RolesAllowed("[admin, casal]")
     @Path("/{id}")
     @DELETE
     public void deleteComment(@PathParam("id") String id) {

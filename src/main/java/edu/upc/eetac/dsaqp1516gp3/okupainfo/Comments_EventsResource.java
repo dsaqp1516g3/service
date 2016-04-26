@@ -7,6 +7,7 @@ import edu.upc.eetac.dsaqp1516gp3.okupainfo.entity.Comments_Casals;
 import edu.upc.eetac.dsaqp1516gp3.okupainfo.entity.Comments_Events;
 import edu.upc.eetac.dsaqp1516gp3.okupainfo.entity.Comments_EventsCollection;
 
+import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.Context;
@@ -140,6 +141,7 @@ public class Comments_EventsResource {
         return Comments_Events;
     }
 
+    @RolesAllowed("[admin, casal]")
     @Path("/{id}")
     @DELETE
     public void deleteComment(@PathParam("id") String id) {
