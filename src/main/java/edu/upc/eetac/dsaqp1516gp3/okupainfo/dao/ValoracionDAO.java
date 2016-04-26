@@ -15,5 +15,8 @@ public interface ValoracionDAO {
     Valoracion createValoracion(String loginid, String casalid, Boolean valoracion) throws SQLException, UserAlreadyExistsException;
     Valoracion updateValoracion(String id, String loginid, String casalid, Boolean valoracion) throws SQLException;
     Valoracion getValoracionById(String id) throws SQLException;
+    Valoracion getValoracionByCasalid(String casalid) throws SQLException;
+    Valoracion getValoracionByLoginid(String loginid) throws SQLException;
+
 
 }

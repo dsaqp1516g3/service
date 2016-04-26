@@ -137,6 +137,88 @@ public class ValoracionDAOImpl implements ValoracionDAO
         return Valoracion;
     }
 
+    @Override
+    public Valoracion getValoracionByLoginid(String loginid) throws SQLException
+    {
+        Valoracion Valoracion = null;
+
+        Connection connection = null;
+        PreparedStatement stmt = null;
+        try
+        {
+            // Obtiene la conexión del DataSource
+            connection = Database.getConnection();
+
+            // Prepara la consulta
+            stmt = connection.prepareStatement(ValoracionDAOQuery.GET_VALORACION_BY_LOGINID);
+            // Da valor a los parámetros de la consulta
+            stmt.setString(1, loginid);
+
+            // Ejecuta la consulta
+            ResultSet rs = stmt.executeQuery();
+            // Procesa los resultados
+            if (rs.next())
+            {
+                Valoracion = new Valoracion();
+                Valoracion.setId(rs.getString("id"));
+                Valoracion.setLoginid(rs.getString("loginid"));
+                Valoracion.setCasalid(rs.getString("casalid"));
+                Valoracion.setValoracion(rs.getString("valoracion"));
+            }
+        }
+        catch (SQLException e)
+        {
+            // Relanza la excepción
+            throw e;
+        }
+        finally
+        {
+            // Libera la conexión
+            if (stmt != null) stmt.close();
+            if (connection != null) connection.close();
+        }
+        // Devuelve el modelo
+        return Valoracion;
+    }
+
+
+    @Override
+    public Valoracion getValoracionByCasalid(String casalid) throws SQLException
+    {
+        Valoracion Valoracion = null;
+
+        Connection connection = null;
+        PreparedStatement stmt = null;
+        try
+        {
+            connection = Database.getConnection();
+
+
+            stmt = connection.prepareStatement(ValoracionDAOQuery.GET_VALORACION_BY_CASALID);
+            stmt.setString(1, casalid);
+
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next())
+            {
+                Valoracion = new Valoracion();
+                Valoracion.setId(rs.getString("id"));
+                Valoracion.setLoginid(rs.getString("loginid"));
+                Valoracion.setCasalid(rs.getString("casalid"));
+                Valoracion.setValoracion(rs.getString("valoracion"));
+            }
+        }
+        catch (SQLException e)
+        {
+            throw e;
+        }
+        finally
+        {
+            if (stmt != null) stmt.close();
+            if (connection != null) connection.close();
+        }
+        return Valoracion;
+    }
+
 
 
 }
