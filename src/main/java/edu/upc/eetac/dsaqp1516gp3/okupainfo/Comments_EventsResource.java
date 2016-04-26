@@ -51,11 +51,12 @@ public class Comments_EventsResource {
 
     @GET
     @Produces(OkupaInfoMediaType.OKUPAINFO_COMMENTS_EVENTS_COLLECTION)
-    public Comments_EventsCollection getAllComments() {
+    public Comments_EventsCollection getAllComments(@QueryParam("timestamp") long timestamp, @DefaultValue("true") @QueryParam("before") boolean before) {
         Comments_EventsCollection Comments_EventsCollection = null;
         Comments_EventosDAO Comments_EventosDAO = new Comments_EventosDAOImpl();
         try {
-            Comments_EventsCollection = Comments_EventosDAO.getAllComments();
+            if (before && timestamp == 0) timestamp = System.currentTimeMillis();
+            Comments_EventsCollection = Comments_EventosDAO.getAllComments(timestamp, before);
         } catch (SQLException e) {
             throw new InternalServerErrorException();
         }
@@ -83,37 +84,36 @@ public class Comments_EventsResource {
     @Path("/{eventoid}")
     @GET
     @Produces(OkupaInfoMediaType.OKUPAINFO_COMMENTS_EVENTS)
-    public Comments_Events getCommentByEventoId(@PathParam("eventoid") String eventoid) {
+    public Comments_EventsCollection getCommentByEventoId(@PathParam("eventoid") String eventoid, @QueryParam("timestamp") long timestamp, @DefaultValue("true") @QueryParam("before") boolean before) {
 
-        Comments_Events Comments_Events = null;
+        Comments_EventsCollection Comments_EventsCollection = null;
         Comments_EventosDAO Comments_EventosDAO = new Comments_EventosDAOImpl();
         try {
-            Comments_Events = Comments_EventosDAO.getCommentByEventoId(eventoid);
-            if (Comments_Events == null)
-                throw new NotFoundException("El evento " + eventoid + " no tiene ningun comentario");
+            if (before && timestamp == 0) timestamp = System.currentTimeMillis();
+            Comments_EventsCollection = Comments_EventosDAO.getCommentByEventoId(eventoid, timestamp, before);
 
         } catch (SQLException e) {
             throw new InternalServerErrorException();
         }
-        return Comments_Events;
+        return Comments_EventsCollection;
     }
 
     @Path("/{creatorid}")
     @GET
     @Produces(OkupaInfoMediaType.OKUPAINFO_COMMENTS_EVENTS)
-    public Comments_Events getCommentByCreatorId(@PathParam("creatorid") String creatorid) {
+    public Comments_EventsCollection getCommentByCreatorId(@PathParam("creatorid") String creatorid, @QueryParam("timestamp") long timestamp, @DefaultValue("true") @QueryParam("before") boolean before) {
 
-        Comments_Events Comments_Events = null;
+        Comments_EventsCollection Comments_EventsCollection = null;
         Comments_EventosDAO Comments_EventosDAO = new Comments_EventosDAOImpl();
         try {
-            Comments_Events = Comments_EventosDAO.getCommentByCreatorId(creatorid);
-            if (Comments_Events == null)
-                throw new NotFoundException("El usuario " + creatorid + " no tiene ningun comentario");
+            if (before && timestamp == 0) timestamp = System.currentTimeMillis();
+            Comments_EventsCollection = Comments_EventosDAO.getCommentByCreatorId(creatorid, timestamp, before);
+
 
         } catch (SQLException e) {
             throw new InternalServerErrorException();
         }
-        return Comments_Events;
+        return Comments_EventsCollection;
     }
 
 
