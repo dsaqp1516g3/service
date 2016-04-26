@@ -14,6 +14,7 @@ public class Comments_Events
     private String eventoid;
     private String Content;
     private long creationTimestamp;
+    private long lastModified;
 
     public List<Link> getLinks() {
         return links;
@@ -61,5 +62,13 @@ public class Comments_Events
 
     public void setCreationTimestamp(long creationTimestamp) {
         this.creationTimestamp = creationTimestamp;
+    }
+
+    public long getLastModified() {
+        return lastModified;
+    }
+
+    public void setLastModified(long lastModified) {
+        this.lastModified = lastModified;
     }
 }

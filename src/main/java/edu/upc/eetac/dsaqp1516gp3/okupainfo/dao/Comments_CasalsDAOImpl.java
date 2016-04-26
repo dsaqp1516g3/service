@@ -4,10 +4,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import edu.upc.eetac.dsaqp1516gp3.okupainfo.entity.Comments_Casals;
 import edu.upc.eetac.dsaqp1516gp3.okupainfo.entity.Comments_CasalsCollection;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class Comments_CasalsDAOImpl implements Comments_CasalsDAO
@@ -127,27 +124,43 @@ public class Comments_CasalsDAOImpl implements Comments_CasalsDAO
     }
 
     @Override
-    public Comments_Casals getCommentByCasalId(String casalid) throws SQLException
+    public Comments_CasalsCollection getCommentByCasalId(String casalid, long timestamp, boolean before) throws SQLException
     {
-        Comments_Casals comments_casals = null;
+        Comments_CasalsCollection Comments_CasalsCollection = new Comments_CasalsCollection();
 
         Connection connection = null;
         PreparedStatement stmt = null;
         try
         {
             connection = Database.getConnection();
-
-            stmt = connection.prepareStatement(Comments_CasalsDAOQuery.GET_COMMENT_BY_CASALID);
-            stmt.setString(1,casalid);
+            if(before)
+            {
+                stmt = connection.prepareStatement(Comments_CasalsDAOQuery.GET_COMMENT_BY_CASALID);
+            }
+            else
+                stmt = connection.prepareStatement(Comments_CasalsDAOQuery.GET_COMMENT_CASALS_AFTER);
+            stmt.setTimestamp(1, new Timestamp(timestamp));
+            stmt.setString(2, casalid);
 
             ResultSet rs = stmt.executeQuery();
-            if (rs.next())
+            boolean first = true;
+
+            while(rs.next())
             {
-                comments_casals = new Comments_Casals();
-                comments_casals.setId(rs.getString("id"));
-                comments_casals.setCreatorid(rs.getString("creatorid"));
-                comments_casals.setCasalid(rs.getString("casalid"));
-                comments_casals.setContent(rs.getString("content"));
+                Comments_Casals Comments_Casals = new Comments_Casals();
+                Comments_Casals.setId(rs.getString("id"));
+                Comments_Casals.setCreatorid(rs.getString("creatorid"));
+                Comments_Casals.setCasalid(rs.getString("casalid"));
+                Comments_Casals.setContent(rs.getString("content"));
+                Comments_CasalsCollection.getComments_casals().add(Comments_Casals);
+                Comments_Casals.setCreationTimestamp(rs.getTimestamp("creation_timestamp").getTime());
+                Comments_Casals.setLastModified(rs.getTimestamp("last_modified").getTime());
+                if (first)
+                {
+                    Comments_CasalsCollection.setNewestTimestamp(Comments_Casals.getLastModified());
+                    first = false;
+                }
+                Comments_CasalsCollection.setOldestTimestamp(Comments_Casals.getLastModified());
             }
         }
         catch (SQLException e)
@@ -159,31 +172,47 @@ public class Comments_CasalsDAOImpl implements Comments_CasalsDAO
             if (stmt != null) stmt.close();
             if (connection != null) connection.close();
         }
-        return comments_casals;
+        return Comments_CasalsCollection;
     }
 
     @Override
-    public Comments_Casals getCommentByCreatorId(String creatorid) throws SQLException
+    public Comments_CasalsCollection getCommentByCreatorId(String creatorid, long timestamp, boolean before) throws SQLException
     {
-        Comments_Casals comments_casals = null;
+        Comments_CasalsCollection Comments_CasalsCollection = new Comments_CasalsCollection();
 
         Connection connection = null;
         PreparedStatement stmt = null;
         try
         {
             connection = Database.getConnection();
-
-            stmt = connection.prepareStatement(Comments_CasalsDAOQuery.GET_COMMENT_BY_CREATORID);
-            stmt.setString(1,creatorid);
+            if(before)
+            {
+                stmt = connection.prepareStatement(Comments_CasalsDAOQuery.GET_COMMENT_BY_CREATORID);
+            }
+            else
+                stmt = connection.prepareStatement(Comments_CasalsDAOQuery.GET_COMMENT_CASALS_AFTER);
+            stmt.setTimestamp(1, new Timestamp(timestamp));
+            stmt.setString(2, creatorid);
 
             ResultSet rs = stmt.executeQuery();
-            if (rs.next())
+            boolean first = true;
+
+            while(rs.next())
             {
-                comments_casals = new Comments_Casals();
-                comments_casals.setId(rs.getString("id"));
-                comments_casals.setCreatorid(rs.getString("creatorid"));
-                comments_casals.setCasalid(rs.getString("casalid"));
-                comments_casals.setContent(rs.getString("content"));
+                Comments_Casals Comments_Casals = new Comments_Casals();
+                Comments_Casals.setId(rs.getString("id"));
+                Comments_Casals.setCreatorid(rs.getString("creatorid"));
+                Comments_Casals.setCasalid(rs.getString("casalid"));
+                Comments_Casals.setContent(rs.getString("content"));
+                Comments_CasalsCollection.getComments_casals().add(Comments_Casals);
+                Comments_Casals.setCreationTimestamp(rs.getTimestamp("creation_timestamp").getTime());
+                Comments_Casals.setLastModified(rs.getTimestamp("last_modified").getTime());
+                if (first)
+                {
+                    Comments_CasalsCollection.setNewestTimestamp(Comments_Casals.getLastModified());
+                    first = false;
+                }
+                Comments_CasalsCollection.setOldestTimestamp(Comments_Casals.getLastModified());
             }
         }
         catch (SQLException e)
@@ -195,11 +224,11 @@ public class Comments_CasalsDAOImpl implements Comments_CasalsDAO
             if (stmt != null) stmt.close();
             if (connection != null) connection.close();
         }
-        return comments_casals;
+        return Comments_CasalsCollection;
     }
 
     @Override
-    public Comments_CasalsCollection getAllComments() throws SQLException
+    public Comments_CasalsCollection getAllComments(long timestamp, boolean before) throws SQLException
     {
 
        /* private String id;
@@ -214,9 +243,17 @@ public class Comments_CasalsDAOImpl implements Comments_CasalsDAO
         PreparedStatement stmt = null;
         try {
             connection = Database.getConnection();
-            stmt = connection.prepareStatement(CasalDAOQuery.GET_ALL_CASALS);
+            if(before)
+            {
+                stmt = connection.prepareStatement(Comments_CasalsDAOQuery.GET_ALL_COMMENTS);
+            }
+            else
+                stmt = connection.prepareStatement(Comments_CasalsDAOQuery.GET_COMMENT_CASALS_AFTER);
+            stmt.setTimestamp(1, new Timestamp(timestamp));
             ResultSet rs = stmt.executeQuery();
-            while (rs.next()) {
+            boolean first = true;
+            if (rs.next())
+            {
                 Comments_Casals Comments_Casals = new Comments_Casals();
                 Comments_Casals.setId(rs.getString("id"));
                 Comments_Casals.setCreatorid(rs.getString("creatorid"));
@@ -224,6 +261,14 @@ public class Comments_CasalsDAOImpl implements Comments_CasalsDAO
                 Comments_Casals.setContent(rs.getString("content"));
                 Comments_Casals.setCreationTimestamp(rs.getLong("description"));
                 Comments_CasalsCollection.getComments_casals().add(Comments_Casals);
+                Comments_Casals.setCreationTimestamp(rs.getTimestamp("creation_timestamp").getTime());
+                Comments_Casals.setLastModified(rs.getTimestamp("last_modified").getTime());
+                if (first)
+                {
+                    Comments_CasalsCollection.setNewestTimestamp(Comments_Casals.getLastModified());
+                    first = false;
+                }
+                Comments_CasalsCollection.setOldestTimestamp(Comments_Casals.getLastModified());
             }
         } catch (SQLException e) {
             throw e;
