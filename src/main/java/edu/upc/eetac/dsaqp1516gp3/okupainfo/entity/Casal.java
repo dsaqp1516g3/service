@@ -67,11 +67,11 @@ public class Casal
         this.description = description;
     }
 
-    public Boolean getValidadet() {
+    public Boolean getValidated() {
         return validated;
     }
 
-    public void setValidadet(Boolean validadet) {
+    public void setValidated(Boolean validadet) {
         this.validated = validadet;
     }
 

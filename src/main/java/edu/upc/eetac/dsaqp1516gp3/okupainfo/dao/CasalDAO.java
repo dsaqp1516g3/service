@@ -10,8 +10,7 @@ import java.sql.SQLException;
 public interface CasalDAO
 {
     Casal createCasal(String adminid, String email, String name, String description, String localization, double latitude,double longitude, boolean validadted) throws SQLException, CasalAlreadyExistsException;
-    Casal updateProfile(String casalid, String email, String name, String description) throws SQLException;
-    Casal updateLocation(String casalid, String localization, Double latitude, Double longitude) throws SQLException;
+    Casal updateProfile(String casalid, String email, String name, String description, String localization, double latitude,double longitude, boolean validadted) throws SQLException;
     Casal getCasalByCasalid(String casalid) throws SQLException;
     Casal getCasalByEmail(String email) throws SQLException;
     CasalCollection getValidatedCasals() throws SQLException;

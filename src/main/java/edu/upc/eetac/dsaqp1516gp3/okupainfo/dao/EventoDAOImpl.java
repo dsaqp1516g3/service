@@ -60,7 +60,7 @@ public class EventoDAOImpl implements EventoDAO
     }
 
     @Override
-    public Event updateProfile(String id, String title, String description, double eventdate) throws SQLException
+    public Event updateProfile(String id, String title, String description, double eventdate, String localization, double latitude, double longitude) throws SQLException
     {
         Event event = null;
 
@@ -74,44 +74,9 @@ public class EventoDAOImpl implements EventoDAO
             stmt.setString(1, title);
             stmt.setString(2, description);
             stmt.setString(3, String.valueOf(eventdate));
-
-            int rows = stmt.executeUpdate();
-            if (rows == 1)
-            {
-                event = getEventById(id);
-            }
-        }
-        catch (SQLException e)
-        {
-            throw e;
-        }
-        finally
-        {
-            if (stmt != null) stmt.close();
-            if (connection != null)
-            {
-                connection.setAutoCommit(true);
-                connection.close();
-            }
-        }
-        return event;
-    }
-
-    @Override
-    public Event updateLocation(String id, String localization, double latitude, double longitude) throws SQLException
-    {
-        Event event = null;
-
-        Connection connection = null;
-        PreparedStatement stmt = null;
-        try
-        {
-            connection = Database.getConnection();
-
-            stmt = connection.prepareStatement(EventoDAOQuery.UPDATE_LOCATION);
-            stmt.setString(1, localization);
-            stmt.setDouble(2, latitude);
-            stmt.setDouble(3, longitude);
+            stmt.setString(4, localization);
+            stmt.setDouble(5, latitude);
+            stmt.setDouble(6, longitude);
 
             int rows = stmt.executeUpdate();
             if (rows == 1)

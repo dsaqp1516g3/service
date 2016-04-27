@@ -61,7 +61,7 @@ public class CasalDAOImpl implements CasalDAO
     }
 
     @Override
-    public Casal updateProfile(String casalid, String email, String name, String description) throws SQLException
+    public Casal updateProfile(String casalid, String email, String name, String description, String localization, double latitude, double longitude, boolean validated) throws SQLException
     {
         Casal casal = null;
 
@@ -74,51 +74,16 @@ public class CasalDAOImpl implements CasalDAO
             stmt.setString(1, email);
             stmt.setString(2, name);
             stmt.setString(3, description);
+            stmt.setString(4, localization);
+            stmt.setDouble(5, latitude);
+            stmt.setDouble(6, longitude);
+            stmt.setBoolean(7, validated);
 
             int rows = stmt.executeUpdate();
             if (rows == 1) {
                 casal = getCasalByCasalid(casalid);
             }
 
-        }
-        catch (SQLException e)
-        {
-            throw e;
-        }
-        finally
-        {
-            if (stmt != null) stmt.close();
-            if (connection != null)
-            {
-                connection.setAutoCommit(true);
-                connection.close();
-            }
-        }
-        return casal;
-    }
-
-    @Override
-    public Casal updateLocation(String casalid, String localization, Double latitude, Double longitude) throws SQLException
-    {
-
-        Casal casal = null;
-
-        Connection connection = null;
-        PreparedStatement stmt = null;
-        try
-        {
-            connection = Database.getConnection();
-
-            stmt = connection.prepareStatement(CasalDAOQuery.UPDATE_LOCATION);
-            stmt.setString(1, localization);
-            stmt.setDouble(2, latitude);
-            stmt.setDouble(3, longitude);
-
-            int rows = stmt.executeUpdate();
-            if (rows == 1)
-            {
-                casal = getCasalByCasalid(casalid);
-            }
         }
         catch (SQLException e)
         {
