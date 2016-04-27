@@ -16,7 +16,7 @@ public class Authorized
     private Authorized() throws IOException
     {
         InputStream in = this.getClass().getClassLoader()
-                .getResourceAsStream("authorized.json");
+                .getResourceAsStream("authorization.json");
         ObjectMapper objectMapper = new ObjectMapper();
         TypeFactory typeFactory = objectMapper.getTypeFactory();
         authorizedResourcesList = objectMapper.readValue(in, typeFactory.constructCollectionType(List.class, AuthorizedResource.class));
