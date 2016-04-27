@@ -262,7 +262,7 @@ public class ValoracionDAOImpl implements ValoracionDAO
         try
         {
             connection = Database.getConnection();
-            stmt = connection.prepareStatement(ValoracionDAOQuery.GET_VALORACIONES_BY_CASALID);
+            stmt = connection.prepareStatement(ValoracionDAOQuery.GET_VALORACION_BY_CASALID);
             stmt.setString(1, casalid);
             ResultSet rs = stmt.executeQuery();
             while (rs.next())
@@ -296,7 +296,7 @@ public class ValoracionDAOImpl implements ValoracionDAO
         try
         {
             connection = Database.getConnection();
-            stmt = connection.prepareStatement(ValoracionDAOQuery.GET_VALORACIONES_BY_LOGINID);
+            stmt = connection.prepareStatement(ValoracionDAOQuery.GET_VALORACION_BY_LOGINID);
             stmt.setString(1, loginid);
             ResultSet rs = stmt.executeQuery();
             while (rs.next())
