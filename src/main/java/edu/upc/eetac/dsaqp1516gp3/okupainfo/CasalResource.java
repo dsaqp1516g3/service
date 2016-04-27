@@ -98,44 +98,10 @@ public class CasalResource
         return casal;
     }
 
-    /*@Path("/{validated}")
-    @GET
-    @Produces(OkupaInfoMediaType.OKUPAINFO_CASAL)
-    public CasalCollection getValidatedCasals()
-    {
-        CasalCollection casalCollection;
-        CasalDAO casalDAO = new CasalDAOImpl();
-        try
-        {
-            casalCollection = casalDAO.getValidatedCasals();
-        }
-        catch (SQLException e)
-        {
-            throw new InternalServerErrorException();
-        }
-        return casalCollection;
-    }
 
-    @Path("/{novalidated}")
-    @GET
-    @Produces(OkupaInfoMediaType.OKUPAINFO_CASAL)
-    public CasalCollection getNoValidatedCasals()
-    {
-        CasalCollection casalCollection;
-        CasalDAO casalDAO = new CasalDAOImpl();
-        try
-        {
-            casalCollection = casalDAO.getNoValidatedCasals();
-        }
-        catch (SQLException e)
-        {
-            throw new InternalServerErrorException();
-        }
-        return casalCollection;
-    }*/
 
     @GET
-    @Produces(OkupaInfoMediaType.OKUPAINFO_CASAL)
+    @Produces(OkupaInfoMediaType.OKUPAINFO_CASAL_COLLECTION)
     public CasalCollection getAllCasals()
     {
         CasalCollection CasalCollection;
@@ -577,6 +543,42 @@ public class CasalResource
             throw new InternalServerErrorException();
         }
     }
+
+       /*@Path("/{validated}")
+    @GET
+    @Produces(OkupaInfoMediaType.OKUPAINFO_CASAL)
+    public CasalCollection getValidatedCasals()
+    {
+        CasalCollection casalCollection;
+        CasalDAO casalDAO = new CasalDAOImpl();
+        try
+        {
+            casalCollection = casalDAO.getValidatedCasals();
+        }
+        catch (SQLException e)
+        {
+            throw new InternalServerErrorException();
+        }
+        return casalCollection;
+    }
+
+    @Path("/{novalidated}")
+    @GET
+    @Produces(OkupaInfoMediaType.OKUPAINFO_CASAL)
+    public CasalCollection getNoValidatedCasals()
+    {
+        CasalCollection casalCollection;
+        CasalDAO casalDAO = new CasalDAOImpl();
+        try
+        {
+            casalCollection = casalDAO.getNoValidatedCasals();
+        }
+        catch (SQLException e)
+        {
+            throw new InternalServerErrorException();
+        }
+        return casalCollection;
+    }*/
 }
 
 

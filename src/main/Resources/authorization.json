@@ -13,7 +13,7 @@
   },
   {
     "path": "casals",
-    "methods": ["POST"]
+    "methods": ["GET"]
   },
   {
     "path": "(?i)casals/([0-9a-f]{32})?",
