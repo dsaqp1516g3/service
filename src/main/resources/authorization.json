@@ -20,6 +20,10 @@
     "methods": ["GET"]
   },
   {
+    "path": "events",
+    "methods": ["GET"]
+  },
+  {
     "path": "(?i)casals/([0-9a-f]{32})?",
     "methods": ["GET"]
   }
