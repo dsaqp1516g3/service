@@ -4,6 +4,10 @@
     "methods": ["GET"]
   },
   {
+    "path": "myresource2",
+    "methods": ["GET"]
+  },
+  {
     "path": "users",
     "methods": ["POST"]
   },
