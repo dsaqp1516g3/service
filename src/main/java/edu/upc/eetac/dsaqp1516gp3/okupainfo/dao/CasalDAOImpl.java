@@ -273,6 +273,7 @@ public class CasalDAOImpl implements CasalDAO
             connection = Database.getConnection();
             stmt = connection.prepareStatement(CasalDAOQuery.GET_ALL_CASALS);
             ResultSet rs = stmt.executeQuery();
+            System.out.println("llista CASALS servida");
             while (rs.next())
             {
                 Casal casal = new Casal();
