@@ -21,24 +21,19 @@ public class UserResource
     @POST
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     @Produces(OkupaInfoMediaType.OKUPAINFO_AUTH_TOKEN)
-    public Response registerUser(@FormParam("loginid") String loginid, @FormParam("password") String password, @FormParam("email") String email, @FormParam("fullname") String fullname, @FormParam("descripcion") String descripcion, @Context UriInfo uriInfo) throws URISyntaxException
+    public Response registerUser(@FormParam("loginid") String loginid, @FormParam("password") String password, @FormParam("email") String email, @FormParam("fullname") String fullname, @FormParam("description") String description, @Context UriInfo uriInfo) throws URISyntaxException
     {
-        if(loginid == null || password == null || email == null || fullname == null || descripcion == null)
+        if(loginid == null || password == null || email == null || fullname == null || description == null)
             throw new BadRequestException("all parameters are mandatory");
         UserDAO userDAO = new UserDAOImpl();
-        User user;
-        AuthToken authenticationToken;
-        try
-        {
-            user = userDAO.createUser(loginid, password, email, fullname, descripcion);
+        User user = null;
+        AuthToken authenticationToken = null;
+        try{
+            user = userDAO.createUser(loginid, password, email, fullname, description);
             authenticationToken = (new AuthTokenDAOImpl()).createAuthToken(user.getId());
-        }
-        catch (UserAlreadyExistsException e)
-        {
+        }catch (UserAlreadyExistsException e){
             throw new WebApplicationException("loginid already exists", Response.Status.CONFLICT);
-        }
-        catch(SQLException e)
-        {
+        }catch(SQLException e){
             throw new InternalServerErrorException();
         }
         URI uri = new URI(uriInfo.getAbsolutePath().toString() + "/" + user.getId());
@@ -65,7 +60,7 @@ public class UserResource
     }
 
     @GET
-    @Produces(OkupaInfoMediaType.OKUPAINFO_USER)
+    @Produces(OkupaInfoMediaType.OKUPAINFO_USER_COLLECTION)
     public UserCollection getAllUsers() {
         UserCollection UserCollection;
         UserDAO userDAO = new UserDAOImpl();

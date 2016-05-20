@@ -22,36 +22,27 @@ import java.util.List;
 public class AuthorizedRequestFilter implements ContainerRequestFilter
 {
     @Override
-    public void filter(ContainerRequestContext requestContext) throws IOException
-    {
-        final boolean secure = requestContext.getUriInfo().getAbsolutePath().getScheme().equals("https");
-
-        String token = requestContext.getHeaderString("X-Auth-Token");
-
+    public void filter(ContainerRequestContext requestContext) throws IOException {
         if(Authorized.getInstance().isAuthorized(requestContext))
             return;
-        /*if (token == null)
-            throw new WebApplicationException(Response.Status.UNAUTHORIZED);*/
+        final boolean secure = requestContext.getUriInfo().getAbsolutePath().getScheme().equals("https");
+        String token = requestContext.getHeaderString("X-Auth-Token");
+        if (token == null) {
+            throw new WebApplicationException(Response.Status.UNAUTHORIZED);
+        }
 
-
-        try
-        {
+        try {
             final UserInfo principal = (new AuthTokenDAOImpl()).getUserByAuthToken(token);
-            /*final CasalInfo principal = (new AuthTokenDAOImpl()).getUserByAuthToken(token);*/
-            if(principal==null)
+            if (principal == null)
                 throw new WebApplicationException("auth token doesn't exists", Response.Status.UNAUTHORIZED);
-            requestContext.setSecurityContext(new SecurityContext()
-            {
+            requestContext.setSecurityContext(new SecurityContext() {
                 @Override
                 public Principal getUserPrincipal() {
                     return principal;
                 }
 
-                /*public Principal getCasalPrincipal() { return principal; }*/
-
                 @Override
-                public boolean isUserInRole(String s)
-                {
+                public boolean isUserInRole(String s) {
                     List<Role> roles = null;
                     if (principal != null) roles = principal.getRoles();
                     return (roles.size() > 0 && roles.contains(Role.valueOf(s)));
@@ -67,9 +58,9 @@ public class AuthorizedRequestFilter implements ContainerRequestFilter
                     return "X-Auth-Token";
                 }
             });
-        } catch (SQLException e)
-        {
+        } catch (SQLException e) {
             throw new InternalServerErrorException();
         }
+
     }
 }

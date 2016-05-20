@@ -9,8 +9,8 @@ import java.sql.SQLException;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public interface UserDAO
 {
-    User createUser(String loginid, String password, String email, String fullname, String descripcion) throws SQLException, UserAlreadyExistsException;
-    User updateProfile(String id, String email, String fullname, String descripcion) throws SQLException;
+    User createUser(String loginid, String password, String email, String fullname, String description) throws SQLException, UserAlreadyExistsException;
+    User updateProfile(String id, String email, String fullname, String description) throws SQLException;
     User updateAsistance(String id, String eventoid)throws SQLException;
     User getUserById(String id) throws SQLException;
     User getIdByUser(String loginid) throws SQLException;

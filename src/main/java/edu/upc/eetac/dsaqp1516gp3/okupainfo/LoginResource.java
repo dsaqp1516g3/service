@@ -21,7 +21,7 @@ public class LoginResource
     @POST
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     @Produces(OkupaInfoMediaType.OKUPAINFO_AUTH_TOKEN)
-    public AuthToken login(@FormParam("login") String loginid, @FormParam("password") String password)
+    public AuthToken login(@FormParam("loginid") String loginid, @FormParam("password") String password)
     {
         if(loginid == null || password == null)
             throw new BadRequestException("all parameters are mandatory");

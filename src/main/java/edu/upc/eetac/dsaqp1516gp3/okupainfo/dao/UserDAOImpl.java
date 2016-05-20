@@ -15,13 +15,12 @@ import java.sql.SQLException;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class UserDAOImpl implements UserDAO {
     @Override
-    public User createUser(String loginid, String password, String email, String fullname, String descripcion) throws SQLException, UserAlreadyExistsException
+    public User createUser(String loginid, String password, String email, String fullname, String description) throws SQLException, UserAlreadyExistsException
     {
         Connection connection = null;
         PreparedStatement stmt = null;
         String id = null;
-        try
-        {
+        try {
             User user = getUserByLoginid(loginid);
             if (user != null)
                 throw new UserAlreadyExistsException();
@@ -44,7 +43,7 @@ public class UserDAOImpl implements UserDAO {
             stmt.setString(3, password);
             stmt.setString(4, email);
             stmt.setString(5, fullname);
-            stmt.setString(6, descripcion);
+            stmt.setString(6, description);
             stmt.executeUpdate();
 
             stmt.close();
@@ -53,16 +52,11 @@ public class UserDAOImpl implements UserDAO {
             stmt.executeUpdate();
 
             connection.commit();
-        }
-        catch (SQLException e)
-        {
+        } catch (SQLException e) {
             throw e;
-        }
-        finally
-        {
+        } finally {
             if (stmt != null) stmt.close();
-            if (connection != null)
-            {
+            if (connection != null) {
                 connection.setAutoCommit(true);
                 connection.close();
             }
@@ -71,7 +65,7 @@ public class UserDAOImpl implements UserDAO {
     }
 
     @Override
-    public User updateProfile(String id, String email, String fullname, String descripcion) throws SQLException
+    public User updateProfile(String id, String email, String fullname, String description) throws SQLException
     {
         User user = null;
 
@@ -84,7 +78,7 @@ public class UserDAOImpl implements UserDAO {
             stmt = connection.prepareStatement(UserDAOQuery.UPDATE_USER);
             stmt.setString(1, email);
             stmt.setString(2, fullname);
-            stmt.setString(3, descripcion);
+            stmt.setString(3, description);
 
             int rows = stmt.executeUpdate();
             if (rows == 1)

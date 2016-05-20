@@ -4,6 +4,7 @@ public class OkupaInfoMediaType
 {
     public final static String OKUPAINFO_AUTH_TOKEN = "application/vnd.dsa.okupainfo.auth-token+json";
     public final static String OKUPAINFO_USER = "application/vnd.dsa.okupainfo.user+json";
+    public final static String OKUPAINFO_USER_COLLECTION = "application/vnd.dsa.okupainfo.user.collection+json";
     public final static String OKUPAINFO_CASAL = "application/vnd.dsa.okupainfo.casal+json";
     public final static String OKUPAINFO_CASAL_COLLECTION = "application/vnd.dsa.okupainfo.casal.collection+json";
     public final static String OKUPAINFO_COMMENTS_EVENTS = "application/vnd.dsa.okupainfo.comments_events+json";

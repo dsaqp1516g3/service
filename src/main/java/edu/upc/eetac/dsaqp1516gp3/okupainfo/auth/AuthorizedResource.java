@@ -3,8 +3,7 @@ package edu.upc.eetac.dsaqp1516gp3.okupainfo.auth;
 import java.util.List;
 import java.util.regex.Pattern;
 
-public class AuthorizedResource
-{
+public class AuthorizedResource {
     private String path;
     private List<String> methods;
     private Pattern pattern;
@@ -13,8 +12,7 @@ public class AuthorizedResource
         return path;
     }
 
-    public void setPath(String path)
-    {
+    public void setPath(String path) {
         this.path = path;
         pattern = Pattern.compile(path);
     }
@@ -29,5 +27,4 @@ public class AuthorizedResource
 
     public Pattern getPattern() {
         return pattern;
-    }
-}
+    }}
