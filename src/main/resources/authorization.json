@@ -20,6 +20,10 @@
     "methods": ["GET"]
   },
   {
+    "path": "users",
+    "methods": ["GET"]
+  },
+  {
     "path": "events",
     "methods": ["GET"]
   },

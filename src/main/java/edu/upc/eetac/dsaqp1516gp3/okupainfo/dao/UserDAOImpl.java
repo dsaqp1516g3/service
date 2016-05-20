@@ -2,6 +2,7 @@ package edu.upc.eetac.dsaqp1516gp3.okupainfo.dao;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import edu.upc.eetac.dsaqp1516gp3.okupainfo.entity.User;
+import edu.upc.eetac.dsaqp1516gp3.okupainfo.entity.UserCollection;
 
 import java.math.BigInteger;
 import java.security.MessageDigest;
@@ -268,29 +269,28 @@ public class UserDAOImpl implements UserDAO {
     }
 
     @Override
-    public User getAllUsers() throws SQLException
-
+    public UserCollection getAllUsers() throws SQLException
     {
-        User user = null;
+        UserCollection userCollection = new UserCollection();
 
         Connection connection = null;
         PreparedStatement stmt = null;
         try
         {
             connection = Database.getConnection();
-
             stmt = connection.prepareStatement(UserDAOQuery.GET_ALL_USERS);
-
             ResultSet rs = stmt.executeQuery();
-            /*while(rs.next()) Se necesita crear un vector con todos los usuarios y devolver este vector
+            System.out.println("llista USERS servida");
+            while (rs.next())
             {
-                user = new User();
-                user.setId(rs.getString("id"));
-                user.setLoginid(rs.getString("loginid"));
+                User user = new User ();
+                user.setId(rs.getString("Id"));
+                user.setLoginid(rs.getString("Loginid"));
                 user.setEmail(rs.getString("email"));
-                user.setFullname(rs.getString("fullname"));
+                user.setFullname(rs.getString("Fullname"));
                 user.setDescription(rs.getString("description"));
-            }*/
+                userCollection.getUsers().add(user);
+            }
         }
         catch (SQLException e)
         {
@@ -301,7 +301,7 @@ public class UserDAOImpl implements UserDAO {
             if (stmt != null) stmt.close();
             if (connection != null) connection.close();
         }
-        return user;
+        return userCollection;
     }
 
     @Override

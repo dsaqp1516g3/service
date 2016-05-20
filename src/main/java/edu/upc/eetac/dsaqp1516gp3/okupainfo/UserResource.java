@@ -6,6 +6,7 @@ import edu.upc.eetac.dsaqp1516gp3.okupainfo.dao.UserDAO;
 import edu.upc.eetac.dsaqp1516gp3.okupainfo.dao.UserDAOImpl;
 import edu.upc.eetac.dsaqp1516gp3.okupainfo.entity.AuthToken;
 import edu.upc.eetac.dsaqp1516gp3.okupainfo.entity.User;
+import edu.upc.eetac.dsaqp1516gp3.okupainfo.entity.UserCollection;
 
 import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.*;
@@ -61,6 +62,19 @@ public class UserResource
         if(user == null)
             throw new NotFoundException("User with id = " + id + " doesn't exist");
         return user;
+    }
+
+    @GET
+    @Produces(OkupaInfoMediaType.OKUPAINFO_USER)
+    public UserCollection getAllUsers() {
+        UserCollection UserCollection;
+        UserDAO userDAO = new UserDAOImpl();
+        try {
+            UserCollection = userDAO.getAllUsers();
+        } catch (SQLException e) {
+            throw new InternalServerErrorException();
+        }
+        return UserCollection;
     }
 
     @Context
