@@ -3,7 +3,7 @@ package edu.upc.eetac.dsaqp1516gp3.okupainfo.dao;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
- public interface UserDAOQuery
+public interface UserDAOQuery
 {
     String UUID = "select REPLACE(UUID(),'-','')";
     String CREATE_USER = "insert into users((id, loginid, password, email, fullname, description) values (UNHEX(?), ?, UNHEX(MD5(?)), ?, ?, ?);";

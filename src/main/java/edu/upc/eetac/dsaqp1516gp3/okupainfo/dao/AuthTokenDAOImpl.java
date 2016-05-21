@@ -63,7 +63,8 @@ public class AuthTokenDAOImpl implements AuthTokenDAO
         PreparedStatement stmt = null;
         String token = null;
         AuthToken authToken = null;
-        try {
+        try
+        {
             connection = Database.getConnection();
 
             stmt = connection.prepareStatement(AuthTokenDAOQuery.UUID);
@@ -83,9 +84,13 @@ public class AuthTokenDAOImpl implements AuthTokenDAO
             authToken = new AuthToken();
             authToken.setToken(token);
             authToken.setUserid(userid);
-        } catch (SQLException e) {
+        }
+        catch (SQLException e)
+        {
             throw e;
-        } finally {
+        }
+        finally
+        {
             if (stmt != null) stmt.close();
             if (connection != null) connection.close();
         }

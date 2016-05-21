@@ -20,7 +20,8 @@ public class UserDAOImpl implements UserDAO {
         Connection connection = null;
         PreparedStatement stmt = null;
         String id = null;
-        try {
+        try
+        {
             User user = getUserByLoginid(loginid);
             if (user != null)
                 throw new UserAlreadyExistsException();
@@ -52,11 +53,16 @@ public class UserDAOImpl implements UserDAO {
             stmt.executeUpdate();
 
             connection.commit();
-        } catch (SQLException e) {
+        }
+        catch (SQLException e)
+        {
             throw e;
-        } finally {
+        }
+        finally
+        {
             if (stmt != null) stmt.close();
-            if (connection != null) {
+            if (connection != null)
+            {
                 connection.setAutoCommit(true);
                 connection.close();
             }
@@ -272,7 +278,9 @@ public class UserDAOImpl implements UserDAO {
         try
         {
             connection = Database.getConnection();
+
             stmt = connection.prepareStatement(UserDAOQuery.GET_ALL_USERS);
+
             ResultSet rs = stmt.executeQuery();
             System.out.println("llista USERS servida");
             while (rs.next())
