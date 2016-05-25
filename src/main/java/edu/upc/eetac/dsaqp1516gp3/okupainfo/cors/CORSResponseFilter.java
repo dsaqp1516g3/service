@@ -5,10 +5,12 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerResponseContext;
 import javax.ws.rs.container.ContainerResponseFilter;
+import javax.ws.rs.ext.Provider;
 import java.io.IOException;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class CORSResponseFIlter implements ContainerResponseFilter
+@Provider
+public class CORSResponseFilter implements ContainerResponseFilter
 {
 
     @Override
