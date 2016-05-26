@@ -21,7 +21,8 @@ public class UserResource
     @POST
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     @Produces(OkupaInfoMediaType.OKUPAINFO_AUTH_TOKEN)
-    public Response registerUser(@FormParam("loginid") String loginid, @FormParam("password") String password, @FormParam("email") String email, @FormParam("fullname") String fullname, @FormParam("description") String description, @Context UriInfo uriInfo) throws URISyntaxException
+    public Response registerUser(@FormParam("loginid") String loginid, @FormParam("password") String password, @FormParam("email") String email,
+                                 @FormParam("fullname") String fullname, @FormParam("description") String description, @Context UriInfo uriInfo) throws URISyntaxException
     {
         if(loginid == null || password == null || email == null || fullname == null || description == null)
             throw new BadRequestException("all parameters are mandatory");

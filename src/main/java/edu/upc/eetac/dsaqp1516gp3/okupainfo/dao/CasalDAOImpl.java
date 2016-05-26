@@ -129,6 +129,7 @@ public class CasalDAOImpl implements CasalDAO
                 casal.setEmail(rs.getString("email"));
                 casal.setName(rs.getString("name"));
                 casal.setDescription(rs.getString("description"));
+                casal.setLocalization(rs.getString("localization"));
             }
         }
         catch (SQLException e)
