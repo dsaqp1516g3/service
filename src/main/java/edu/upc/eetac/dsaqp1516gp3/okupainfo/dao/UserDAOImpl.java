@@ -109,37 +109,6 @@ public class UserDAOImpl implements UserDAO {
         return user;
     }
 
-    @Override
-    public User updateAsistance(String id, String eventoid) throws SQLException
-    {
-        User user = null;
-
-        Connection connection = null;
-        PreparedStatement stmt = null;
-        try
-        {
-            stmt = connection.prepareStatement(UserDAOQuery.ASSIGN_ASSISTANCE);// en eventos buscammos la id de usuario e insertamos dentro de user_events
-            stmt.setString(1, id);
-            stmt.setString(2, eventoid);
-            stmt.executeUpdate();
-            connection.commit();
-
-        }
-        catch (SQLException e)
-        {
-            throw e;
-        }
-        finally
-        {
-            if (stmt != null) stmt.close();
-            if (connection != null)
-            {
-                connection.setAutoCommit(true);
-                connection.close();
-            }
-        }
-        return user;
-    }
 
     @Override
     public User getUserById(String id) throws SQLException

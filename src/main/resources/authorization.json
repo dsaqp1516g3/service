@@ -36,6 +36,10 @@
     "methods": ["GET"]
   },
   {
+    "path": "casals",
+    "methods": ["GET"]
+  },
+  {
   "path": "users",
   "methods": ["GET"]
 },
