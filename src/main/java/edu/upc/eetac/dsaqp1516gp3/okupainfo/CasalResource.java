@@ -16,8 +16,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.sql.SQLException;
 
-import static javax.ws.rs.core.HttpHeaders.USER_AGENT;
-
 @Path("casals")
 public class CasalResource
 {
@@ -91,6 +89,19 @@ public class CasalResource
         return coordinates;
     }
 
+    @GET
+    @Produces(OkupaInfoMediaType.OKUPAINFO_CASAL_COLLECTION)
+    public CasalCollection getAllCasals() {
+        CasalCollection CasalCollection;
+        CasalDAO casalDAO = new CasalDAOImpl();
+        try {
+            CasalCollection = casalDAO.getAllCasals();
+        } catch (SQLException e) {
+            throw new InternalServerErrorException();
+        }
+        return CasalCollection;
+    }
+
     @RolesAllowed("[admin, casal]")
     @Path("/{casalid}")
     @PUT
@@ -139,19 +150,6 @@ public class CasalResource
         return casal;
     }
 
-
-    @GET
-    @Produces(OkupaInfoMediaType.OKUPAINFO_CASAL_COLLECTION)
-    public CasalCollection getAllCasals() {
-        CasalCollection CasalCollection;
-        CasalDAO casalDAO = new CasalDAOImpl();
-        try {
-            CasalCollection = casalDAO.getAllCasals();
-        } catch (SQLException e) {
-            throw new InternalServerErrorException();
-        }
-        return CasalCollection;
-    }
 
     @Path("/{casalid}")
     @RolesAllowed("[admin, casal]")
@@ -203,6 +201,25 @@ public class CasalResource
         return Response.created(uri).type(OkupaInfoMediaType.OKUPAINFO_AUTH_TOKEN).entity(authenticationToken).build();
     }
 
+    @GET
+    @Path("/{id}/events") /**Get All events of 1 casal**/
+    @Produces(OkupaInfoMediaType.OKUPAINFO_EVENTS_COLLECTION)
+    public EventCollection getAllEvents(@QueryParam("timestamp") long timestamp, @DefaultValue("true") @QueryParam("before") boolean before)
+    {
+        EventCollection EventCollection;
+        EventoDAO EventoDAO = new EventoDAOImpl();
+        try
+        {
+            if (before && timestamp == 0) timestamp = System.currentTimeMillis();
+            EventCollection = EventoDAO.getAllEvents(timestamp, before);
+        }
+        catch (SQLException e)
+        {
+            throw new InternalServerErrorException();
+        }
+        return EventCollection;
+    }
+
     @Path("/{id}/events/{id}")
     @PUT
     @Consumes(OkupaInfoMediaType.OKUPAINFO_EVENTS)
@@ -232,7 +249,41 @@ public class CasalResource
         return event;
     }
 
-    @Path("{id}/events/{userid}")
+    @Path("/{id}/events/{id}")
+    @RolesAllowed("[admin, casal]")
+    @DELETE
+    public void deleteEvent(@PathParam("id") String id)
+    {
+        EventoDAO EventoDAO = new EventoDAOImpl();
+        try
+        {
+            if (!EventoDAO.deleteEvent(id))
+                throw new NotFoundException("Event with id = " + id + " doesn't exist");
+        }
+        catch (SQLException e)
+        {
+            throw new InternalServerErrorException();
+        }
+    }
+
+    @Path("/{id}/events/{id}") /**Get de un solo evento en concreto de un casal específico**/
+    @RolesAllowed("[admin, casal]")
+    @GET
+    public EventCollection getEventsByCasalId(@PathParam("id") String id, @QueryParam("timestamp") long timestamp, @DefaultValue("true") @QueryParam("before") boolean before, @Context Request request)
+    {
+        EventCollection eventCollection;
+        EventoDAO eventoDAO = new EventoDAOImpl();
+
+        try {
+            if (before && timestamp == 0) timestamp = System.currentTimeMillis();
+            eventCollection = eventoDAO.getEventsByCreatorId(id, timestamp, before);
+        } catch (SQLException e) {
+            throw new InternalServerErrorException();
+        }
+        return eventCollection;
+    }
+
+    @Path("{id}/events/{userid}") /**Comprobamos a que eventos asiste el usuario**/
     @GET
     @Produces(OkupaInfoMediaType.OKUPAINFO_EVENTS)//Miramos la asistencia de un usuario a varios eventos
     public EventCollection getEventsByUserId(@PathParam("userid") String userid, @QueryParam("timestamp") long timestamp, @DefaultValue("true")
@@ -253,16 +304,18 @@ public class CasalResource
         return eventCollection;
     }
 
-    @Path("/events/{id}")
-    @RolesAllowed("[admin, casal]")
-    @DELETE
-    public void deleteEvent(@PathParam("id") String id)
+    @Path("{id}/events/{id}/{userid}") /**Añadimos la asistencia del usuario al evento**/
+    @POST
+    @Produces(OkupaInfoMediaType.OKUPAINFO_EVENTS)//Miramos la asistencia de un usuario a varios eventos
+    public void addAssistanceToEvent(@FormParam("userid") String userid, @FormParam("eventid") String eventid, @Context UriInfo uriInfo) throws URISyntaxException
     {
-        EventoDAO EventoDAO = new EventoDAOImpl();
+        if (userid == null || eventid == null)
+            throw new BadRequestException("all parameters are mandatory");
+        EventoDAO eventoDAO = new EventoDAOImpl();
+
         try
         {
-            if (!EventoDAO.deleteEvent(id))
-                throw new NotFoundException("Casal with id = " + id + " doesn't exist");
+            eventoDAO.addUserAssistance(userid, eventid);
         }
         catch (SQLException e)
         {
@@ -270,30 +323,29 @@ public class CasalResource
         }
     }
 
-    @GET
-    @Path("/{id}/events")
-    @Produces(OkupaInfoMediaType.OKUPAINFO_EVENTS_COLLECTION)
-    public EventCollection getAllEvents(@QueryParam("timestamp") long timestamp, @DefaultValue("true") @QueryParam("before") boolean before)
+    @Path("{id}/events/{id}/{userid}") /**Eliminamos la asistencia del usuario al evento**/
+    @DELETE
+    @Produces(OkupaInfoMediaType.OKUPAINFO_EVENTS)//Miramos la asistencia de un usuario a varios eventos
+    public void deleteAssistanceToEvent(@PathParam("userid") String userid, @PathParam("eventid") String eventid)
     {
-        EventCollection EventCollection;
-        EventoDAO EventoDAO = new EventoDAOImpl();
+        EventoDAO eventoDAO = new EventoDAOImpl();
+
         try
         {
-            if (before && timestamp == 0) timestamp = System.currentTimeMillis();
-            EventCollection = EventoDAO.getAllEvents(timestamp, before);
+            if (!eventoDAO.deleteAssistanceEvent(userid, eventid));
+            throw new NotFoundException("Event with id = " + eventid + " doesn't exist or user with id = " + userid + " doesn't exist");
         }
         catch (SQLException e)
         {
             throw new InternalServerErrorException();
         }
-        return EventCollection;
     }
 
     /***********************************************************************************************************/
     /******************************COMMENTS**EVENTOS************************************************************/
     /***********************************************************************************************************/
 
-    @Path("{id}/events/comments")
+    @Path("{id}/events/{id}")
     @POST
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     public Response createEventComment(@FormParam("creatorid") String creatorid, @FormParam("eventoid") String eventoid,
@@ -315,7 +367,7 @@ public class CasalResource
         return Response.created(uri).type(OkupaInfoMediaType.OKUPAINFO_COMMENTS_EVENTS).entity(Comments_Events).build();
     }
 
-    @Path("/events/comments")
+    @Path("{id}/events/{id}/comments")
     @GET
     @Produces(OkupaInfoMediaType.OKUPAINFO_COMMENTS_EVENTS_COLLECTION)
     public Comments_EventsCollection getAllEventComments(@QueryParam("timestamp") long timestamp, @DefaultValue("true") @QueryParam("before") boolean before)
@@ -334,28 +386,6 @@ public class CasalResource
         return Comments_EventsCollection;
     }
 
-
-    @Path("/{id}/events/{id}/comments/{creatorid}")
-    @GET
-    @Produces(OkupaInfoMediaType.OKUPAINFO_COMMENTS_EVENTS)
-    public Comments_EventsCollection getCommentEventByCreatorId(@PathParam("creatorid") String creatorid, @QueryParam("timestamp") long timestamp, @DefaultValue("true") @QueryParam("before") boolean before)
-    {
-
-        Comments_EventsCollection Comments_EventsCollection;
-        Comments_EventosDAO Comments_EventosDAO = new Comments_EventosDAOImpl();
-        try
-        {
-            if (before && timestamp == 0) timestamp = System.currentTimeMillis();
-            Comments_EventsCollection = Comments_EventosDAO.getCommentByCreatorId(creatorid, timestamp, before);
-
-
-        }
-        catch (SQLException e)
-        {
-            throw new InternalServerErrorException();
-        }
-        return Comments_EventsCollection;
-    }
 
     @Path("/{id}/events/{id}/comments/{id}")
     @PUT
@@ -403,6 +433,25 @@ public class CasalResource
     /******************************COMMENTS**CASALS************************************************************/
     /***********************************************************************************************************/
 
+    @Path("/comments")
+    @GET
+    @Produces(OkupaInfoMediaType.OKUPAINFO_COMMENTS_CASALS_COLLECTION)
+    public Comments_CasalsCollection getAllCasalComments(@QueryParam("timestamp") long timestamp, @DefaultValue("true") @QueryParam("before") boolean before)
+    {
+        Comments_CasalsCollection Comments_CasalsCollection;
+        Comments_CasalsDAO Comments_CasalsDAO = new Comments_CasalsDAOImpl();
+        try
+        {
+            if (before && timestamp == 0) timestamp = System.currentTimeMillis();
+            Comments_CasalsCollection = Comments_CasalsDAO.getAllComments(timestamp, before);
+        }
+        catch (SQLException e)
+        {
+            throw new InternalServerErrorException();
+        }
+        return Comments_CasalsCollection;
+    }
+
     @POST
     @Path("/{id}/")
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
@@ -425,27 +474,7 @@ public class CasalResource
         return Response.created(uri).type(OkupaInfoMediaType.OKUPAINFO_COMMENTS_CASALS).entity(Comments_Casals).build();
     }
 
-    @Path("/{id}/comments")
-    @GET
-    @Produces(OkupaInfoMediaType.OKUPAINFO_COMMENTS_CASALS_COLLECTION)
-    public Comments_CasalsCollection getAllCasalComments(@QueryParam("timestamp") long timestamp, @DefaultValue("true") @QueryParam("before") boolean before)
-    {
-        Comments_CasalsCollection Comments_CasalsCollection;
-        Comments_CasalsDAO Comments_CasalsDAO = new Comments_CasalsDAOImpl();
-        try
-        {
-            if (before && timestamp == 0) timestamp = System.currentTimeMillis();
-            Comments_CasalsCollection = Comments_CasalsDAO.getAllComments(timestamp, before);
-        }
-        catch (SQLException e)
-        {
-            throw new InternalServerErrorException();
-        }
-        return Comments_CasalsCollection;
-    }
-
-
-    @Path("/{id}/comments/{casalid}")
+    @Path("/{id}/comments/") /**Get  specific comment of casal**/
     @GET
     @Produces(OkupaInfoMediaType.OKUPAINFO_COMMENTS_CASALS)
     public Comments_CasalsCollection getCommentByCasalId(@PathParam("casalid") String casalid, @QueryParam("timestamp") long timestamp, @DefaultValue("true") @QueryParam("before") boolean before)
@@ -463,7 +492,6 @@ public class CasalResource
         }
         return Comments_CasalsCollection;
     }
-
 
     @Path("/{id}/comments/{id}")
     @PUT
@@ -505,6 +533,25 @@ public class CasalResource
         {
             throw new InternalServerErrorException();
         }
+    }
+
+    @Path("/comments/{creatorid}") /**Get  all comments of a specific user in regards to this casal**/
+    @GET
+    @Produces(OkupaInfoMediaType.OKUPAINFO_COMMENTS_CASALS)
+    public Comments_CasalsCollection getCommentByCreatorId(@PathParam("creatorid") String creatorid, @QueryParam("timestamp") long timestamp, @DefaultValue("true") @QueryParam("before") boolean before)
+    {
+        Comments_CasalsCollection Comments_CasalsCollection;
+        Comments_CasalsDAO Comments_CasalsDAO = new Comments_CasalsDAOImpl();
+        try
+        {
+            if (before && timestamp == 0) timestamp = System.currentTimeMillis();
+            Comments_CasalsCollection = Comments_CasalsDAO.getCommentByCreatorId(creatorid, timestamp, before);
+        }
+        catch (SQLException e)
+        {
+            throw new InternalServerErrorException();
+        }
+        return Comments_CasalsCollection;
     }
 
     /***********************************************************************************************************/
@@ -629,198 +676,3 @@ public class CasalResource
     /****************************************************************************************************************/
     /****************************************************************************************************************/
 }
-
-
-    /*
-
-
-    //Este va al UserResource
-    @Path("/{id}/valoracion/{id}")
-    @GET
-    @Produces(OkupaInfoMediaType.OKUPAINFO_EVENTS_COLLECTION)
-    public Valoracion getValoracionByCasalid(@PathParam("casalid") String casalid)
-    {
-        Valoracion Valoracion;
-        try
-        {
-            Valoracion = (new ValoracionDAOImpl().getValoracionByCasalid(casalid));
-        }
-        catch (SQLException e)
-        {
-            throw new InternalServerErrorException(e.getMessage());
-        }
-        if (Valoracion == null)
-            throw new NotFoundException("Event with id = " + casalid + "doesn't exist");
-        return Valoracion;
-    }
-
-    //Este va al UserResource
-    @Path("/{id}/valoracion/{casalid}")
-    @GET
-    @Produces(OkupaInfoMediaType.OKUPAINFO_EVENTS_COLLECTION)
-    public ValoracionCollection getValoracionesByCasalId(@PathParam("casalid") String casalid)
-    {
-        ValoracionCollection ValoracionCollection;
-        ValoracionDAO ValoracionDAO = new ValoracionDAOImpl();
-        try
-        {
-            ValoracionCollection = ValoracionDAO.getValoracionesByCasalId(casalid);
-        }
-        catch (SQLException e)
-        {
-            throw new InternalServerErrorException();
-        }
-        return ValoracionCollection;
-    }
-
-
-    @Path("/{id}")
-    @GET
-    @Produces(OkupaInfoMediaType.OKUPAINFO_COMMENTS_CASALS)
-    public Comments_Casals getCommentCasalById(@PathParam("id") String id)
-    {
-        Comments_Casals Comments_Casals = null;
-        Comments_CasalsDAO Comments_CasalsDAO = new Comments_CasalsDAOImpl();
-        try
-        {
-            Comments_Casals = Comments_CasalsDAO.getCommentById(id);
-            if (Comments_Casals == null)
-                throw new NotFoundException("No existe un comentario con id = " + id + " en este casal");
-        }
-        catch (SQLException e)
-        {
-            throw new InternalServerErrorException();
-        }
-        return Comments_Casals;
-    }*/
-
-
-       /* @Path("/{id}/comments/{creatorid}")
-    @GET
-    @Produces(OkupaInfoMediaType.OKUPAINFO_COMMENTS_CASALS)
-    public Comments_CasalsCollection getCommentCasalsByCreatorId(@PathParam("creatorid") String creatorid, @QueryParam("timestamp") long timestamp, @DefaultValue("true") @QueryParam("before") boolean before)
-    {
-
-        Comments_CasalsCollection Comments_CasalsCollection = null;
-        Comments_CasalsDAO Comments_CasalsDAO = new Comments_CasalsDAOImpl();
-        try
-        {
-            if (before && timestamp == 0) timestamp = System.currentTimeMillis();
-            Comments_CasalsCollection = Comments_CasalsDAO.getCommentByCreatorId(creatorid, timestamp, before);
-        }
-        catch (SQLException e)
-        {
-            throw new InternalServerErrorException();
-        }
-        return Comments_CasalsCollection;
-    }*/
-
-       /*@Path("/{validated}")
-    @GET
-    @Produces(OkupaInfoMediaType.OKUPAINFO_CASAL)
-    public CasalCollection getValidatedCasals()
-    {
-        CasalCollection casalCollection;
-        CasalDAO casalDAO = new CasalDAOImpl();
-        try
-        {
-            casalCollection = casalDAO.getValidatedCasals();
-        }
-        catch (SQLException e)
-        {
-            throw new InternalServerErrorException();
-        }
-        return casalCollection;
-    }
-
-    @Path("/{novalidated}")
-    @GET
-    @Produces(OkupaInfoMediaType.OKUPAINFO_CASAL)
-    public CasalCollection getNoValidatedCasals()
-    {
-        CasalCollection casalCollection;
-        CasalDAO casalDAO = new CasalDAOImpl();
-        try
-        {
-            casalCollection = casalDAO.getNoValidatedCasals();
-        }
-        catch (SQLException e)
-        {
-            throw new InternalServerErrorException();
-        }
-        return casalCollection;
-    }*/
-
-       /* @Path("/{id}")
-    @GET
-    @Produces(OkupaInfoMediaType.OKUPAINFO_COMMENTS_EVENTS)
-    public Comments_Events getCommentEventById(@PathParam("id") String id) {
-        Comments_Events Comments_Events = null;
-        Comments_EventosDAO Comments_EventosDAO = new Comments_EventosDAOImpl();
-        try {
-            Comments_Events = Comments_EventosDAO.getCommentById(id);
-            if (Comments_Events == null)
-                throw new NotFoundException("No existe un comentario con id = " + id + " en este evento");
-        } catch (SQLException e) {
-            throw new InternalServerErrorException();
-        }
-        return Comments_Events;
-    }*/
-
-
-    /*@Path("/{eventoid}")
-    @GET
-    @Produces(OkupaInfoMediaType.OKUPAINFO_COMMENTS_EVENTS)
-    public Comments_EventsCollection getCommentByEventoId(@PathParam("eventoid") String eventoid, @QueryParam("timestamp") long timestamp, @DefaultValue("true") @QueryParam("before") boolean before) {
-
-        Comments_EventsCollection Comments_EventsCollection = null;
-        Comments_EventosDAO Comments_EventosDAO = new Comments_EventosDAOImpl();
-        try {
-            if (before && timestamp == 0) timestamp = System.currentTimeMillis();
-            Comments_EventsCollection = Comments_EventosDAO.getCommentByEventoId(eventoid, timestamp, before);
-
-        } catch (SQLException e) {
-            throw new InternalServerErrorException();
-        }
-        return Comments_EventsCollection;
-    }*/
-
-
-    /*@Path("/{id}/events/{creatorid}")
-    @GET
-    @Produces(OkupaInfoMediaType.OKUPAINFO_EVENTS_COLLECTION)
-    public EventCollection getEventsByCreatorId(@PathParam("userid") String casalid, @QueryParam("timestamp") long timestamp, @DefaultValue("true") @QueryParam("before") boolean before) {
-        EventCollection eventCollection;
-        EventoDAO eventoDAO = new EventoDAOImpl();
-
-        try {
-            if (before && timestamp == 0) timestamp = System.currentTimeMillis();
-            eventCollection = eventoDAO.getEventsByCreatorId(casalid, timestamp, before);
-        } catch (SQLException e) {
-            throw new InternalServerErrorException();
-        }
-        return eventCollection;
-    }*/
-
-
-    /*@Path("/{id}/events/{id}")
-    @GET
-    @Produces(OkupaInfoMediaType.OKUPAINFO_EVENTS)
-    public Event getEventById(@PathParam("id") String id)
-    {
-        Event Event;
-        try
-        {
-            Event = (new EventoDAOImpl().getEventById(id));
-        }
-        catch (SQLException e)
-        {
-            throw new InternalServerErrorException(e.getMessage());
-        }
-        if (Event == null)
-            throw new NotFoundException("Event with id = " + id + "doesn't exist");
-        return Event;
-    }*/
-
-
-

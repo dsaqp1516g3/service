@@ -1,7 +1,10 @@
 package edu.upc.eetac.dsaqp1516gp3.okupainfo;
 
+import edu.upc.eetac.dsaqp1516gp3.okupainfo.dao.Comments_EventosDAO;
+import edu.upc.eetac.dsaqp1516gp3.okupainfo.dao.Comments_EventosDAOImpl;
 import edu.upc.eetac.dsaqp1516gp3.okupainfo.dao.EventoDAO;
 import edu.upc.eetac.dsaqp1516gp3.okupainfo.dao.EventoDAOImpl;
+import edu.upc.eetac.dsaqp1516gp3.okupainfo.entity.Comments_EventsCollection;
 import edu.upc.eetac.dsaqp1516gp3.okupainfo.entity.EventCollection;
 
 import javax.ws.rs.*;
@@ -30,5 +33,25 @@ public class EventResource
             throw new InternalServerErrorException();
         }
         return EventCollection;
+    }
+
+    @Path("/comments/{creatorid}")
+    @GET
+    @Produces(OkupaInfoMediaType.OKUPAINFO_COMMENTS_EVENTS)
+    public Comments_EventsCollection getCommentEventByCreatorId(@PathParam("creatorid") String creatorid, @QueryParam("timestamp") long timestamp, @DefaultValue("true") @QueryParam("before") boolean before)
+    {
+
+        Comments_EventsCollection Comments_EventsCollection;
+        Comments_EventosDAO Comments_EventosDAO = new Comments_EventosDAOImpl();
+        try
+        {
+            if (before && timestamp == 0) timestamp = System.currentTimeMillis();
+            Comments_EventsCollection = Comments_EventosDAO.getCommentByCreatorId(creatorid, timestamp, before);
+        }
+        catch (SQLException e)
+        {
+            throw new InternalServerErrorException();
+        }
+        return Comments_EventsCollection;
     }
 }

@@ -16,7 +16,23 @@
     "methods": ["GET"]
   },
   {
-    "path": "casals",
+    "path": "casals/([0-9a-f]{32})?/events",
+    "methods": ["GET"]
+  },
+  {
+    "path": "casals/([0-9a-f]{32})?/events/([0-9a-f]{32})?",
+    "methods": ["GET"]
+  },
+  {
+    "path": "casals/([0-9a-f]{32})?/comments",
+    "methods": ["GET"]
+  },
+  {
+    "path": "casals/([0-9a-f]{32})?/events/([0-9a-f]{32})?/comments",
+    "methods": ["GET"]
+  },
+  {
+    "path": "casals/comments",
     "methods": ["GET"]
   },
   {
@@ -25,6 +41,10 @@
 },
   {
     "path": "events",
+    "methods": ["GET"]
+  },
+  {
+    "path": "events/comments/([0-9a-f]{32})?",
     "methods": ["GET"]
   },
   {

@@ -18,6 +18,9 @@ import java.sql.SQLException;
 @Path("users")
 public class UserResource
 {
+    @Context
+    private SecurityContext securityContext;
+
     @POST
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     @Produces(OkupaInfoMediaType.OKUPAINFO_AUTH_TOKEN)
@@ -77,9 +80,6 @@ public class UserResource
         }
         return UserCollection;
     }
-
-    @Context
-    private SecurityContext securityContext;
 
     @Path("/{id}")
     @PUT
