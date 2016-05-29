@@ -92,6 +92,8 @@ public class UserResource
         if(!id.equals(user.getId()))
             throw new BadRequestException("path parameter id and entity parameter id doesn't match");
 
+        System.out.println(securityContext.getUserPrincipal());
+        System.out.println(securityContext.getUserPrincipal().getName());
         String userid = securityContext.getUserPrincipal().getName();
         if(!userid.equals(id))
             throw new ForbiddenException("operation not allowed");
@@ -108,6 +110,35 @@ public class UserResource
         }
         return user;
     }
+
+    /*
+        @Path("/{id}")
+    @PUT
+    @Consumes(BeeterMediaType.BEETER_USER)
+    @Produces(BeeterMediaType.BEETER_USER)
+    public User updateUser(@PathParam("id") String id, User user)
+    {
+        if(user == null)
+            throw new BadRequestException("entity is null");
+        if(!id.equals(user.getId()))
+            throw new BadRequestException("path parameter id and entity parameter id doesn't match");
+
+
+        String userid = securityContext.getUserPrincipal().getName();
+        if(!userid.equals(id))
+            throw new ForbiddenException("operation not allowed");
+
+        UserDAO userDAO = new UserDAOImpl();
+        try {
+            user = userDAO.updateProfile(userid, user.getEmail(), user.getFullname());
+            if(user == null)
+                throw new NotFoundException("User with id = "+id+" doesn't exist");
+        } catch (SQLException e) {
+            throw new InternalServerErrorException();
+        }
+        return user;
+    }
+     */
 
     @Path("/{id}")
     @RolesAllowed("[admin, registered]")/*admin estara por encima de registered y de casal, administrara por encima de todos y habrá solo 3*/

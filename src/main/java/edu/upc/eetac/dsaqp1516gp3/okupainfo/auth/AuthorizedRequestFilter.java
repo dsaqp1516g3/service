@@ -30,14 +30,11 @@ public class AuthorizedRequestFilter implements ContainerRequestFilter
 
         if(Authorized.getInstance().isAuthorized(requestContext))
             return;
-        /*if (token == null)
-            throw new WebApplicationException(Response.Status.UNAUTHORIZED);*/
-
-
+        if (token == null)
+            throw new WebApplicationException(Response.Status.UNAUTHORIZED);
         try
         {
             final UserInfo principal = (new AuthTokenDAOImpl()).getUserByAuthToken(token);
-            /*final CasalInfo principal = (new AuthTokenDAOImpl()).getUserByAuthToken(token);*/
             if(principal==null)
                 throw new WebApplicationException("auth token doesn't exists", Response.Status.UNAUTHORIZED);
             requestContext.setSecurityContext(new SecurityContext()
@@ -47,14 +44,12 @@ public class AuthorizedRequestFilter implements ContainerRequestFilter
                     return principal;
                 }
 
-                /*public Principal getCasalPrincipal() { return principal; }*/
-
                 @Override
-                public boolean isUserInRole(String s)
+                public boolean isUserInRole(String role)
                 {
                     List<Role> roles = null;
                     if (principal != null) roles = principal.getRoles();
-                    return (roles.size() > 0 && roles.contains(Role.valueOf(s)));
+                    return (roles.size() > 0 && roles.contains(Role.valueOf(role)));
                 }
 
                 @Override
@@ -67,9 +62,63 @@ public class AuthorizedRequestFilter implements ContainerRequestFilter
                     return "X-Auth-Token";
                 }
             });
-        } catch (SQLException e)
+        }
+        catch (SQLException e)
         {
             throw new InternalServerErrorException();
         }
     }
 }
+/*
+@Override
+    public void filter(ContainerRequestContext requestContext) throws IOException
+    {
+        if(Authorized.getInstance().isAuthorized(requestContext))
+            return;
+
+        final boolean secure = requestContext.getUriInfo().getAbsolutePath().getScheme().equals("https");
+
+        String token = requestContext.getHeaderString("X-Auth-Token");
+
+        if (token == null)
+            throw new WebApplicationException(Response.Status.UNAUTHORIZED);
+
+        try {
+            final UserInfo principal = (new AuthTokenDAOImpl()).getUserByAuthToken(token);
+            if(principal==null)
+                throw new WebApplicationException("auth token doesn't exists", Response.Status.UNAUTHORIZED);
+
+            requestContext.setSecurityContext(new SecurityContext()
+            {
+                @Override
+                public Principal getUserPrincipal() {
+
+                    return principal;
+                }
+
+                @Override
+                public boolean isUserInRole(String role)
+                {
+                    List<Role> roles = null;
+                    if (principal != null) roles = principal.getRoles();
+                    return (roles.size() > 0 && roles.contains(Role.valueOf(role)));
+                }
+
+                @Override
+                public boolean isSecure()
+                {
+                    return secure;
+                }
+
+                @Override
+                public String getAuthenticationScheme()
+                {
+                    return "X-Auth-Token";
+                }
+            });
+        }
+        catch (SQLException e)
+        {
+            throw new InternalServerErrorException();
+        }
+ */

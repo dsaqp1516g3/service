@@ -38,7 +38,7 @@ public class UserDAOImpl implements UserDAO {
             connection.setAutoCommit(false);
 
             stmt.close();
-            stmt = connection.prepareStatement(UserDAOQuery.CREATE_USER);
+                stmt = connection.prepareStatement(UserDAOQuery.CREATE_USER);
             stmt.setString(1, id);
             stmt.setString(2, loginid);
             stmt.setString(3, password);
@@ -108,7 +108,6 @@ public class UserDAOImpl implements UserDAO {
         }
         return user;
     }
-
 
     @Override
     public User getUserById(String id) throws SQLException

@@ -138,9 +138,13 @@ public class Comments_CasalsDAOImpl implements Comments_CasalsDAO
                 stmt = connection.prepareStatement(Comments_CasalsDAOQuery.GET_COMMENT_BY_CASALID);
             }
             else
+            {
                 stmt = connection.prepareStatement(Comments_CasalsDAOQuery.GET_COMMENT_CASALS_AFTER);
-            stmt.setTimestamp(1, new Timestamp(timestamp));
-            stmt.setString(2, casalid);
+            }
+
+
+            stmt.setString(1, casalid);
+            stmt.setTimestamp(2, new Timestamp(timestamp));
 
             ResultSet rs = stmt.executeQuery();
             boolean first = true;

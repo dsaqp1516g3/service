@@ -16,6 +16,14 @@
     "methods": ["GET"]
   },
   {
+    "path": "(?i)users/([0-9a-f]{32})?",
+    "methods": ["PUT"]
+  },
+  {
+    "path": "(?i)users/([0-9a-f]{32})?",
+    "methods": ["DELETE"]
+  },
+  {
     "path": "casals/([0-9a-f]{32})?/events",
     "methods": ["GET"]
   },
@@ -24,7 +32,7 @@
     "methods": ["GET"]
   },
   {
-    "path": "casals/([0-9a-f]{32})?/comments",
+    "path": "casals/E383D95D24BA11E6B5CD08002764EE77/comments",
     "methods": ["GET"]
   },
   {
@@ -50,6 +58,10 @@
   {
     "path": "events/comments/([0-9a-f]{32})?",
     "methods": ["GET"]
+  },
+  {
+    "path": "login",
+    "methods": ["POST"]
   },
   {
     "path": "(?i)casals/([0-9a-f]{32})?",
