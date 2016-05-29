@@ -11,7 +11,7 @@ public class OkupaInfoMediaType
     public final static String OKUPAINFO_COMMENTS_EVENTS_COLLECTION = "application/vnd.dsa.okupainfo.comments_events.collection+json";
     public final static String OKUPAINFO_COMMENTS_CASALS = "application/vnd.dsa.okupainfo.comments_casals+json";
     public final static String OKUPAINFO_COMMENTS_CASALS_COLLECTION = "application/vnd.dsa.okupainfo.comments_casals.collection+json";
-    public final static String OKUPAINFO_EVENTS = "application/vnd.dsa.okupainfo.events+json";
+    public final static String OKUPAINFO_EVENTS = "application/vnd.dsa.okupainfo.casals.events+json";
     public final static String OKUPAINFO_EVENTS_COLLECTION = "application/vnd.dsa.okupainfo.events.collection+json";
     public final static String OKUPAINFO_ROOT = "application/vnd.dsa.okupainfo.root+json";
 }

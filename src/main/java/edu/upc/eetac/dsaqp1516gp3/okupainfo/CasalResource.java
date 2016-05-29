@@ -41,7 +41,7 @@ public class CasalResource
             StringBuffer coordinates = sendGet(localization);
             /**Asignamos el valor devuelto por OpenStreetMap a nuestros valores de longitud y latitud**/
             //casal = casalDAO.createCasal(adminid, email, name, description, localization, coordinates.longitude, coordinates.latitude, validated);
-            authenticationToken = (new AuthTokenDAOImpl()).createAuthToken(casal.getCasalid());
+            casal = casalDAO.createCasal(adminid, email, name, description, localization, longitude, latitude, validated);
         }
         catch (CasalAlreadyExistsException e)
         {
@@ -54,7 +54,7 @@ public class CasalResource
             e.printStackTrace();
         }
         URI uri = new URI(uriInfo.getAbsolutePath().toString() + "/" + casal.getCasalid());
-        return Response.created(uri).type(OkupaInfoMediaType.OKUPAINFO_AUTH_TOKEN).entity(authenticationToken).build();
+        return Response.created(uri).type(OkupaInfoMediaType.OKUPAINFO_CASAL).entity(casal).build();
     }
 
     /**Aqui atacamos a la API externa para obtener las longitudes y latitudes**/
@@ -191,14 +191,13 @@ public class CasalResource
 
 
             Event = EventoDAO.createEvent(casalid, title, description, localization, latitude, longitude, eventdate);
-            authenticationToken = (new AuthTokenDAOImpl()).createAuthToken(Event.getId());
         }
         catch (SQLException e)
         {
             throw new InternalServerErrorException();
         }
         URI uri = new URI(uriInfo.getAbsolutePath().toString() + "/" + Event.getId());
-        return Response.created(uri).type(OkupaInfoMediaType.OKUPAINFO_AUTH_TOKEN).entity(authenticationToken).build();
+        return Response.created(uri).type(OkupaInfoMediaType.OKUPAINFO_EVENTS).entity(Event).build();
     }
 
     @GET
