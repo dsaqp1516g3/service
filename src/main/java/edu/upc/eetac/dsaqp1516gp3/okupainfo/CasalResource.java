@@ -1,11 +1,14 @@
 package edu.upc.eetac.dsaqp1516gp3.okupainfo;
 
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import edu.upc.eetac.dsaqp1516gp3.okupainfo.dao.*;
 import edu.upc.eetac.dsaqp1516gp3.okupainfo.entity.*;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.json.JSONObject;
 
 import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.*;
@@ -30,18 +33,21 @@ public class CasalResource
                                 @FormParam("validated") boolean validated, @Context UriInfo uriInfo) throws URISyntaxException
     {
 
-        if (adminid == null || email == null || name == null || description == null || localization == null || latitude == null || longitude == null)
+        if (adminid == null || email == null || name == null || description == null || localization == null )
             throw new BadRequestException("all parameters are mandatory");
         CasalDAO casalDAO = new CasalDAOImpl();
         Casal casal = null;
         AuthToken authenticationToken = null;
-        try
-        {
+        try {
             /**Aqui atacamos a la API externa para obtener las longitudes y latitudes**/
-            StringBuffer coordinates = sendGet(localization);
+            JSONObject coordinates = sendGet(localization);
+            System.out.println(coordinates.get("lat"));
+
             /**Asignamos el valor devuelto por OpenStreetMap a nuestros valores de longitud y latitud**/
             //casal = casalDAO.createCasal(adminid, email, name, description, localization, coordinates.longitude, coordinates.latitude, validated);
-            authenticationToken = (new AuthTokenDAOImpl()).createAuthToken(casal.getCasalid());
+            casal = casalDAO.createCasal(adminid, email, name, description, localization, longitude, latitude, validated);
+
+            //authenticationToken = (new AuthTokenDAOImpl()).createAuthToken(casal.getCasalid());
         }
         catch (CasalAlreadyExistsException e)
         {
@@ -58,7 +64,7 @@ public class CasalResource
     }
 
     /**Aqui atacamos a la API externa para obtener las longitudes y latitudes**/
-    private StringBuffer sendGet(String localization) throws Exception
+    private JSONObject sendGet(String localization) throws Exception
     {
 
         String url = "http://nominatim.openstreetmap.org/search?q=" + localization + "&format=json&addressdetails=1";
@@ -75,19 +81,22 @@ public class CasalResource
         System.out.println("Response Code : " +
                 response.getStatusLine().getStatusCode());
 
-        BufferedReader rd = new BufferedReader(
-                new InputStreamReader(response.getEntity().getContent()));
+        BufferedReader rd = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
 
         StringBuffer coordinates = new StringBuffer();
+        JSONObject myObject = new JSONObject(coordinates);
         String line = "";
         while ((line = rd.readLine()) != null)
         {
             coordinates.append(line);
+
         }
 
         System.out.println(coordinates.toString());
-        return coordinates;
+        JsonObject jsonObject = new JsonParser().parse(String.valueOf(coordinates)).getAsJsonObject();
+        return myObject;
     }
+
 
     @GET
     @Produces(OkupaInfoMediaType.OKUPAINFO_CASAL_COLLECTION)
