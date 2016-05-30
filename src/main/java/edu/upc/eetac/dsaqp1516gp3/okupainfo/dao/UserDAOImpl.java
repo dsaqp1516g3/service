@@ -85,6 +85,7 @@ public class UserDAOImpl implements UserDAO {
             stmt.setString(1, email);
             stmt.setString(2, fullname);
             stmt.setString(3, description);
+            stmt.setString(4, id);
 
             int rows = stmt.executeUpdate();
             if (rows == 1)

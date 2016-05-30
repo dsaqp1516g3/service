@@ -1,23 +1,15 @@
 package edu.upc.eetac.dsaqp1516gp3.okupainfo;
 
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import edu.upc.eetac.dsaqp1516gp3.okupainfo.dao.*;
 import edu.upc.eetac.dsaqp1516gp3.okupainfo.entity.*;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.json.JSONObject;
 
 import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.sql.SQLException;
+import java.util.Map;
 
 @Path("casals")
 public class CasalResource
@@ -29,23 +21,26 @@ public class CasalResource
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     @Produces(OkupaInfoMediaType.OKUPAINFO_AUTH_TOKEN)
     public Response createCasal(@FormParam("adminid") String adminid, @FormParam("email") String email, @FormParam("name") String name, @FormParam("description") String description,
-                                @FormParam("localization") String localization, @FormParam("latitude") Double latitude, @FormParam("longitude") Double longitude,
-                                @FormParam("validated") boolean validated, @Context UriInfo uriInfo) throws URISyntaxException
+                                @FormParam("localization") String localization, @FormParam("validated") boolean validated, @Context UriInfo uriInfo) throws URISyntaxException
     {
-
-        if (adminid == null || email == null || name == null || description == null || localization == null )
+        if (adminid == null || email == null || name == null || description == null || localization == null)
             throw new BadRequestException("all parameters are mandatory");
         CasalDAO casalDAO = new CasalDAOImpl();
         Casal casal = null;
-        AuthToken authenticationToken = null;
-        try {
-            /**Aqui atacamos a la API externa para obtener las longitudes y latitudes**/
-            JSONObject coordinates = sendGet(localization);
-            System.out.println(coordinates.get("lat"));
+        OpenStreetMapUtils openStreetMapUtils = new OpenStreetMapUtils();
 
-            /**Asignamos el valor devuelto por OpenStreetMap a nuestros valores de longitud y latitud**/
+        AuthToken authenticationToken = null;
+        try
+        {
+            /**Aqui atacamos a la API externa para obtener las longitudes y latitudes**/
+            Map<String, Double> coo = openStreetMapUtils.getCoordinates(localization);
+            double lon = coo.get("lon");
+            double lat = coo.get("lat");
+            /**De alguna manera misteriosa obtenemos lat y long y los guardamos cada uno en una variable**/
+
+            /**Asignaremos el valor devuelto por OpenStreetMap a nuestros valores de longitud y latitud**/
             //casal = casalDAO.createCasal(adminid, email, name, description, localization, coordinates.longitude, coordinates.latitude, validated);
-            casal = casalDAO.createCasal(adminid, email, name, description, localization, longitude, latitude, validated);
+            casal = casalDAO.createCasal(adminid, email, name, description, localization, lon, lat, validated);
 
             //authenticationToken = (new AuthTokenDAOImpl()).createAuthToken(casal.getCasalid());
         }
@@ -56,47 +51,14 @@ public class CasalResource
         catch (SQLException e)
         {
             throw new InternalServerErrorException();
-        } catch (Exception e) {
+        }
+        catch (Exception e)
+        {
             e.printStackTrace();
         }
         URI uri = new URI(uriInfo.getAbsolutePath().toString() + "/" + casal.getCasalid());
-        return Response.created(uri).type(OkupaInfoMediaType.OKUPAINFO_AUTH_TOKEN).entity(authenticationToken).build();
+            return Response.created(uri).type(OkupaInfoMediaType.OKUPAINFO_AUTH_TOKEN).entity(authenticationToken).build();
     }
-
-    /**Aqui atacamos a la API externa para obtener las longitudes y latitudes**/
-    private JSONObject sendGet(String localization) throws Exception
-    {
-
-        String url = "http://nominatim.openstreetmap.org/search?q=" + localization + "&format=json&addressdetails=1";
-
-        HttpClient client = new DefaultHttpClient();
-        HttpGet request = new HttpGet(url);
-
-        // add request header
-        //request.addHeader("User-Agent", USER_AGENT);
-
-        HttpResponse response = client.execute(request);
-
-        System.out.println("\nSending 'GET' request to URL : " + url);
-        System.out.println("Response Code : " +
-                response.getStatusLine().getStatusCode());
-
-        BufferedReader rd = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
-
-        StringBuffer coordinates = new StringBuffer();
-        JSONObject myObject = new JSONObject(coordinates);
-        String line = "";
-        while ((line = rd.readLine()) != null)
-        {
-            coordinates.append(line);
-
-        }
-
-        System.out.println(coordinates.toString());
-        JsonObject jsonObject = new JsonParser().parse(String.valueOf(coordinates)).getAsJsonObject();
-        return myObject;
-    }
-
 
     @GET
     @Produces(OkupaInfoMediaType.OKUPAINFO_CASAL_COLLECTION)
@@ -110,6 +72,33 @@ public class CasalResource
         }
         return CasalCollection;
     }
+
+    //@GET
+//    @Path("/validated")
+//    @Produces(OkupaInfoMediaType.OKUPAINFO_CASAL_COLLECTION)
+//    public CasalCollection getAllCasals() {
+//        CasalCollection CasalCollection;
+//        CasalDAO casalDAO = new CasalDAOImpl();
+//        try {
+//            CasalCollection = casalDAO.getAllCasals();
+//        } catch (SQLException e) {
+//            throw new InternalServerErrorException();
+//        }
+//        return CasalCollection;
+//    }
+//    @GET
+//    @Path("/unvalildated")
+//    @Produces(OkupaInfoMediaType.OKUPAINFO_CASAL_COLLECTION)
+//    public CasalCollection g() {
+//        CasalCollection CasalCollection;
+//        CasalDAO casalDAO = new CasalDAOImpl();
+//        try {
+//            CasalCollection = casalDAO.getAllCasals();
+//        } catch (SQLException e) {
+//            throw new InternalServerErrorException();
+//        }
+//        return CasalCollection;
+//    }
 
     @RolesAllowed("[admin, casal]")
     @Path("/{casalid}")

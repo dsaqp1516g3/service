@@ -38,13 +38,13 @@ public class CasalDAOImpl implements CasalDAO
 
             stmt.setString(1, adminid);
             stmt.setString(2, casalid);
-            stmt.setString(4, email);
-            stmt.setString(5, name);
-            stmt.setString(6, description);
-            stmt.setString(7, localization);
-            stmt.setString(8, String.valueOf(latitude));
-            stmt.setString(9, String.valueOf(longitude));
-            stmt.setString(10, String.valueOf(false));
+            stmt.setString(3, email);
+            stmt.setString(4, name);
+            stmt.setString(5, description);
+            stmt.setString(6, localization);
+            stmt.setDouble(7, latitude);
+            stmt.setDouble(8, longitude);
+            stmt.setString(9, String.valueOf(false));
             stmt.executeUpdate();
 
             connection.commit();
@@ -130,6 +130,8 @@ public class CasalDAOImpl implements CasalDAO
                 casal.setName(rs.getString("name"));
                 casal.setDescription(rs.getString("description"));
                 casal.setLocalization(rs.getString("localization"));
+                casal.setLatitude(rs.getDouble("latitude"));
+                casal.setLongitude(rs.getDouble("longitude"));
             }
         }
         catch (SQLException e)
@@ -283,6 +285,8 @@ public class CasalDAOImpl implements CasalDAO
                 casal.setEmail(rs.getString("email"));
                 casal.setName(rs.getString("name"));
                 casal.setDescription(rs.getString("description"));
+                casal.setLatitude(rs.getDouble("latitude"));
+                casal.setLongitude(rs.getDouble("longitude"));
                 casalCollection.getCasals().add(casal);
             }
         }
