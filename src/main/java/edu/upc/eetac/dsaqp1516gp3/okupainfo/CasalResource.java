@@ -8,7 +8,6 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.*;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.sql.Date;
 import java.sql.SQLException;
 import java.util.Map;
 
@@ -17,6 +16,7 @@ public class CasalResource {
     @Context
     private SecurityContext securityContext;
 
+    /**Creamos un casal**/
     @POST
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     @Produces(OkupaInfoMediaType.OKUPAINFO_AUTH_TOKEN)
@@ -47,6 +47,7 @@ public class CasalResource {
         return Response.created(uri).build();
     }
 
+    /**Obtenemos una lista de todos los casales**/
     @GET
     @Produces(OkupaInfoMediaType.OKUPAINFO_CASAL_COLLECTION)
     public CasalCollection getAllCasals() {
@@ -60,6 +61,7 @@ public class CasalResource {
         return CasalCollection;
     }
 
+    /**Obtenemos una lista de todos los casales que SI esten validados**/
     @GET
     @Path("/validated")
     @Produces(OkupaInfoMediaType.OKUPAINFO_CASAL_COLLECTION)
@@ -74,8 +76,9 @@ public class CasalResource {
         return CasalCollection;
     }
 
+    /**Obtenemos una lista de todos los casales que NO esten validados**/
     @GET
-    @Path("/unvalildated")
+    @Path("/unvalidated")
     @Produces(OkupaInfoMediaType.OKUPAINFO_CASAL_COLLECTION)
     public CasalCollection getAllUnvalidatedCasals() {
         CasalCollection CasalCollection;
@@ -88,14 +91,13 @@ public class CasalResource {
         return CasalCollection;
     }
 
-    @RolesAllowed("[admin, casal]")
+    /**Actualizamos el perfil de un casal**/
+    //  @RolesAllowed("[admin, casal]")
     @Path("/{casalid}")
     @PUT
     @Consumes(OkupaInfoMediaType.OKUPAINFO_CASAL)
     @Produces(OkupaInfoMediaType.OKUPAINFO_CASAL)
-    public Casal updateProfile(@PathParam("casalid") String casalid, @PathParam("email") String email, @PathParam("name") String name,
-                               @PathParam("description") String description, @PathParam("localization") String localization, @PathParam("latitude") double latitude,
-                               @PathParam("longitude") double longitude, @PathParam("validated") boolean validated, Casal casal) {
+    public Casal updateCasalProfile(@PathParam("casalid") String casalid, Casal casal) {
         if (casal == null)
             throw new BadRequestException("entity is null");
         if (!casalid.equals(casal.getCasalid()))
@@ -116,6 +118,7 @@ public class CasalResource {
         return casal;
     }
 
+    /**Obtenemos el perfil de un Casal**/
     @Path("/{casalid}")
     @GET
     @Produces(OkupaInfoMediaType.OKUPAINFO_CASAL)
@@ -131,6 +134,7 @@ public class CasalResource {
         return casal;
     }
 
+    /**Eliminamos un casal**/
     @Path("/{casalid}")
     @RolesAllowed("[admin, casal]")
     @DELETE
@@ -152,8 +156,9 @@ public class CasalResource {
     /******************************************EVENTOS**********************************************************/
     /***********************************************************************************************************/
 
+    /**Creamos un evento siendo un casal**/
     @POST
-    @Path("/{casalid}/events/")
+    @Path("/{casalid}")
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     @Produces(OkupaInfoMediaType.OKUPAINFO_AUTH_TOKEN)
     public Response createEvent(@PathParam("casalid") String casalid, @FormParam("title") String title, @FormParam("description") String description,
@@ -161,7 +166,7 @@ public class CasalResource {
         if (title == null || description == null || localization == null || eventdate == 0)
             throw new BadRequestException("all parameters are mandatory");
         CasalDAO casalDAO = new CasalDAOImpl();
-        String adminid = null;
+        String adminid;
         try {
             adminid = casalDAO.getAdminId(casalid);
             if (adminid == null || !adminid.equals(securityContext.getUserPrincipal().getName()))
@@ -189,132 +194,83 @@ public class CasalResource {
         return Response.created(uri).build();
     }
 
-    @RolesAllowed("[registered, admin, casal]")
+    /**Lista de eventos ofrecidas por un casal**/
+    //@RolesAllowed("[registered, admin, casal]")
     @GET
-    @Path("/{id}/events")
-    /**Get All events of 1 casal**/
+    @Path("/{casalid}/events")
     @Produces(OkupaInfoMediaType.OKUPAINFO_EVENTS_COLLECTION)
-    public EventCollection getAllEvents(@QueryParam("timestamp") long timestamp, @DefaultValue("true") @QueryParam("before") boolean before) {
+    public EventCollection getAllEventsOfCasal(@PathParam("casalid") String casalid, @QueryParam("timestamp") long timestamp, @DefaultValue("true") @QueryParam("before") boolean before) {
         EventCollection EventCollection;
         EventoDAO EventoDAO = new EventoDAOImpl();
         try {
             if (before && timestamp == 0) timestamp = System.currentTimeMillis();
-            EventCollection = EventoDAO.getAllEvents(timestamp, before);
+            EventCollection = EventoDAO.getEventsByCasalId(casalid, timestamp, before);
         } catch (SQLException e) {
             throw new InternalServerErrorException();
         }
         return EventCollection;
     }
 
-    @Path("/{id}/events/{id}")
+    /**Actualizamos el perfil de un evento**/
+    @Path("/{casalid}/events/{eventid}")
     @PUT
     @Consumes(OkupaInfoMediaType.OKUPAINFO_EVENTS)
     @Produces(OkupaInfoMediaType.OKUPAINFO_EVENTS)
-    public Event updateProfile(@PathParam("id") String id, @PathParam("title") String title, @PathParam("description") String description,
-                               @PathParam("eventdate") Date eventdate, @PathParam("localization") String localization, @PathParam("latitude") double latitude,
-                               @PathParam("longitude") double longitude, Event event) {
+    public Event updateEventProfile(@PathParam("eventid") String eventid, Event event) {
         if (event == null)
             throw new BadRequestException("entity is null");
-        if (!id.equals(event.getId()))
+        if (!eventid.equals(event.getId()))
             throw new BadRequestException("path parameter id and entity parameter id doesn't match");
         String userid = securityContext.getUserPrincipal().getName();
         if (!userid.equals(event.getCasalid()))
             throw new ForbiddenException("operation not allowed");
         EventoDAO EventoDAO = new EventoDAOImpl();
         try {
-            event = EventoDAO.updateProfile(id, event.getTitle(), event.getDescription(), event.getEventdate(), event.getLocalization(), event.getLatitude(), event.getLongitude());
+            event = EventoDAO.updateProfile(eventid, event.getTitle(), event.getDescription(), event.getEventdate(), event.getLocalization(), event.getLatitude(), event.getLongitude());
             if (event == null)
-                throw new NotFoundException("El evento con la id " + id + " no existe");
+                throw new NotFoundException("El evento con la id " + eventid + " no existe");
         } catch (SQLException e) {
             throw new InternalServerErrorException();
         }
         return event;
     }
 
-    @Path("/{id}/events/{id}")
+    /**Eliminamos un evento**/
+    @Path("/{casalid}/events/{eventid}")
     @RolesAllowed("[admin, casal]")
     @DELETE
-    public void deleteEvent(@PathParam("id") String id) {
+    public void deleteEvent(@PathParam("eventid") String eventid) {
         EventoDAO EventoDAO = new EventoDAOImpl();
         try {
-            if (!EventoDAO.deleteEvent(id))
-                throw new NotFoundException("Event with id = " + id + " doesn't exist");
+            if (!EventoDAO.deleteEvent(eventid))
+                throw new NotFoundException("Event with id = " + eventid + " doesn't exist");
         } catch (SQLException e) {
             throw new InternalServerErrorException();
         }
     }
 
-    @Path("/{id}/events/{id}")
-    /**Get de un solo evento en concreto de un casal específico**/
+    /**Obtenemos el perfil de un evento**/
+    @Path("/{casalid}/events/{eventid}")
     @RolesAllowed("[admin, casal]")
     @GET
-    public EventCollection getEventsByCasalId(@PathParam("id") String id, @QueryParam("timestamp") long timestamp, @DefaultValue("true") @QueryParam("before") boolean before, @Context Request request) {
-        EventCollection eventCollection;
+    public Event getEventsByCasalId(@PathParam("casalid") String casalid, @PathParam("eventid") String eventid) {
+        Event event;
         EventoDAO eventoDAO = new EventoDAOImpl();
 
         try {
-            if (before && timestamp == 0) timestamp = System.currentTimeMillis();
-            eventCollection = eventoDAO.getEventsByCreatorId(id, timestamp, before);
+            event = eventoDAO.getEventByIdAndCasalId(casalid, eventid);
         } catch (SQLException e) {
             throw new InternalServerErrorException();
         }
-        return eventCollection;
-    }
-
-    @Path("{id}/events/{userid}")
-    /**Comprobamos a que eventos asiste el usuario**/
-    @GET
-    @Produces(OkupaInfoMediaType.OKUPAINFO_EVENTS)//Miramos la asistencia de un usuario a varios eventos
-    public EventCollection getEventsByUserId(@PathParam("userid") String userid, @QueryParam("timestamp") long timestamp, @DefaultValue("true")
-    @QueryParam("before") boolean before, @Context Request request) {
-        EventCollection eventCollection;
-        EventoDAO eventoDAO = new EventoDAOImpl();
-
-        try {
-            if (before && timestamp == 0) timestamp = System.currentTimeMillis();
-            eventCollection = eventoDAO.getEventsByUserId(userid, timestamp, before);
-        } catch (SQLException e) {
-            throw new InternalServerErrorException();
-        }
-        return eventCollection;
-    }
-
-    @Path("{id}/events/{id}/{userid}")
-    /**Añadimos la asistencia del usuario al evento**/
-    @POST
-    @Produces(OkupaInfoMediaType.OKUPAINFO_EVENTS)//Miramos la asistencia de un usuario a varios eventos
-    public void addAssistanceToEvent(@FormParam("userid") String userid, @FormParam("eventid") String eventid, @Context UriInfo uriInfo) throws URISyntaxException {
-        if (userid == null || eventid == null)
-            throw new BadRequestException("all parameters are mandatory");
-        EventoDAO eventoDAO = new EventoDAOImpl();
-
-        try {
-            eventoDAO.addUserAssistance(userid, eventid);
-        } catch (SQLException e) {
-            throw new InternalServerErrorException();
-        }
-    }
-
-    @Path("{id}/events/{id}/{userid}")
-    /**Eliminamos la asistencia del usuario al evento**/
-    @DELETE
-    @Produces(OkupaInfoMediaType.OKUPAINFO_EVENTS)//Miramos la asistencia de un usuario a varios eventos
-    public void deleteAssistanceToEvent(@PathParam("userid") String userid, @PathParam("eventid") String eventid) {
-        EventoDAO eventoDAO = new EventoDAOImpl();
-
-        try {
-            if (!eventoDAO.deleteAssistanceEvent(userid, eventid)) ;
-            throw new NotFoundException("Event with id = " + eventid + " doesn't exist or user with id = " + userid + " doesn't exist");
-        } catch (SQLException e) {
-            throw new InternalServerErrorException();
-        }
+        return event;
     }
 
     /***********************************************************************************************************/
     /******************************COMMENTS**EVENTOS************************************************************/
     /***********************************************************************************************************/
 
-    @Path("{id}/events/{id}")
+    /**Creamos un comentario acerca de un evento**/
+    @Path("{casalid}/events/{eventid}/comments")
     @POST
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     public Response createEventComment(@FormParam("creatorid") String creatorid, @FormParam("eventoid") String eventoid,
@@ -332,7 +288,8 @@ public class CasalResource {
         return Response.created(uri).type(OkupaInfoMediaType.OKUPAINFO_COMMENTS_EVENTS).entity(Comments_Events).build();
     }
 
-    @Path("{id}/events/{id}/comments")
+    /**Vemos todos los comentarios de un evento**/
+    @Path("{casalid}/events/{eventid}/comments")
     @GET
     @Produces(OkupaInfoMediaType.OKUPAINFO_COMMENTS_EVENTS_COLLECTION)
     public Comments_EventsCollection getAllEventComments(@QueryParam("timestamp") long timestamp, @DefaultValue("true") @QueryParam("before") boolean before) {
@@ -347,31 +304,51 @@ public class CasalResource {
         return Comments_EventsCollection;
     }
 
-    @Path("/{id}/events/{id}/comments/{id}")
+    /**Actualizamos el comentario de un evento**/
+    @Path("/{casalid}/events/{eventid}/comments/{commentid}")
     @PUT
     @Consumes(OkupaInfoMediaType.OKUPAINFO_COMMENTS_EVENTS)
     @Produces(OkupaInfoMediaType.OKUPAINFO_COMMENTS_EVENTS)
-    public Comments_Events updateCommentEvent(@PathParam("id") String id, @PathParam("creatorid") String creatorid, @PathParam("content") String content, Comments_Events Comments_Events) {
+    public Comments_Events updateCommentEvent(@PathParam("commentid") String commentid, @FormParam("content") String content, Comments_Events Comments_Events) {
         if (Comments_Events == null)
             throw new BadRequestException("entity is null");
-        if (!id.equals(Comments_Events.getId()))
+        if (!commentid.equals(Comments_Events.getId()))
             throw new BadRequestException("path parameter id and entity parameter id doesn't match");
 
         Comments_EventosDAO Comments_EventosDAO = new Comments_EventosDAOImpl();
         try {
-            Comments_Events = Comments_EventosDAO.updateComment(id, Comments_Events.getCreatorid(), Comments_Events.getContent());
+            Comments_Events = Comments_EventosDAO.updateComment(commentid, Comments_Events.getCreatorid(), Comments_Events.getContent());
             if (Comments_Events == null)
-                throw new NotFoundException("El comentario con la id " + id + " no existe");
+                throw new NotFoundException("El comentario con la id " + commentid + " no existe");
         } catch (SQLException e) {
             throw new InternalServerErrorException();
         }
         return Comments_Events;
     }
 
+    /**Visualizamos el comentario de un evento**/
+    @Path("/{casalid}/events/{eventid}/comments/{commentid}")
+    @GET
+    @Produces(OkupaInfoMediaType.OKUPAINFO_COMMENTS_EVENTS)
+    public Comments_Events getCommentEventById(@PathParam("commentid") String eventid) {
+        Comments_Events comments_events;
+        Comments_EventosDAO Comments_EventosDAO = new Comments_EventosDAOImpl();
+
+        try {
+            comments_events = Comments_EventosDAO.getCommentById(eventid);
+            if (comments_events == null)
+                throw new NotFoundException("El comentario con la id " + eventid + " no existe");
+        } catch (SQLException e) {
+            throw new InternalServerErrorException();
+        }
+        return comments_events;
+    }
+
+    /**Eliminamos el comentario de un evento**/
     @RolesAllowed("[admin, casal]")
-    @Path("/{id}/events/{id}/comments/{id}")
+    @Path("/{casalid}/events/{eventid}/comments/{commentid}")
     @DELETE
-    public void deleteCommentEvent(@PathParam("id") String id) {
+    public void deleteCommentEvent(@PathParam("commentid") String id) {
         Comments_EventosDAO Comments_EventosDAO = new Comments_EventosDAOImpl();
         try {
             if (!Comments_EventosDAO.deleteComment(id))
@@ -385,6 +362,7 @@ public class CasalResource {
     /******************************COMMENTS**CASALS************************************************************/
     /***********************************************************************************************************/
 
+    /**Obtenemos todos los comentarios hechos acerca de los casals**/
     @Path("/comments")
     @GET
     @Produces(OkupaInfoMediaType.OKUPAINFO_COMMENTS_CASALS_COLLECTION)
@@ -400,10 +378,11 @@ public class CasalResource {
         return Comments_CasalsCollection;
     }
 
+    /**Comentamos sobre un casal**/
     @POST
-    @Path("/{id}/")
+    @Path("/{casalid}/comments")
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-    public Response createCasalComment(@FormParam("creatorid") String creatorid, @FormParam("casalid") String casalid,
+    public Response createCasalComment(@FormParam("creatorid") String creatorid, @PathParam("casalid") String casalid,
                                        @FormParam("content") String content, @Context UriInfo uriInfo) throws URISyntaxException {
         if (creatorid == null || casalid == null || content == null)
             throw new BadRequestException("all parameters are mandatory");
@@ -418,8 +397,8 @@ public class CasalResource {
         return Response.created(uri).type(OkupaInfoMediaType.OKUPAINFO_COMMENTS_CASALS).entity(Comments_Casals).build();
     }
 
-    @Path("/{id}/comments/")
-    /**Get  specific comment of casal**/
+    /**Obtenemos los comentarios acerca de un casal**/
+    @Path("/{casalid}/comments")
     @GET
     @Produces(OkupaInfoMediaType.OKUPAINFO_COMMENTS_CASALS)
     public Comments_CasalsCollection getCommentByCasalId(@PathParam("casalid") String casalid, @QueryParam("timestamp") long timestamp, @DefaultValue("true") @QueryParam("before") boolean before) {
@@ -427,18 +406,34 @@ public class CasalResource {
         Comments_CasalsDAO Comments_CasalsDAO = new Comments_CasalsDAOImpl();
         try {
             if (before && timestamp == 0) timestamp = System.currentTimeMillis();
-            Comments_CasalsCollection = Comments_CasalsDAO.getCommentByCasalId(casalid, timestamp, before);
+            Comments_CasalsCollection = Comments_CasalsDAO.getCommentsByCasalId(casalid, timestamp, before);
         } catch (SQLException e) {
             throw new InternalServerErrorException();
         }
         return Comments_CasalsCollection;
     }
 
-    @Path("/{id}/comments/{id}")
+    /**Miramos un comentario**/
+    @Path("/{casalid}/comments/{commentid}")
+    @GET
+    @Produces(OkupaInfoMediaType.OKUPAINFO_COMMENTS_CASALS)
+    public Comments_Casals getCommentByCommentId(@PathParam("commentid") String id, @PathParam("casalid") String creatorid) {
+        Comments_Casals comments_casals;
+        Comments_CasalsDAO Comments_CasalsDAO = new Comments_CasalsDAOImpl();
+        try {
+            comments_casals = Comments_CasalsDAO.getCommentById(id);
+        } catch (SQLException e) {
+            throw new InternalServerErrorException();
+        }
+        return comments_casals;
+    }
+
+    /**Modificamos un comentario**/
+    @Path("/{casalid}/comments/{commentid}")
     @PUT
     @Consumes(OkupaInfoMediaType.OKUPAINFO_COMMENTS_CASALS)
     @Produces(OkupaInfoMediaType.OKUPAINFO_COMMENTS_CASALS)
-    public Comments_Casals updateComment(@PathParam("id") String id, @PathParam("creatorid") String creatorid, @PathParam("content") String content, Comments_Casals Comments_Casals) {
+    public Comments_Casals updateComment(@PathParam("casalid") String id, @PathParam("commentid") String creatorid, @FormParam("content") String content, Comments_Casals Comments_Casals) {
         if (Comments_Casals == null)
             throw new BadRequestException("entity is null");
         if (!id.equals(Comments_Casals.getId()))
@@ -456,9 +451,9 @@ public class CasalResource {
     }
 
     @RolesAllowed("[admin, registered]")
-    @Path("/{id}/comments/{id}")
+    @Path("/{casalid}/comments/{commentid}")
     @DELETE
-    public void deleteCommentCasal(@PathParam("id") String id) {
+    public void deleteCommentCasal(@PathParam("commentid") String id) {
         Comments_CasalsDAO Comments_CasalsDAO = new Comments_CasalsDAOImpl();
         try {
             if (!Comments_CasalsDAO.deleteComment(id))
@@ -468,8 +463,8 @@ public class CasalResource {
         }
     }
 
+    /**Obtenemos todos los comentarios a casals hechos por un usuario**/
     @Path("/comments/{creatorid}")
-    /**Get  all comments of a specific user in regards to this casal**/
     @GET
     @Produces(OkupaInfoMediaType.OKUPAINFO_COMMENTS_CASALS)
     public Comments_CasalsCollection getCommentByCreatorId(@PathParam("creatorid") String creatorid, @QueryParam("timestamp") long timestamp, @DefaultValue("true") @QueryParam("before") boolean before) {
@@ -477,7 +472,7 @@ public class CasalResource {
         Comments_CasalsDAO Comments_CasalsDAO = new Comments_CasalsDAOImpl();
         try {
             if (before && timestamp == 0) timestamp = System.currentTimeMillis();
-            Comments_CasalsCollection = Comments_CasalsDAO.getCommentByCreatorId(creatorid, timestamp, before);
+            Comments_CasalsCollection = Comments_CasalsDAO.getCommentByCreatorId( creatorid, timestamp, before);
         } catch (SQLException e) {
             throw new InternalServerErrorException();
         }
@@ -487,81 +482,81 @@ public class CasalResource {
     /***********************************************************************************************************/
     /*********************************Valoraciones**************************************************************/
     /***********************************************************************************************************/
-
-    @Path("/{id}/valoracion")
-    @POST
-    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-    @Produces(OkupaInfoMediaType.OKUPAINFO_AUTH_TOKEN)
-    public Response createValoracion(@FormParam("loginid") String loginid, @FormParam("casalid") String casalid, @FormParam("valoracion") boolean valoracion, @Context UriInfo uriInfo) throws URISyntaxException {
-        if (loginid == null || casalid == null)
-            throw new BadRequestException("all parameters are mandatory");
-        ValoracionDAO ValoracionDAO = new ValoracionDAOImpl();
-        Valoracion Valoracion = null;
-        AuthToken authenticationToken;
-        try {
-        /*Aqui atacamos a la API externa para obtener las longitudes y latitudes*/
-            try {
-                Valoracion = ValoracionDAO.createValoracion(loginid, casalid, valoracion);
-            } catch (UserAlreadyExistsException e) {
-                e.printStackTrace();
-            }
-            authenticationToken = (new AuthTokenDAOImpl()).createAuthToken(Valoracion.getId());
-        } catch (SQLException e) {
-            throw new InternalServerErrorException();
-        }
-        URI uri = new URI(uriInfo.getAbsolutePath().toString() + "/" + Valoracion.getId());
-        return Response.created(uri).type(OkupaInfoMediaType.OKUPAINFO_AUTH_TOKEN).entity(authenticationToken).build();
-    }
-
-    @Path("/{id}/valoracion/{id}")
-    @PUT
-    @Consumes(OkupaInfoMediaType.OKUPAINFO_EVENTS)
-    @Produces(OkupaInfoMediaType.OKUPAINFO_EVENTS)
-    public Valoracion updateValoracion(@PathParam("id") String id, @PathParam("loginid") String loginid, @PathParam("casalid") String casalid, @PathParam("valoracion") boolean valoracion, Valoracion Valoracion) {
-        if (Valoracion == null)
-            throw new BadRequestException("entity is null");
-        if (!id.equals(Valoracion.getId()))
-            throw new BadRequestException("path parameter id and entity parameter id doesn't match");
-        String userid = securityContext.getUserPrincipal().getName();
-        if (!userid.equals(Valoracion.getCasalid()))
-            throw new ForbiddenException("operation not allowed");
-        ValoracionDAO ValoracionDAO = new ValoracionDAOImpl();
-        try {
-            Valoracion = ValoracionDAO.updateValoracion(id, loginid, casalid, valoracion);
-            if (Valoracion == null)
-                throw new NotFoundException("La valoracion con la id " + id + " no existe");
-        } catch (SQLException e) {
-            throw new InternalServerErrorException();
-        }
-        return Valoracion;
-    }
-
-    @Path("/{id}/valoracion/{id}")
-    @GET
-    @Produces(OkupaInfoMediaType.OKUPAINFO_EVENTS_COLLECTION)
-    public Valoracion getValoracionByLoginid(@PathParam("loginid") String loginid) {
-        Valoracion Valoracion;
-        try {
-            Valoracion = (new ValoracionDAOImpl().getValoracionByLoginid(loginid));
-        } catch (SQLException e) {
-            throw new InternalServerErrorException(e.getMessage());
-        }
-        if (Valoracion == null)
-            throw new NotFoundException("Event with id = " + loginid + "doesn't exist");
-        return Valoracion;
-    }
-
-    @Path("/{id}/valoracion/")
-    @GET
-    @Produces(OkupaInfoMediaType.OKUPAINFO_EVENTS_COLLECTION)
-    public ValoracionCollection getAllValoraciones() {
-        ValoracionCollection ValoracionCollection;
-        ValoracionDAO ValoracionDAO = new ValoracionDAOImpl();
-        try {
-            ValoracionCollection = ValoracionDAO.getAllValoraciones();
-        } catch (SQLException e) {
-            throw new InternalServerErrorException();
-        }
-        return ValoracionCollection;
-    }
+//
+//    @Path("/{id}/valoracion")
+//    @POST
+//    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+//    @Produces(OkupaInfoMediaType.OKUPAINFO_AUTH_TOKEN)
+//    public Response createValoracion(@FormParam("loginid") String loginid, @FormParam("casalid") String casalid, @FormParam("valoracion") boolean valoracion, @Context UriInfo uriInfo) throws URISyntaxException {
+//        if (loginid == null || casalid == null)
+//            throw new BadRequestException("all parameters are mandatory");
+//        ValoracionDAO ValoracionDAO = new ValoracionDAOImpl();
+//        Valoracion Valoracion = null;
+//        AuthToken authenticationToken;
+//        try {
+//        /*Aqui atacamos a la API externa para obtener las longitudes y latitudes*/
+//            try {
+//                Valoracion = ValoracionDAO.createValoracion(loginid, casalid, valoracion);
+//            } catch (UserAlreadyExistsException e) {
+//                e.printStackTrace();
+//            }
+//            authenticationToken = (new AuthTokenDAOImpl()).createAuthToken(Valoracion.getId());
+//        } catch (SQLException e) {
+//            throw new InternalServerErrorException();
+//        }
+//        URI uri = new URI(uriInfo.getAbsolutePath().toString() + "/" + Valoracion.getId());
+//        return Response.created(uri).type(OkupaInfoMediaType.OKUPAINFO_AUTH_TOKEN).entity(authenticationToken).build();
+//    }
+//
+//    @Path("/{id}/valoracion/{id}")
+//    @PUT
+//    @Consumes(OkupaInfoMediaType.OKUPAINFO_EVENTS)
+//    @Produces(OkupaInfoMediaType.OKUPAINFO_EVENTS)
+//    public Valoracion updateValoracion(@PathParam("id") String id, @PathParam("loginid") String loginid, @PathParam("casalid") String casalid, @PathParam("valoracion") boolean valoracion, Valoracion Valoracion) {
+//        if (Valoracion == null)
+//            throw new BadRequestException("entity is null");
+//        if (!id.equals(Valoracion.getId()))
+//            throw new BadRequestException("path parameter id and entity parameter id doesn't match");
+//        String userid = securityContext.getUserPrincipal().getName();
+//        if (!userid.equals(Valoracion.getCasalid()))
+//            throw new ForbiddenException("operation not allowed");
+//        ValoracionDAO ValoracionDAO = new ValoracionDAOImpl();
+//        try {
+//            Valoracion = ValoracionDAO.updateValoracion(id, loginid, casalid, valoracion);
+//            if (Valoracion == null)
+//                throw new NotFoundException("La valoracion con la id " + id + " no existe");
+//        } catch (SQLException e) {
+//            throw new InternalServerErrorException();
+//        }
+//        return Valoracion;
+//    }
+//
+//    @Path("/{id}/valoracion/{id}")
+//    @GET
+//    @Produces(OkupaInfoMediaType.OKUPAINFO_EVENTS_COLLECTION)
+//    public Valoracion getValoracionByLoginid(@PathParam("loginid") String loginid) {
+//        Valoracion Valoracion;
+//        try {
+//            Valoracion = (new ValoracionDAOImpl().getValoracionByLoginid(loginid));
+//        } catch (SQLException e) {
+//            throw new InternalServerErrorException(e.getMessage());
+//        }
+//        if (Valoracion == null)
+//            throw new NotFoundException("Event with id = " + loginid + "doesn't exist");
+//        return Valoracion;
+//    }
+//
+//    @Path("/{id}/valoracion/")
+//    @GET
+//    @Produces(OkupaInfoMediaType.OKUPAINFO_EVENTS_COLLECTION)
+//    public ValoracionCollection getAllValoraciones() {
+//        ValoracionCollection ValoracionCollection;
+//        ValoracionDAO ValoracionDAO = new ValoracionDAOImpl();
+//        try {
+//            ValoracionCollection = ValoracionDAO.getAllValoraciones();
+//        } catch (SQLException e) {
+//            throw new InternalServerErrorException();
+//        }
+//        return ValoracionCollection;
+//    }
 }

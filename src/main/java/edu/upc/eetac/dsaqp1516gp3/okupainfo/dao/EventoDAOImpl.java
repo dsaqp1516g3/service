@@ -66,7 +66,7 @@ public class EventoDAOImpl implements EventoDAO
     }
 
     @Override
-    public Event updateProfile(String id, String title, String description, Date eventdate, String localization, double latitude, double longitude) throws SQLException
+    public Event updateProfile(String id, String title, String description, long eventdate, String localization, double latitude, double longitude) throws SQLException
     {
         Event event = null;
 
@@ -79,7 +79,7 @@ public class EventoDAOImpl implements EventoDAO
             stmt = connection.prepareStatement(EventoDAOQuery.UPDATE_EVENT);
             stmt.setString(1, title);
             stmt.setString(2, description);
-            stmt.setDate(3, eventdate);
+            stmt.setTimestamp(3, new Timestamp(eventdate*1000));
             stmt.setString(4, localization);
             stmt.setDouble(5, latitude);
             stmt.setDouble(6, longitude);
@@ -107,6 +107,47 @@ public class EventoDAOImpl implements EventoDAO
     }
 
     @Override
+    public Event getEventByIdAndCasalId(String id, String casalid) throws SQLException {
+        Event event = null;
+
+        Connection connection = null;
+        PreparedStatement stmt = null;
+        try
+        {
+            connection = Database.getConnection();
+
+            stmt = connection.prepareStatement(EventoDAOQuery.GET_EVENT_BY_ID_AND_CASALID);
+            stmt.setString(1, id);
+            stmt.setString(1, casalid);
+
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                event = new Event();
+                event.setId(rs.getString("id"));
+                event.setCasalid(rs.getString("casalid"));
+                event.setTitle(rs.getString("title"));
+                event.setDescription(rs.getString("description"));
+                event.setLocalization(rs.getString("localization"));
+                event.setLatitude(rs.getDouble("latitude"));
+                event.setLongitude(rs.getDouble("longitude"));
+                event.setEventdate(rs.getTimestamp("eventdate").getTime());
+
+            }
+        } catch (SQLException e)
+        {
+            throw e;
+        }
+        finally
+        {
+            if (stmt != null) stmt.close();
+            if (connection != null) connection.close();
+        }
+        return event;
+    }
+
+
+    @Override
     public Event getEventById(String id) throws SQLException {
         Event event = null;
 
@@ -127,10 +168,11 @@ public class EventoDAOImpl implements EventoDAO
                 event.setCasalid(rs.getString("casalid"));
                 event.setTitle(rs.getString("title"));
                 event.setDescription(rs.getString("description"));
-                event.setEventdate(rs.getDate("eventdate"));
                 event.setLocalization(rs.getString("localization"));
                 event.setLatitude(rs.getDouble("latitude"));
                 event.setLongitude(rs.getDouble("longitude"));
+                event.setEventdate(rs.getTimestamp("eventdate").getTime());
+
             }
         } catch (SQLException e)
         {
@@ -178,7 +220,7 @@ public class EventoDAOImpl implements EventoDAO
     }
 
     @Override
-    public EventCollection getEventsByCreatorId(String casalid, long timestamp, boolean before) throws SQLException
+    public EventCollection getEventsByCasalId(String casalid, long timestamp, boolean before) throws SQLException
     {
 
         EventCollection eventCollection = new EventCollection();
@@ -190,7 +232,7 @@ public class EventoDAOImpl implements EventoDAO
             connection = Database.getConnection();
             if (before)
             {
-                stmt = connection.prepareStatement(EventoDAOQuery.GET_EVENT_BY_CREATOR_ID);
+                stmt = connection.prepareStatement(EventoDAOQuery.GET_EVENTS_BY_CASAL_ID);
             } else
                 stmt = connection.prepareStatement(EventoDAOQuery.GET_EVENTS_AFTER);
             stmt.setTimestamp(1, new Timestamp(timestamp));
@@ -205,7 +247,7 @@ public class EventoDAOImpl implements EventoDAO
                 event.setCasalid(rs.getString("casalid"));
                 event.setTitle(rs.getString("title"));
                 event.setDescription(rs.getString("description"));
-                event.setEventdate(rs.getDate("eventdate"));
+                event.setEventdate(rs.getTimestamp("eventdate").getTime());
                 event.setLocalization(rs.getString("localization"));
                 event.setLatitude(rs.getDouble("latitude"));
                 event.setLongitude(rs.getDouble("longitude"));
@@ -245,10 +287,12 @@ public class EventoDAOImpl implements EventoDAO
             connection = Database.getConnection();
             if (before) {
                 stmt = connection.prepareStatement(EventoDAOQuery.GET_EVENTS_BY_USER_ID);
-            } else
+                stmt.setString(1, userid);
+            } else {
                 stmt = connection.prepareStatement(EventoDAOQuery.GET_EVENTS_AFTER);
-            stmt.setTimestamp(1, new Timestamp(timestamp));
-            stmt.setString(2, userid);
+                stmt.setTimestamp(1, new Timestamp(timestamp));
+            }
+
 
             ResultSet rs = stmt.executeQuery();
             boolean first = true;
@@ -259,7 +303,7 @@ public class EventoDAOImpl implements EventoDAO
                 event.setCasalid(rs.getString("casalid"));
                 event.setTitle(rs.getString("title"));
                 event.setDescription(rs.getString("description"));
-                event.setEventdate(rs.getDate("eventdate"));
+                event.setEventdate(rs.getTimestamp("eventdate").getTime());
                 event.setLocalization(rs.getString("localization"));
                 event.setLatitude(rs.getDouble("latitude"));
                 event.setLongitude(rs.getDouble("longitude"));
@@ -319,7 +363,7 @@ public class EventoDAOImpl implements EventoDAO
                 event.setLocalization(rs.getString("localization"));
                 event.setLatitude(rs.getDouble("latitude"));
                 event.setLongitude(rs.getDouble("longitude"));
-                event.setEventdate(rs.getDate("eventdate"));
+                event.setEventdate(rs.getTimestamp("eventdate").getTime());
                 if (first)
                 {
                     eventCollection.setNewestTimestamp(event.getLastModified());

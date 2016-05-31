@@ -132,6 +132,7 @@ public class CasalDAOImpl implements CasalDAO
                 casal.setLocalization(rs.getString("localization"));
                 casal.setLatitude(rs.getDouble("latitude"));
                 casal.setLongitude(rs.getDouble("longitude"));
+                casal.setValidated(rs.getBoolean("validado"));
             }
         }
         catch (SQLException e)
@@ -214,6 +215,7 @@ public class CasalDAOImpl implements CasalDAO
                 casal.setEmail(rs.getString("email"));
                 casal.setName(rs.getString("name"));
                 casal.setDescription(rs.getString("description"));
+                casal.setValidated(rs.getBoolean("validado"));
                 casalCollection.getCasals().add(casal);
             }
         }
@@ -249,6 +251,7 @@ public class CasalDAOImpl implements CasalDAO
                 casal.setEmail(rs.getString("email"));
                 casal.setName(rs.getString("name"));
                 casal.setDescription(rs.getString("description"));
+                casal.setValidated(rs.getBoolean("validado"));
                 casalCollection.getCasals().add(casal);
             }
         }

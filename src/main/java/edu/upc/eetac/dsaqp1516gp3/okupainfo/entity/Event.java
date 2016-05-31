@@ -9,7 +9,6 @@ import org.glassfish.jersey.linking.InjectLink;
 import org.glassfish.jersey.linking.InjectLinks;
 
 import javax.ws.rs.core.Link;
-import java.sql.Date;
 import java.util.List;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -28,7 +27,7 @@ public class Event {
     private String localization;
     private double latitude;
     private double longitude;
-    private Date eventdate;
+    private long eventdate;
     private long creationTimestamp;
     private long lastModified;
 
@@ -97,11 +96,11 @@ public class Event {
         this.longitude = longitude;
     }
 
-    public Date getEventdate() {
+    public long getEventdate() {
         return eventdate;
     }
 
-    public void setEventdate(Date eventdate) {
+    public void setEventdate(long eventdate) {
         this.eventdate = eventdate;
     }
 

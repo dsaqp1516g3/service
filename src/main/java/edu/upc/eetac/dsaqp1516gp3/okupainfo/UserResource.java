@@ -8,7 +8,6 @@ import edu.upc.eetac.dsaqp1516gp3.okupainfo.entity.AuthToken;
 import edu.upc.eetac.dsaqp1516gp3.okupainfo.entity.User;
 import edu.upc.eetac.dsaqp1516gp3.okupainfo.entity.UserCollection;
 
-import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
 import java.net.URI;
@@ -16,8 +15,7 @@ import java.net.URISyntaxException;
 import java.sql.SQLException;
 
 @Path("users")
-public class UserResource
-{
+public class UserResource {
     @Context
     private SecurityContext securityContext;
 
@@ -25,24 +23,18 @@ public class UserResource
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     @Produces(OkupaInfoMediaType.OKUPAINFO_AUTH_TOKEN)
     public Response registerUser(@FormParam("loginid") String loginid, @FormParam("password") String password, @FormParam("email") String email,
-                                 @FormParam("fullname") String fullname, @FormParam("description") String description, @Context UriInfo uriInfo) throws URISyntaxException
-    {
-        if(loginid == null || password == null || email == null || fullname == null || description == null)
+                                 @FormParam("fullname") String fullname, @FormParam("description") String description, @Context UriInfo uriInfo) throws URISyntaxException {
+        if (loginid == null || password == null || email == null || fullname == null || description == null)
             throw new BadRequestException("all parameters are mandatory");
         UserDAO userDAO = new UserDAOImpl();
         User user;
         AuthToken authenticationToken;
-        try
-        {
+        try {
             user = userDAO.createUser(loginid, password, email, fullname, description);
             authenticationToken = (new AuthTokenDAOImpl()).createAuthToken(user.getId());
-        }
-        catch (UserAlreadyExistsException e)
-        {
+        } catch (UserAlreadyExistsException e) {
             throw new WebApplicationException("loginid already exists", Response.Status.CONFLICT);
-        }
-        catch(SQLException e)
-        {
+        } catch (SQLException e) {
             throw new InternalServerErrorException();
         }
         URI uri = new URI(uriInfo.getAbsolutePath().toString() + "/" + user.getId());
@@ -52,18 +44,14 @@ public class UserResource
     @Path("/{id}")
     @GET
     @Produces(OkupaInfoMediaType.OKUPAINFO_USER)
-    public User getUser(@PathParam("id") String id)
-    {
+    public User getUser(@PathParam("id") String id) {
         User user;
-        try
-        {
+        try {
             user = (new UserDAOImpl()).getUserById(id);
-        }
-        catch (SQLException e)
-        {
+        } catch (SQLException e) {
             throw new InternalServerErrorException(e.getMessage());
         }
-        if(user == null)
+        if (user == null)
             throw new NotFoundException("User with id = " + id + " doesn't exist");
         return user;
     }
@@ -85,77 +73,41 @@ public class UserResource
     @PUT
     @Consumes(OkupaInfoMediaType.OKUPAINFO_USER)
     @Produces(OkupaInfoMediaType.OKUPAINFO_USER)
-    public User updateUser(@PathParam("id") String id, User user)
-    {
-        if(user == null)
+    public User updateUser(@PathParam("id") String id, User user) {
+        if (user == null)
             throw new BadRequestException("entity is null");
-        if(!id.equals(user.getId()))
+        if (!id.equals(user.getId()))
             throw new BadRequestException("path parameter id and entity parameter id doesn't match");
 
         System.out.println(securityContext.getUserPrincipal());
         System.out.println(securityContext.getUserPrincipal().getName());
         String userid = securityContext.getUserPrincipal().getName();
-        if(!userid.equals(id))
-            throw new ForbiddenException("operation not allowed");
-
-        UserDAO userDAO = new UserDAOImpl();
-        try
-        {
-            user = userDAO.updateProfile(userid, user.getEmail(), user.getFullname(), user.getDescription());
-            if(user == null)
-                throw new NotFoundException("User with id = " + id + " doesn't exist");
-        } catch (SQLException e)
-        {
-            throw new InternalServerErrorException();
-        }
-        return user;
-    }
-
-    /*
-        @Path("/{id}")
-    @PUT
-    @Consumes(BeeterMediaType.BEETER_USER)
-    @Produces(BeeterMediaType.BEETER_USER)
-    public User updateUser(@PathParam("id") String id, User user)
-    {
-        if(user == null)
-            throw new BadRequestException("entity is null");
-        if(!id.equals(user.getId()))
-            throw new BadRequestException("path parameter id and entity parameter id doesn't match");
-
-
-        String userid = securityContext.getUserPrincipal().getName();
-        if(!userid.equals(id))
+        if (!userid.equals(id))
             throw new ForbiddenException("operation not allowed");
 
         UserDAO userDAO = new UserDAOImpl();
         try {
-            user = userDAO.updateProfile(userid, user.getEmail(), user.getFullname());
-            if(user == null)
-                throw new NotFoundException("User with id = "+id+" doesn't exist");
+            user = userDAO.updateProfile(userid, user.getEmail(), user.getFullname(), user.getDescription());
+            if (user == null)
+                throw new NotFoundException("User with id = " + id + " doesn't exist");
         } catch (SQLException e) {
             throw new InternalServerErrorException();
         }
         return user;
     }
-     */
 
     @Path("/{id}")
-    @RolesAllowed("[admin, registered]")/*admin estara por encima de registered y de casal, administrara por encima de todos y habrá solo 3*/
+    //@RolesAllowed("[admin, registered]")/*admin estara por encima de registered y de casal, administrara por encima de todos y habrá solo 3*/
     @DELETE
-    public void deleteUser(@PathParam("id") String id)
-    {
+    public void deleteUser(@PathParam("id") String id) {
         String userid = securityContext.getUserPrincipal().getName();
-        if(!userid.equals(id))
+        if (!userid.equals(id))
             throw new ForbiddenException("operation not allowed");
         UserDAO userDAO = new UserDAOImpl();
-        try
-        {
-            if(!userDAO.deleteUser(id))
+        try {
+            if (!userDAO.deleteUser(id))
                 throw new NotFoundException("User with id = " + id + " doesn't exist");
-        }
-        catch (SQLException e)
-        {
+        } catch (SQLException e) {
             throw new InternalServerErrorException();
         }
     }
