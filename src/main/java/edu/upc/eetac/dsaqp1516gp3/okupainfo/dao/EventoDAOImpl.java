@@ -5,16 +5,20 @@ import edu.upc.eetac.dsaqp1516gp3.okupainfo.entity.Event;
 import edu.upc.eetac.dsaqp1516gp3.okupainfo.entity.EventCollection;
 
 import java.sql.*;
+import java.util.Calendar;
 
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class EventoDAOImpl implements EventoDAO {
+public class EventoDAOImpl implements EventoDAO
+{
     @Override
-    public Event createEvent(String casalid, String title, String description, String localization, double latitude, double longitude, double eventdate) throws SQLException {
+    public Event createEvent(String casalid, String title, String description, String localization, double latitude, double longitude, long eventdate) throws SQLException
+    {
         Connection connection = null;
         PreparedStatement stmt = null;
         String id = null;
-        try {
+        try
+        {
             connection = Database.getConnection();
 
             stmt = connection.prepareStatement(EventoDAOQuery.UUID);
@@ -33,18 +37,27 @@ public class EventoDAOImpl implements EventoDAO {
             stmt.setString(3, title);
             stmt.setString(4, description);
             stmt.setString(5, localization);
-            stmt.setString(6, String.valueOf(latitude));
-            stmt.setString(7, String.valueOf(longitude));
-            stmt.setString(5, String.valueOf(eventdate));
+            stmt.setDouble(6, latitude);
+            stmt.setDouble(7, longitude);
+
+            long l = Calendar.getInstance().getTimeInMillis();
+            Timestamp ts = new Timestamp(l);
+            String tss = ts.toString();
+
+            stmt.setTimestamp(8, new Timestamp(eventdate*1000));
             stmt.executeUpdate();
 
             connection.commit();
 
-        } catch (SQLException e) {
+        } catch (SQLException e)
+        {
             throw e;
-        } finally {
+        }
+        finally
+        {
             if (stmt != null) stmt.close();
-            if (connection != null) {
+            if (connection != null)
+            {
                 connection.setAutoCommit(true);
                 connection.close();
             }
@@ -53,31 +66,39 @@ public class EventoDAOImpl implements EventoDAO {
     }
 
     @Override
-    public Event updateProfile(String id, String title, String description, double eventdate, String localization, double latitude, double longitude) throws SQLException {
+    public Event updateProfile(String id, String title, String description, Date eventdate, String localization, double latitude, double longitude) throws SQLException
+    {
         Event event = null;
 
         Connection connection = null;
         PreparedStatement stmt = null;
-        try {
+        try
+        {
             connection = Database.getConnection();
 
             stmt = connection.prepareStatement(EventoDAOQuery.UPDATE_EVENT);
             stmt.setString(1, title);
             stmt.setString(2, description);
-            stmt.setString(3, String.valueOf(eventdate));
+            stmt.setDate(3, eventdate);
             stmt.setString(4, localization);
             stmt.setDouble(5, latitude);
             stmt.setDouble(6, longitude);
 
             int rows = stmt.executeUpdate();
-            if (rows == 1) {
+            if (rows == 1)
+            {
                 event = getEventById(id);
             }
-        } catch (SQLException e) {
+        }
+        catch (SQLException e)
+        {
             throw e;
-        } finally {
+        }
+        finally
+        {
             if (stmt != null) stmt.close();
-            if (connection != null) {
+            if (connection != null)
+            {
                 connection.setAutoCommit(true);
                 connection.close();
             }
@@ -91,44 +112,46 @@ public class EventoDAOImpl implements EventoDAO {
 
         Connection connection = null;
         PreparedStatement stmt = null;
-        try {
-            // Obtiene la conexión del DataSource
+        try
+        {
             connection = Database.getConnection();
 
-            // Prepara la consulta
             stmt = connection.prepareStatement(EventoDAOQuery.GET_EVENT_BY_ID);
-            // Da valor a los parámetros de la consulta
             stmt.setString(1, id);
 
-            // Ejecuta la consulta
             ResultSet rs = stmt.executeQuery();
-            // Procesa los resultados
+
             if (rs.next()) {
                 event = new Event();
                 event.setId(rs.getString("id"));
                 event.setCasalid(rs.getString("casalid"));
                 event.setTitle(rs.getString("title"));
                 event.setDescription(rs.getString("description"));
-                event.setEventdate(rs.getLong("eventdate"));
+                event.setEventdate(rs.getDate("eventdate"));
+                event.setLocalization(rs.getString("localization"));
+                event.setLatitude(rs.getDouble("latitude"));
+                event.setLongitude(rs.getDouble("longitude"));
             }
-        } catch (SQLException e) {
-            // Relanza la excepción
+        } catch (SQLException e)
+        {
             throw e;
-        } finally {
-            // Libera la conexión
+        }
+        finally
+        {
             if (stmt != null) stmt.close();
             if (connection != null) connection.close();
         }
-        // Devuelve el modelo
         return event;
     }
 
     @Override
-    public void addUserAssistance(String userid, String eventid) throws SQLException {
+    public void addUserAssistance(String userid, String eventid) throws SQLException
+    {
         PreparedStatement stmt = null;
         Connection connection = null;
 
-        try {
+        try
+        {
             connection = Database.getConnection();
 
             connection.setAutoCommit(false);
@@ -138,7 +161,6 @@ public class EventoDAOImpl implements EventoDAO {
             stmt.setString(2, eventid);
             stmt.executeUpdate();
             connection.commit();
-
         }
         catch (SQLException e)
         {
@@ -147,7 +169,8 @@ public class EventoDAOImpl implements EventoDAO {
         finally
         {
             if (stmt != null) stmt.close();
-            if (connection != null) {
+            if (connection != null)
+            {
                 connection.setAutoCommit(true);
                 connection.close();
             }
@@ -155,15 +178,18 @@ public class EventoDAOImpl implements EventoDAO {
     }
 
     @Override
-    public EventCollection getEventsByCreatorId(String casalid, long timestamp, boolean before) throws SQLException {
+    public EventCollection getEventsByCreatorId(String casalid, long timestamp, boolean before) throws SQLException
+    {
 
         EventCollection eventCollection = new EventCollection();
 
         Connection connection = null;
         PreparedStatement stmt = null;
-        try {
+        try
+        {
             connection = Database.getConnection();
-            if (before) {
+            if (before)
+            {
                 stmt = connection.prepareStatement(EventoDAOQuery.GET_EVENT_BY_CREATOR_ID);
             } else
                 stmt = connection.prepareStatement(EventoDAOQuery.GET_EVENTS_AFTER);
@@ -172,25 +198,34 @@ public class EventoDAOImpl implements EventoDAO {
 
             ResultSet rs = stmt.executeQuery();
             boolean first = true;
-            if (rs.next()) {
+            if (rs.next())
+            {
                 Event event = new Event();
                 event.setId(rs.getString("id"));
                 event.setCasalid(rs.getString("casalid"));
                 event.setTitle(rs.getString("title"));
                 event.setDescription(rs.getString("description"));
-                event.setEventdate(rs.getLong("eventdate"));
+                event.setEventdate(rs.getDate("eventdate"));
+                event.setLocalization(rs.getString("localization"));
+                event.setLatitude(rs.getDouble("latitude"));
+                event.setLongitude(rs.getDouble("longitude"));
                 eventCollection.getEvents().add(event);
                 event.setCreationTimestamp(rs.getTimestamp("creation_timestamp").getTime());
                 event.setLastModified(rs.getTimestamp("last_modified").getTime());
-                if (first) {
+                if (first)
+                {
                     eventCollection.setNewestTimestamp(event.getLastModified());
                     first = false;
                 }
                 eventCollection.setOldestTimestamp(event.getLastModified());
             }
-        } catch (SQLException e) {
+        }
+        catch (SQLException e)
+        {
             throw e;
-        } finally {
+        }
+        finally
+        {
             if (stmt != null) stmt.close();
             if (connection != null) connection.close();
         }
@@ -198,13 +233,15 @@ public class EventoDAOImpl implements EventoDAO {
     }
 
     @Override
-    public EventCollection getEventsByUserId(String userid, long timestamp, boolean before) throws SQLException {
+    public EventCollection getEventsByUserId(String userid, long timestamp, boolean before) throws SQLException
+    {
         EventCollection eventCollection = new EventCollection();
 
         Connection connection = null;
         PreparedStatement stmt = null;
 
-        try {
+        try
+        {
             connection = Database.getConnection();
             if (before) {
                 stmt = connection.prepareStatement(EventoDAOQuery.GET_EVENTS_BY_USER_ID);
@@ -215,25 +252,34 @@ public class EventoDAOImpl implements EventoDAO {
 
             ResultSet rs = stmt.executeQuery();
             boolean first = true;
-            while (rs.next()) {
+            while (rs.next())
+            {
                 Event event = new Event();
                 event.setId(rs.getString("id"));
                 event.setCasalid(rs.getString("casalid"));
                 event.setTitle(rs.getString("title"));
                 event.setDescription(rs.getString("description"));
-                event.setEventdate(rs.getLong("eventdate"));
+                event.setEventdate(rs.getDate("eventdate"));
+                event.setLocalization(rs.getString("localization"));
+                event.setLatitude(rs.getDouble("latitude"));
+                event.setLongitude(rs.getDouble("longitude"));
                 eventCollection.getEvents().add(event);
                 event.setCreationTimestamp(rs.getTimestamp("creation_timestamp").getTime());
                 event.setLastModified(rs.getTimestamp("last_modified").getTime());
-                if (first) {
+                if (first)
+                {
                     eventCollection.setNewestTimestamp(event.getLastModified());
                     first = false;
                 }
                 eventCollection.setOldestTimestamp(event.getLastModified());
             }
-        } catch (SQLException e) {
+        }
+        catch (SQLException e)
+        {
             throw e;
-        } finally {
+        }
+        finally
+        {
             if (stmt != null) stmt.close();
             if (connection != null) connection.close();
         }
@@ -241,25 +287,30 @@ public class EventoDAOImpl implements EventoDAO {
     }
 
     @Override
-    public EventCollection getAllEvents(long timestamp, boolean before) throws SQLException {
+    public EventCollection getAllEvents(long timestamp, boolean before) throws SQLException
+    {
         EventCollection eventCollection = new EventCollection();
 
         Connection connection = null;
         PreparedStatement stmt = null;
-        try {
+        try
+        {
             connection = Database.getConnection();
-            if (before) {
+            if (before)
+            {
                 stmt = connection.prepareStatement(EventoDAOQuery.GET_ALL_EVENTS);
                 System.out.println("llista EVENTS servida");
             }
-            else {
+            else
+            {
                 stmt = connection.prepareStatement(EventoDAOQuery.GET_EVENTS_AFTER);
                 stmt.setTimestamp(1, new Timestamp(timestamp));
             }
 
             ResultSet rs = stmt.executeQuery();
             boolean first = true;
-            while (rs.next()) {
+            while (rs.next())
+            {
                 Event event = new Event();
                 event.setId(rs.getString("id"));
                 event.setCasalid(rs.getString("casalid"));
@@ -268,18 +319,23 @@ public class EventoDAOImpl implements EventoDAO {
                 event.setLocalization(rs.getString("localization"));
                 event.setLatitude(rs.getDouble("latitude"));
                 event.setLongitude(rs.getDouble("longitude"));
-                event.setEventdate(rs.getLong("eventdate"));
-                if (first) {
+                event.setEventdate(rs.getDate("eventdate"));
+                if (first)
+                {
                     eventCollection.setNewestTimestamp(event.getLastModified());
                     first = false;
                 }
                 eventCollection.setOldestTimestamp(event.getLastModified());
                 eventCollection.getEvents().add(event);
             }
-        } catch (SQLException e) {
+        }
+        catch (SQLException e)
+        {
             e.printStackTrace();
             throw e;
-        } finally {
+        }
+        finally
+        {
             if (stmt != null) stmt.close();
             if (connection != null) connection.close();
         }
@@ -287,10 +343,12 @@ public class EventoDAOImpl implements EventoDAO {
     }
 
     @Override
-    public boolean deleteEvent(String id) throws SQLException {
+    public boolean deleteEvent(String id) throws SQLException
+    {
         Connection connection = null;
         PreparedStatement stmt = null;
-        try {
+        try
+        {
             connection = Database.getConnection();
 
             stmt = connection.prepareStatement(EventoDAOQuery.DELETE_EVENT);
@@ -298,19 +356,25 @@ public class EventoDAOImpl implements EventoDAO {
 
             int rows = stmt.executeUpdate();
             return (rows == 1);
-        } catch (SQLException e) {
+        }
+        catch (SQLException e)
+        {
             throw e;
-        } finally {
+        }
+        finally
+        {
             if (stmt != null) stmt.close();
             if (connection != null) connection.close();
         }
     }
 
     @Override
-    public boolean deleteAssistanceEvent(String userid, String eventid) throws SQLException {
+    public boolean deleteAssistanceEvent(String userid, String eventid) throws SQLException
+    {
         Connection connection = null;
         PreparedStatement stmt = null;
-        try {
+        try
+        {
             connection = Database.getConnection();
 
             stmt = connection.prepareStatement(EventoDAOQuery.DELETE_ASSITANCE_TO_EVENT);

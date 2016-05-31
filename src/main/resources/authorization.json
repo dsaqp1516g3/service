@@ -16,23 +16,11 @@
     "methods": ["POST"]
   },
   {
+    "path": "casals/validated",
+    "methods": ["GET"]
+  },
+  {
     "path": "(?i)users/([0-9a-f]{32})?",
-    "methods": ["GET"]
-  },
-  {
-    "path": "casals/([0-9a-f]{32})?/events",
-    "methods": ["GET"]
-  },
-  {
-    "path": "casals/([0-9a-f]{32})?/events/([0-9a-f]{32})?",
-    "methods": ["GET"]
-  },
-  {
-    "path": "casals/E383D95D24BA11E6B5CD08002764EE77/comments",
-    "methods": ["GET"]
-  },
-  {
-    "path": "casals/([0-9a-f]{32})?/events/([0-9a-f]{32})?/comments",
     "methods": ["GET"]
   },
   {
@@ -46,7 +34,7 @@
   {
   "path": "users",
   "methods": ["GET"]
-},
+ },
   {
     "path": "events",
     "methods": ["GET"]

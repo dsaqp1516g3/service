@@ -327,4 +327,32 @@ public class CasalDAOImpl implements CasalDAO
             if (connection != null) connection.close();
         }
     }
+
+    @Override
+    public String getAdminId(String casalid) throws SQLException {
+        String adminid = null;
+        Connection connection = null;
+        PreparedStatement stmt = null;
+        try
+        {
+            connection = Database.getConnection();
+
+            stmt = connection.prepareStatement(CasalDAOQuery.GET_ADMINID);
+            stmt.setString(1, casalid);
+
+            ResultSet rs = stmt.executeQuery();
+            if(rs.next())
+                adminid = rs.getString(1);
+        }
+        catch (SQLException e)
+        {
+            throw e;
+        }
+        finally
+        {
+            if (stmt != null) stmt.close();
+            if (connection != null) connection.close();
+        }
+        return adminid;
+    }
 }

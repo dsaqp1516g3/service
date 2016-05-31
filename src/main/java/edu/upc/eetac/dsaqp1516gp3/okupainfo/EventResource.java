@@ -38,7 +38,8 @@ public class EventResource
     @Path("/comments/{creatorid}")
     @GET
     @Produces(OkupaInfoMediaType.OKUPAINFO_COMMENTS_EVENTS)
-    public Comments_EventsCollection getCommentEventByCreatorId(@PathParam("creatorid") String creatorid, @QueryParam("timestamp") long timestamp, @DefaultValue("true") @QueryParam("before") boolean before)
+    public Comments_EventsCollection getCommentEventByCreatorId(@PathParam("creatorid") String creatorid, @QueryParam("timestamp") long timestamp,
+                                                                @DefaultValue("true") @QueryParam("before") boolean before)
     {
 
         Comments_EventsCollection Comments_EventsCollection;

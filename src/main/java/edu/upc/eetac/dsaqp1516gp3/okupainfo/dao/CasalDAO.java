@@ -17,4 +17,5 @@ public interface CasalDAO
     CasalCollection getNoValidatedCasals() throws SQLException;
     CasalCollection getAllCasals() throws SQLException;
     boolean deleteCasal(String casalid) throws SQLException;
+    String getAdminId(String casalid) throws SQLException;
 }

@@ -14,4 +14,5 @@ public interface CasalDAOQuery
     String GET_NO_VALIDATED_CASALS = "select casalid, adminid, email, name, description, localization where validado=FALSE";
     String DELETE_CASAL = "delete from casals where id=unhex(?)";
     String GET_ALL_CASALS = "select hex(casalid) as casalid, hex(adminid) as adminid, email, name, description, localization, latitude, longitude from casals";
+    String GET_ADMINID = "select hex(adminid) as adminid from casals where casalid=unhex(?)";
 }
