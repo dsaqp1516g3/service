@@ -16,7 +16,9 @@ public class CasalResource {
     @Context
     private SecurityContext securityContext;
 
-    /**Creamos un casal**/
+    /**
+     * Creamos un casal
+     **/
     @POST
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     @Produces(OkupaInfoMediaType.OKUPAINFO_AUTH_TOKEN)
@@ -47,7 +49,9 @@ public class CasalResource {
         return Response.created(uri).build();
     }
 
-    /**Obtenemos una lista de todos los casales**/
+    /**
+     * Obtenemos una lista de todos los casales
+     **/
     @GET
     @Produces(OkupaInfoMediaType.OKUPAINFO_CASAL_COLLECTION)
     public CasalCollection getAllCasals() {
@@ -61,7 +65,9 @@ public class CasalResource {
         return CasalCollection;
     }
 
-    /**Obtenemos una lista de todos los casales que SI esten validados**/
+    /**
+     * Obtenemos una lista de todos los casales que SI esten validados
+     **/
     @GET
     @Path("/validated")
     @Produces(OkupaInfoMediaType.OKUPAINFO_CASAL_COLLECTION)
@@ -76,7 +82,9 @@ public class CasalResource {
         return CasalCollection;
     }
 
-    /**Obtenemos una lista de todos los casales que NO esten validados**/
+    /**
+     * Obtenemos una lista de todos los casales que NO esten validados
+     **/
     @GET
     @Path("/unvalidated")
     @Produces(OkupaInfoMediaType.OKUPAINFO_CASAL_COLLECTION)
@@ -91,8 +99,9 @@ public class CasalResource {
         return CasalCollection;
     }
 
-    /**Actualizamos el perfil de un casal**/
-    //  @RolesAllowed("[admin, casal]")
+    /**
+     * Actualizamos el perfil de un casal
+     **/
     @Path("/{casalid}")
     @PUT
     @Consumes(OkupaInfoMediaType.OKUPAINFO_CASAL)
@@ -104,12 +113,18 @@ public class CasalResource {
             throw new BadRequestException("path parameter id and entity parameter id doesn't match");
 
         String userid = securityContext.getUserPrincipal().getName();
-        if (!userid.equals(casalid))
+        if (!userid.equals(casal.getAdminid()))
             throw new ForbiddenException("operation not allowed");
 
-        CasalDAO casalDAO = new CasalDAOImpl();
+        OpenStreetMapUtils openStreetMapUtils = new OpenStreetMapUtils();
+        /**Aqui atacamos a la API externa para obtener las longitudes y latitudes**/
+        Map<String, Double> coo = openStreetMapUtils.getCoordinates(casal.getLocalization());
+        /**De alguna manera misteriosa obtenemos lat y long y los guardamos cada uno en una variable**/
+        double lon = coo.get("lon");
+        double lat = coo.get("lat");
+        /**Asignaremos el valor devuelto por OpenStreetMap a nuestros valores de longitud y latitud**/
         try {
-            casal = casalDAO.updateProfile(casalid, casal.getEmail(), casal.getName(), casal.getDescription(), casal.getLocalization(), casal.getLatitude(), casal.getLongitude(), casal.getValidated());
+            casal = new CasalDAOImpl().updateProfile(casalid, casal.getEmail(), casal.getName(), casal.getDescription(), casal.getLocalization(), lat, lon, casal.getValidated());
             if (casal == null)
                 throw new NotFoundException("El casal con la id " + casalid + " no existe");
         } catch (SQLException e) {
@@ -118,7 +133,9 @@ public class CasalResource {
         return casal;
     }
 
-    /**Obtenemos el perfil de un Casal**/
+    /**
+     * Obtenemos el perfil de un Casal
+     **/
     @Path("/{casalid}")
     @GET
     @Produces(OkupaInfoMediaType.OKUPAINFO_CASAL)
@@ -134,17 +151,19 @@ public class CasalResource {
         return casal;
     }
 
-    /**Eliminamos un casal**/
+    /**
+     * Eliminamos un casal
+     **/
     @Path("/{casalid}")
-    @RolesAllowed("[admin, casal]")
     @DELETE
     public void deleteCasal(@PathParam("casalid") String casalid) {
-        String userid = securityContext.getUserPrincipal().getName();
-        if (!userid.equals(casalid))
-            throw new ForbiddenException("operation not allowed");
-
         CasalDAO casalDAO = new CasalDAOImpl();
+        String adminid;
+
         try {
+            adminid = casalDAO.getAdminId(casalid);
+            if (adminid == null || !adminid.equals(securityContext.getUserPrincipal().getName()))
+                throw new ForbiddenException("operation not allowed");
             if (!casalDAO.deleteCasal(casalid))
                 throw new NotFoundException("Casal with id = " + casalid + " doesn't exist");
         } catch (SQLException e) {
@@ -156,7 +175,9 @@ public class CasalResource {
     /******************************************EVENTOS**********************************************************/
     /***********************************************************************************************************/
 
-    /**Creamos un evento siendo un casal**/
+    /**
+     * Creamos un evento siendo un casal
+     **/
     @POST
     @Path("/{casalid}")
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
@@ -194,8 +215,9 @@ public class CasalResource {
         return Response.created(uri).build();
     }
 
-    /**Lista de eventos ofrecidas por un casal**/
-    //@RolesAllowed("[registered, admin, casal]")
+    /**
+     * Lista de eventos ofrecidas por un casal
+     **/
     @GET
     @Path("/{casalid}/events")
     @Produces(OkupaInfoMediaType.OKUPAINFO_EVENTS_COLLECTION)
@@ -211,7 +233,9 @@ public class CasalResource {
         return EventCollection;
     }
 
-    /**Actualizamos el perfil de un evento**/
+    /**
+     * Actualizamos el perfil de un evento
+     **/
     @Path("/{casalid}/events/{eventid}")
     @PUT
     @Consumes(OkupaInfoMediaType.OKUPAINFO_EVENTS)
@@ -221,12 +245,24 @@ public class CasalResource {
             throw new BadRequestException("entity is null");
         if (!eventid.equals(event.getId()))
             throw new BadRequestException("path parameter id and entity parameter id doesn't match");
+
         String userid = securityContext.getUserPrincipal().getName();
+        /*if (!userid.equals(event.getCasalid()))
         if (!userid.equals(event.getCasalid()))
-            throw new ForbiddenException("operation not allowed");
+            throw new ForbiddenException("operation not allowed");*/
+
+        OpenStreetMapUtils openStreetMapUtils = new OpenStreetMapUtils();
+        /**Aqui atacamos a la API externa para obtener las longitudes y latitudes**/
+        Map<String, Double> coo = openStreetMapUtils.getCoordinates(event.getLocalization());
+        /**De alguna manera misteriosa obtenemos lat y long y los guardamos cada uno en una variable**/
+        double lon = coo.get("lon");
+        double lat = coo.get("lat");
+        /**Asignaremos el valor devuelto por OpenStreetMap a nuestros valores de longitud y latitud**/
+
+
         EventoDAO EventoDAO = new EventoDAOImpl();
         try {
-            event = EventoDAO.updateProfile(eventid, event.getTitle(), event.getDescription(), event.getEventdate(), event.getLocalization(), event.getLatitude(), event.getLongitude());
+            event = EventoDAO.updateProfile(eventid, event.getTitle(), event.getDescription(), event.getEventdate(), event.getLocalization(), lat, lon);
             if (event == null)
                 throw new NotFoundException("El evento con la id " + eventid + " no existe");
         } catch (SQLException e) {
@@ -235,9 +271,10 @@ public class CasalResource {
         return event;
     }
 
-    /**Eliminamos un evento**/
+    /**
+     * Eliminamos un evento
+     **/
     @Path("/{casalid}/events/{eventid}")
-    @RolesAllowed("[admin, casal]")
     @DELETE
     public void deleteEvent(@PathParam("eventid") String eventid) {
         EventoDAO EventoDAO = new EventoDAOImpl();
@@ -249,16 +286,18 @@ public class CasalResource {
         }
     }
 
-    /**Obtenemos el perfil de un evento**/
+    /**
+     * Obtenemos el perfil de un evento
+     **/
     @Path("/{casalid}/events/{eventid}")
-    @RolesAllowed("[admin, casal]")
     @GET
-    public Event getEventsByCasalId(@PathParam("casalid") String casalid, @PathParam("eventid") String eventid) {
+    @Produces(OkupaInfoMediaType.OKUPAINFO_EVENTS)
+    public Event getEventsByCasalId(@PathParam("eventid") String eventid) {
         Event event;
         EventoDAO eventoDAO = new EventoDAOImpl();
 
         try {
-            event = eventoDAO.getEventByIdAndCasalId(casalid, eventid);
+            event = eventoDAO.getEventById(eventid);
         } catch (SQLException e) {
             throw new InternalServerErrorException();
         }
@@ -269,7 +308,9 @@ public class CasalResource {
     /******************************COMMENTS**EVENTOS************************************************************/
     /***********************************************************************************************************/
 
-    /**Creamos un comentario acerca de un evento**/
+    /**
+     * Creamos un comentario acerca de un evento
+     **/
     @Path("{casalid}/events/{eventid}/comments")
     @POST
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
@@ -288,7 +329,9 @@ public class CasalResource {
         return Response.created(uri).type(OkupaInfoMediaType.OKUPAINFO_COMMENTS_EVENTS).entity(Comments_Events).build();
     }
 
-    /**Vemos todos los comentarios de un evento**/
+    /**
+     * Vemos todos los comentarios de un evento
+     **/
     @Path("{casalid}/events/{eventid}/comments")
     @GET
     @Produces(OkupaInfoMediaType.OKUPAINFO_COMMENTS_EVENTS_COLLECTION)
@@ -304,7 +347,9 @@ public class CasalResource {
         return Comments_EventsCollection;
     }
 
-    /**Actualizamos el comentario de un evento**/
+    /**
+     * Actualizamos el comentario de un evento
+     **/
     @Path("/{casalid}/events/{eventid}/comments/{commentid}")
     @PUT
     @Consumes(OkupaInfoMediaType.OKUPAINFO_COMMENTS_EVENTS)
@@ -326,7 +371,9 @@ public class CasalResource {
         return Comments_Events;
     }
 
-    /**Visualizamos el comentario de un evento**/
+    /**
+     * Visualizamos el comentario de un evento
+     **/
     @Path("/{casalid}/events/{eventid}/comments/{commentid}")
     @GET
     @Produces(OkupaInfoMediaType.OKUPAINFO_COMMENTS_EVENTS)
@@ -344,7 +391,9 @@ public class CasalResource {
         return comments_events;
     }
 
-    /**Eliminamos el comentario de un evento**/
+    /**
+     * Eliminamos el comentario de un evento
+     **/
     @RolesAllowed("[admin, casal]")
     @Path("/{casalid}/events/{eventid}/comments/{commentid}")
     @DELETE
@@ -362,7 +411,9 @@ public class CasalResource {
     /******************************COMMENTS**CASALS************************************************************/
     /***********************************************************************************************************/
 
-    /**Obtenemos todos los comentarios hechos acerca de los casals**/
+    /**
+     * Obtenemos todos los comentarios hechos acerca de los casals
+     **/
     @Path("/comments")
     @GET
     @Produces(OkupaInfoMediaType.OKUPAINFO_COMMENTS_CASALS_COLLECTION)
@@ -378,7 +429,9 @@ public class CasalResource {
         return Comments_CasalsCollection;
     }
 
-    /**Comentamos sobre un casal**/
+    /**
+     * Comentamos sobre un casal
+     **/
     @POST
     @Path("/{casalid}/comments")
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
@@ -397,7 +450,9 @@ public class CasalResource {
         return Response.created(uri).type(OkupaInfoMediaType.OKUPAINFO_COMMENTS_CASALS).entity(Comments_Casals).build();
     }
 
-    /**Obtenemos los comentarios acerca de un casal**/
+    /**
+     * Obtenemos los comentarios acerca de un casal
+     **/
     @Path("/{casalid}/comments")
     @GET
     @Produces(OkupaInfoMediaType.OKUPAINFO_COMMENTS_CASALS)
@@ -413,7 +468,9 @@ public class CasalResource {
         return Comments_CasalsCollection;
     }
 
-    /**Miramos un comentario**/
+    /**
+     * Miramos un comentario
+     **/
     @Path("/{casalid}/comments/{commentid}")
     @GET
     @Produces(OkupaInfoMediaType.OKUPAINFO_COMMENTS_CASALS)
@@ -428,22 +485,24 @@ public class CasalResource {
         return comments_casals;
     }
 
-    /**Modificamos un comentario**/
+    /**
+     * Modificamos un comentario
+     **/
     @Path("/{casalid}/comments/{commentid}")
     @PUT
     @Consumes(OkupaInfoMediaType.OKUPAINFO_COMMENTS_CASALS)
     @Produces(OkupaInfoMediaType.OKUPAINFO_COMMENTS_CASALS)
-    public Comments_Casals updateComment(@PathParam("casalid") String id, @PathParam("commentid") String creatorid, @FormParam("content") String content, Comments_Casals Comments_Casals) {
+    public Comments_Casals updateComment(@PathParam("casalid") String casalid, @PathParam("commentid") String commentid, @FormParam("content") String content, Comments_Casals Comments_Casals) {
         if (Comments_Casals == null)
             throw new BadRequestException("entity is null");
-        if (!id.equals(Comments_Casals.getId()))
+        if (!commentid.equals(Comments_Casals.getId()))
             throw new BadRequestException("path parameter id and entity parameter id doesn't match");
 
         Comments_CasalsDAO Comments_CasalsDAO = new Comments_CasalsDAOImpl();
         try {
-            Comments_Casals = Comments_CasalsDAO.updateComment(id, Comments_Casals.getCreatorid(), Comments_Casals.getContent());
+            Comments_Casals = Comments_CasalsDAO.updateComment(casalid, Comments_Casals.getContent());
             if (Comments_Casals == null)
-                throw new NotFoundException("El comentario con la id " + id + " no existe");
+                throw new NotFoundException("El comentario con la id " + commentid + " no existe");
         } catch (SQLException e) {
             throw new InternalServerErrorException();
         }
@@ -463,7 +522,9 @@ public class CasalResource {
         }
     }
 
-    /**Obtenemos todos los comentarios a casals hechos por un usuario**/
+    /**
+     * Obtenemos todos los comentarios a casals hechos por un usuario
+     **/
     @Path("/comments/{creatorid}")
     @GET
     @Produces(OkupaInfoMediaType.OKUPAINFO_COMMENTS_CASALS)
@@ -472,7 +533,7 @@ public class CasalResource {
         Comments_CasalsDAO Comments_CasalsDAO = new Comments_CasalsDAOImpl();
         try {
             if (before && timestamp == 0) timestamp = System.currentTimeMillis();
-            Comments_CasalsCollection = Comments_CasalsDAO.getCommentByCreatorId( creatorid, timestamp, before);
+            Comments_CasalsCollection = Comments_CasalsDAO.getCommentByCreatorId(creatorid, timestamp, before);
         } catch (SQLException e) {
             throw new InternalServerErrorException();
         }

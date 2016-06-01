@@ -19,28 +19,27 @@ import java.sql.SQLException;
  */
 
 @Path("events")
-public class EventResource
-{
-    /**Obtenemos una lista de todos los eventos**/
+public class EventResource {
+    /**
+     * Obtenemos una lista de todos los eventos
+     **/
     @GET
     @Produces(OkupaInfoMediaType.OKUPAINFO_EVENTS_COLLECTION)
-    public EventCollection getAllEvents(@QueryParam("timestamp") long timestamp, @DefaultValue("true") @QueryParam("before") boolean before)
-    {
+    public EventCollection getAllEvents(@QueryParam("timestamp") long timestamp, @DefaultValue("true") @QueryParam("before") boolean before) {
         EventCollection EventCollection;
         EventoDAO EventoDAO = new EventoDAOImpl();
-        try
-        {
+        try {
             if (before && timestamp == 0) timestamp = System.currentTimeMillis();
             EventCollection = EventoDAO.getAllEvents(timestamp, before);
-        }
-        catch (SQLException e)
-        {
+        } catch (SQLException e) {
             throw new InternalServerErrorException();
         }
         return EventCollection;
     }
 
-    /**Comprobamos a que eventos asiste el usuario**/
+    /**
+     * Comprobamos a que eventos asiste el usuario
+     **/
     @Path("assistance/{userid}")
     @GET
     @Produces(OkupaInfoMediaType.OKUPAINFO_EVENTS)//Miramos la asistencia de un usuario a varios eventos
@@ -58,11 +57,13 @@ public class EventResource
         return eventCollection;
     }
 
-    /**Añadimos la asistencia del usuario al evento**/
-    @Path("assistance/{userid}")
+    /**
+     * Añadimos la asistencia del usuario al evento
+     **/
+    @Path("/{eventid}/{userid}")
     @POST
     @Produces(OkupaInfoMediaType.OKUPAINFO_EVENTS)//Miramos la asistencia de un usuario a varios eventos
-    public void addAssistanceToEvent(@FormParam("userid") String userid, @FormParam("eventid") String eventid, @Context UriInfo uriInfo) throws URISyntaxException {
+    public void addAssistanceToEvent(@PathParam("userid") String userid, @PathParam("eventid") String eventid, @Context UriInfo uriInfo) throws URISyntaxException {
         if (userid == null || eventid == null)
             throw new BadRequestException("all parameters are mandatory");
         EventoDAO eventoDAO = new EventoDAOImpl();
@@ -74,10 +75,12 @@ public class EventResource
         }
     }
 
-    /**Eliminamos la asistencia del usuario al evento**/
-    @Path("{eventid}/{userid}")
+    /**
+     * Eliminamos la asistencia del usuario al evento
+     **/
+    @Path("/{eventid}/{userid}")
     @DELETE
-    @Produces(OkupaInfoMediaType.OKUPAINFO_EVENTS)//Miramos la asistencia de un usuario a varios eventos
+    @Produces(OkupaInfoMediaType.OKUPAINFO_EVENTS)
     public void deleteAssistanceToEvent(@PathParam("userid") String userid, @PathParam("eventid") String eventid) {
         EventoDAO eventoDAO = new EventoDAOImpl();
 
@@ -89,31 +92,31 @@ public class EventResource
         }
     }
 
-    /**Comprobamos la asistencia del usuario al evento**/
+    /**
+     * Comprobamos la asistencia del usuario al evento
+     **/
     @Path("{eventid}/{userid}")
     @GET
     @Produces(OkupaInfoMediaType.OKUPAINFO_EVENTS)//Miramos la asistencia de un usuario a varios eventos
     public boolean checkAssitanceToEvent(@PathParam("userid") String userid) {
-        return  true;
+        return true;
     }
 
-    /**Obtenemos todos los commentarios que ha hecho un usuarios acerca de todos los eventos**/
+    /**
+     * Obtenemos todos los commentarios que ha hecho un usuarios acerca de todos los eventos
+     **/
     @Path("/comments/{creatorid}")
     @GET
     @Produces(OkupaInfoMediaType.OKUPAINFO_COMMENTS_EVENTS)
     public Comments_EventsCollection getCommentEventByCreatorId(@PathParam("creatorid") String creatorid, @QueryParam("timestamp") long timestamp,
-                                                                @DefaultValue("true") @QueryParam("before") boolean before)
-    {
+                                                                @DefaultValue("true") @QueryParam("before") boolean before) {
 
         Comments_EventsCollection Comments_EventsCollection;
         Comments_EventosDAO Comments_EventosDAO = new Comments_EventosDAOImpl();
-        try
-        {
+        try {
             if (before && timestamp == 0) timestamp = System.currentTimeMillis();
             Comments_EventsCollection = Comments_EventosDAO.getCommentByCreatorId(creatorid, timestamp, before);
-        }
-        catch (SQLException e)
-        {
+        } catch (SQLException e) {
             throw new InternalServerErrorException();
         }
         return Comments_EventsCollection;

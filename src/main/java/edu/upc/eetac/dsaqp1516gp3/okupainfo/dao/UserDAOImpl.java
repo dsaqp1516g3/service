@@ -15,13 +15,11 @@ import java.sql.SQLException;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class UserDAOImpl implements UserDAO {
     @Override
-    public User createUser(String loginid, String password, String email, String fullname, String description) throws SQLException, UserAlreadyExistsException
-    {
+    public User createUser(String loginid, String password, String email, String fullname, String description) throws SQLException, UserAlreadyExistsException {
         Connection connection = null;
         PreparedStatement stmt = null;
         String id = null;
-        try
-        {
+        try {
             User user = getUserByLoginid(loginid);
             if (user != null)
                 throw new UserAlreadyExistsException();
@@ -38,7 +36,7 @@ public class UserDAOImpl implements UserDAO {
             connection.setAutoCommit(false);
 
             stmt.close();
-                stmt = connection.prepareStatement(UserDAOQuery.CREATE_USER);
+            stmt = connection.prepareStatement(UserDAOQuery.CREATE_USER);
             stmt.setString(1, id);
             stmt.setString(2, loginid);
             stmt.setString(3, password);
@@ -53,16 +51,11 @@ public class UserDAOImpl implements UserDAO {
             stmt.executeUpdate();
 
             connection.commit();
-        }
-        catch (SQLException e)
-        {
+        } catch (SQLException e) {
             throw e;
-        }
-        finally
-        {
+        } finally {
             if (stmt != null) stmt.close();
-            if (connection != null)
-            {
+            if (connection != null) {
                 connection.setAutoCommit(true);
                 connection.close();
             }
@@ -71,14 +64,12 @@ public class UserDAOImpl implements UserDAO {
     }
 
     @Override
-    public User updateProfile(String id, String email, String fullname, String description) throws SQLException
-    {
+    public User updateProfile(String id, String email, String fullname, String description) throws SQLException {
         User user = null;
 
         Connection connection = null;
         PreparedStatement stmt = null;
-        try
-        {
+        try {
             connection = Database.getConnection();
 
             stmt = connection.prepareStatement(UserDAOQuery.UPDATE_USER);
@@ -88,21 +79,15 @@ public class UserDAOImpl implements UserDAO {
             stmt.setString(4, id);
 
             int rows = stmt.executeUpdate();
-            if (rows == 1)
-            {
+            if (rows == 1) {
                 user = getUserById(id);
             }
 
-        }
-        catch (SQLException e)
-        {
+        } catch (SQLException e) {
             throw e;
-        }
-        finally
-        {
+        } finally {
             if (stmt != null) stmt.close();
-            if (connection != null)
-            {
+            if (connection != null) {
                 connection.setAutoCommit(true);
                 connection.close();
             }
@@ -111,27 +96,19 @@ public class UserDAOImpl implements UserDAO {
     }
 
     @Override
-    public User getUserById(String id) throws SQLException
-    {
+    public User getUserById(String id) throws SQLException {
         User user = null;
 
         Connection connection = null;
         PreparedStatement stmt = null;
-        try
-        {
-            // Obtiene la conexión del DataSource
+        try {
             connection = Database.getConnection();
 
-            // Prepara la consulta
             stmt = connection.prepareStatement(UserDAOQuery.GET_USER_BY_ID);
-            // Da valor a los parámetros de la consulta
             stmt.setString(1, id);
 
-            // Ejecuta la consulta
             ResultSet rs = stmt.executeQuery();
-            // Procesa los resultados
-            if (rs.next())
-            {
+            if (rs.next()) {
                 user = new User();
                 user.setId(rs.getString("id"));
                 user.setLoginid(rs.getString("loginid"));
@@ -139,75 +116,49 @@ public class UserDAOImpl implements UserDAO {
                 user.setFullname(rs.getString("fullname"));
                 user.setDescription(rs.getString("description"));
             }
-        }
-        catch (SQLException e)
-        {
-            // Relanza la excepción
+        } catch (SQLException e) {
             throw e;
-        }
-        finally
-        {
-            // Libera la conexión
+        } finally {
             if (stmt != null) stmt.close();
             if (connection != null) connection.close();
         }
-        // Devuelve el modelo
         return user;
     }
 
-
     @Override
-    public User getIdByUser(String loginid) throws SQLException
-    {
+    public User getIdByUser(String loginid) throws SQLException {
         User user = null;
 
         Connection connection = null;
         PreparedStatement stmt = null;
-        try
-        {
-            // Obtiene la conexión del DataSource
+        try {
             connection = Database.getConnection();
 
-            // Prepara la consulta
             stmt = connection.prepareStatement(UserDAOQuery.GET_ID_BY_USER);
-            // Da valor a los parámetros de la consulta
             stmt.setString(1, loginid);
 
-            // Ejecuta la consulta
             ResultSet rs = stmt.executeQuery();
-            // Procesa los resultados
-            if (rs.next())
-            {
+            if (rs.next()) {
                 user = new User();
                 user.setId(rs.getString("id"));
                 user.setLoginid(rs.getString("loginid"));
             }
-        }
-        catch (SQLException e)
-        {
-            // Relanza la excepción
+        } catch (SQLException e) {
             throw e;
-        }
-        finally
-        {
-            // Libera la conexión
+        } finally {
             if (stmt != null) stmt.close();
             if (connection != null) connection.close();
         }
-        // Devuelve el modelo
         return user;
     }
 
-
     @Override
-    public User getUserByLoginid(String loginid) throws SQLException
-    {
+    public User getUserByLoginid(String loginid) throws SQLException {
         User user = null;
 
         Connection connection = null;
         PreparedStatement stmt = null;
-        try
-        {
+        try {
             connection = Database.getConnection();
 
 
@@ -215,8 +166,7 @@ public class UserDAOImpl implements UserDAO {
             stmt.setString(1, loginid);
 
             ResultSet rs = stmt.executeQuery();
-            if (rs.next())
-            {
+            if (rs.next()) {
                 user = new User();
                 user.setId(rs.getString("id"));
                 user.setLoginid(rs.getString("loginid"));
@@ -224,13 +174,9 @@ public class UserDAOImpl implements UserDAO {
                 user.setFullname(rs.getString("fullname"));
                 user.setDescription(rs.getString("description"));
             }
-        }
-        catch (SQLException e)
-        {
+        } catch (SQLException e) {
             throw e;
-        }
-        finally
-        {
+        } finally {
             if (stmt != null) stmt.close();
             if (connection != null) connection.close();
         }
@@ -238,23 +184,20 @@ public class UserDAOImpl implements UserDAO {
     }
 
     @Override
-    public UserCollection getAllUsers() throws SQLException
-    {
+    public UserCollection getAllUsers() throws SQLException {
         UserCollection userCollection = new UserCollection();
 
         Connection connection = null;
         PreparedStatement stmt = null;
-        try
-        {
+        try {
             connection = Database.getConnection();
 
             stmt = connection.prepareStatement(UserDAOQuery.GET_ALL_USERS);
 
             ResultSet rs = stmt.executeQuery();
             System.out.println("llista USERS servida");
-            while (rs.next())
-            {
-                User user = new User ();
+            while (rs.next()) {
+                User user = new User();
                 user.setId(rs.getString("Id"));
                 user.setLoginid(rs.getString("Loginid"));
                 user.setEmail(rs.getString("email"));
@@ -262,13 +205,9 @@ public class UserDAOImpl implements UserDAO {
                 user.setDescription(rs.getString("description"));
                 userCollection.getUsers().add(user);
             }
-        }
-        catch (SQLException e)
-        {
+        } catch (SQLException e) {
             throw e;
-        }
-        finally
-        {
+        } finally {
             if (stmt != null) stmt.close();
             if (connection != null) connection.close();
         }
@@ -281,29 +220,23 @@ public class UserDAOImpl implements UserDAO {
 
         Connection connection = null;
         PreparedStatement stmt = null;
-        try
-        {
+        try {
             connection = Database.getConnection();
 
             stmt = connection.prepareStatement(UserDAOQuery.GET_USERS_BY_EVENT_ID);
-            stmt.setString(2,eventoid);
+            stmt.setString(2, eventoid);
 
             ResultSet rs = stmt.executeQuery();
-            if(rs.next())
-            {
+            if (rs.next()) {
                 user.setId(rs.getString("id"));
                 user.setLoginid(rs.getString("loginid"));
                 user.setEmail(rs.getString("email"));
                 user.setFullname(rs.getString("fullname"));
                 user.setDescription(rs.getString("description"));
             }
-        }
-        catch (SQLException e)
-        {
+        } catch (SQLException e) {
             throw e;
-        }
-        finally
-        {
+        } finally {
             if (stmt != null) stmt.close();
             if (connection != null) connection.close();
         }
@@ -311,12 +244,10 @@ public class UserDAOImpl implements UserDAO {
     }
 
     @Override
-    public boolean deleteUser(String id) throws SQLException
-    {
+    public boolean deleteUser(String id) throws SQLException {
         Connection connection = null;
         PreparedStatement stmt = null;
-        try
-        {
+        try {
             connection = Database.getConnection();
 
             stmt = connection.prepareStatement(UserDAOQuery.DELETE_USER);
@@ -324,52 +255,41 @@ public class UserDAOImpl implements UserDAO {
 
             int rows = stmt.executeUpdate();
             return (rows == 1);
-        }
-        catch (SQLException e)
-        {
+        } catch (SQLException e) {
             throw e;
-        }
-        finally
-        {
+        } finally {
             if (stmt != null) stmt.close();
             if (connection != null) connection.close();
         }
     }
 
     @Override
-    public boolean checkPassword(String id, String password) throws SQLException
-    {
+    public boolean checkPassword(String id, String password) throws SQLException {
         Connection connection = null;
         PreparedStatement stmt = null;
-        try
-        {
+        try {
             connection = Database.getConnection();
 
             stmt = connection.prepareStatement(UserDAOQuery.GET_PASSWORD);
             stmt.setString(1, id);
 
             ResultSet rs = stmt.executeQuery();
-            if (rs.next())
-            {
+            if (rs.next()) {
                 String storedPassword = rs.getString("password");
-                try
-                {
+                try {
                     MessageDigest md = MessageDigest.getInstance("MD5");
+                    md.update(password.getBytes());
                     md.update(password.getBytes());
                     String passedPassword = new BigInteger(1, md.digest()).toString(16);
 
                     return passedPassword.equalsIgnoreCase(storedPassword);
+                } catch (NoSuchAlgorithmException e) {
                 }
-                catch (NoSuchAlgorithmException e) {}
             }
             return false;
-        }
-        catch (SQLException e)
-        {
+        } catch (SQLException e) {
             throw e;
-        }
-        finally
-        {
+        } finally {
             if (stmt != null) stmt.close();
             if (connection != null) connection.close();
         }
