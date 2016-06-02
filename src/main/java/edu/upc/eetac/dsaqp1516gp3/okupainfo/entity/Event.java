@@ -52,7 +52,7 @@ public class Event {
         return casalid;
     }
 
-    public void setCasalid(String casalsid) {
+    public void setCasalid(String casalid) {
         this.casalid = casalid;
     }
 

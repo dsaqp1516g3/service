@@ -240,16 +240,14 @@ public class CasalResource {
     @PUT
     @Consumes(OkupaInfoMediaType.OKUPAINFO_EVENTS)
     @Produces(OkupaInfoMediaType.OKUPAINFO_EVENTS)
-    public Event updateEventProfile(@PathParam("eventid") String eventid, Event event) {
-        if (event == null)
-            throw new BadRequestException("entity is null");
-        if (!eventid.equals(event.getId()))
-            throw new BadRequestException("path parameter id and entity parameter id doesn't match");
+    public Event updateEventProfile(@PathParam("eventid") String eventid,@PathParam("casalid") String casalid, Event event) {
 
-        String userid = securityContext.getUserPrincipal().getName();
-        /*if (!userid.equals(event.getCasalid()))
-        if (!userid.equals(event.getCasalid()))
-            throw new ForbiddenException("operation not allowed");*/
+        if (event == null)
+            throw new BadRequestException("Entity is null");
+        if (!eventid.equals(event.getId()))
+            throw new BadRequestException("Casal ID doesn't match with Event ID");
+        if (!casalid.equals(event.getCasalid()))
+            throw new ForbiddenException("You are not the owner of this casal");
 
         OpenStreetMapUtils openStreetMapUtils = new OpenStreetMapUtils();
         /**Aqui atacamos a la API externa para obtener las longitudes y latitudes**/
@@ -258,7 +256,6 @@ public class CasalResource {
         double lon = coo.get("lon");
         double lat = coo.get("lat");
         /**Asignaremos el valor devuelto por OpenStreetMap a nuestros valores de longitud y latitud**/
-
 
         EventoDAO EventoDAO = new EventoDAOImpl();
         try {
