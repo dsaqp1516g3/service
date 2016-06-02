@@ -97,9 +97,16 @@ public class EventResource {
      **/
     @Path("{eventid}/{userid}")
     @GET
-    @Produces(OkupaInfoMediaType.OKUPAINFO_EVENTS)//Miramos la asistencia de un usuario a varios eventos
-    public boolean checkAssitanceToEvent(@PathParam("userid") String userid) {
-        return true;
+    @Produces(OkupaInfoMediaType.OKUPAINFO_EVENTS)
+    public boolean checkAssitanceToEvent(@PathParam("userid") String userid, @PathParam("eventid") String eventid) {
+        EventoDAO eventoDAO = new EventoDAOImpl();
+        boolean assistance = false;
+        try {
+            assistance = eventoDAO.checkAssistanceToEvent(userid,eventid);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return assistance;
     }
 
     /**

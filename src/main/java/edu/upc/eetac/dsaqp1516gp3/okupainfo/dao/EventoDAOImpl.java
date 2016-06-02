@@ -335,4 +335,28 @@ public class EventoDAOImpl implements EventoDAO {
             if (connection != null) connection.close();
         }
     }
+
+    @Override
+    public boolean checkAssistanceToEvent(String userid, String eventid) throws SQLException {
+        Connection connection = null;
+        PreparedStatement stmt = null;
+        try {
+            connection = Database.getConnection();
+
+            stmt = connection.prepareStatement(EventoDAOQuery.CHECK_ASSISTANCE_TO_EVENT);
+            stmt.setString(1, userid);
+            stmt.setString(2, eventid);
+
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return true;
+            } else
+                return false;
+        } catch (SQLException e) {
+            throw e;
+        } finally {
+            if (stmt != null) stmt.close();
+            if (connection != null) connection.close();
+        }
+    }
 }
