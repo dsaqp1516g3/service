@@ -19,4 +19,5 @@ public interface EventoDAO
     boolean deleteEvent(String id) throws SQLException;
     boolean deleteAssistanceEvent(String userid, String eventid) throws SQLException;
     boolean checkAssistanceToEvent(String userid, String eventid) throws SQLException;
+    boolean checkEventsOfCasal(String casalid) throws SQLException;
 }

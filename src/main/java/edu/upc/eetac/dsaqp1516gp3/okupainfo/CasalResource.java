@@ -240,7 +240,7 @@ public class CasalResource {
     @PUT
     @Consumes(OkupaInfoMediaType.OKUPAINFO_EVENTS)
     @Produces(OkupaInfoMediaType.OKUPAINFO_EVENTS)
-    public Event updateEventProfile(@PathParam("eventid") String eventid,@PathParam("casalid") String casalid, Event event) {
+    public Event updateEventProfile(@PathParam("eventid") String eventid, @PathParam("casalid") String casalid, Event event) {
 
         if (event == null)
             throw new BadRequestException("Entity is null");
@@ -308,17 +308,27 @@ public class CasalResource {
     /**
      * Creamos un comentario acerca de un evento
      **/
-    @Path("{casalid}/events/{eventid}/comments")
+    @Path("/{casalid}/events/{eventid}/comments")
     @POST
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-    public Response createEventComment(@FormParam("creatorid") String creatorid, @FormParam("eventoid") String eventoid,
+    public Response createEventComment(@PathParam("casalid") String casalid, @PathParam("eventid") String eventid,
                                        @FormParam("content") String content, @Context UriInfo uriInfo) throws URISyntaxException {
-        if (creatorid == null || eventoid == null || content == null)
+        if (content == null)
             throw new BadRequestException("all parameters are mandatory");
+
+        CasalDAO casalDAO = new CasalDAOImpl();
+        EventoDAO eventoDAO = new EventoDAOImpl();
         Comments_EventosDAO Comments_EventosDAO = new Comments_EventosDAOImpl();
         Comments_Events Comments_Events;
+
         try {
-            Comments_Events = Comments_EventosDAO.createComment(creatorid, eventoid, content);
+            boolean belong = eventoDAO.checkEventsOfCasal(casalid);
+            if (belong) {
+                String creatorid = casalDAO.getAdminId(casalid);
+                Comments_Events = Comments_EventosDAO.createComment(creatorid, eventid, content);
+            } else {
+                throw new BadRequestException("Casal and EventID doesn't match");
+            }
         } catch (SQLException e) {
             throw new InternalServerErrorException();
         }
@@ -432,13 +442,14 @@ public class CasalResource {
     @POST
     @Path("/{casalid}/comments")
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-    public Response createCasalComment(@FormParam("creatorid") String creatorid, @PathParam("casalid") String casalid,
-                                       @FormParam("content") String content, @Context UriInfo uriInfo) throws URISyntaxException {
-        if (creatorid == null || casalid == null || content == null)
+    public Response createCasalComment(@PathParam("casalid") String casalid, @FormParam("content") String content, @Context UriInfo uriInfo) throws URISyntaxException {
+        if (casalid == null || content == null)
             throw new BadRequestException("all parameters are mandatory");
         Comments_CasalsDAO Comments_CasalsDAO = new Comments_CasalsDAOImpl();
         Comments_Casals Comments_Casals;
+        CasalDAO casalDAO = new CasalDAOImpl();
         try {
+            String creatorid = casalDAO.getAdminId(casalid);
             Comments_Casals = Comments_CasalsDAO.createComment(creatorid, casalid, content);
         } catch (SQLException e) {
             throw new InternalServerErrorException();

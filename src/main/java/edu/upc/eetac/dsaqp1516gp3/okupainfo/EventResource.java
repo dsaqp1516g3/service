@@ -102,7 +102,7 @@ public class EventResource {
         EventoDAO eventoDAO = new EventoDAOImpl();
         boolean assistance = false;
         try {
-            assistance = eventoDAO.checkAssistanceToEvent(userid,eventid);
+            assistance = eventoDAO.checkAssistanceToEvent(userid, eventid);
         } catch (SQLException e) {
             e.printStackTrace();
         }

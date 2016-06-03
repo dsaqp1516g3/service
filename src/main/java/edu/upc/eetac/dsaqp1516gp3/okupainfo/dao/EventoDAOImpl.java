@@ -359,4 +359,26 @@ public class EventoDAOImpl implements EventoDAO {
             if (connection != null) connection.close();
         }
     }
+
+    @Override
+    public boolean checkEventsOfCasal(String casalid) throws SQLException {
+        Connection connection = null;
+        PreparedStatement stmt = null;
+        try {
+            connection = Database.getConnection();
+
+            stmt = connection.prepareStatement(EventoDAOQuery.GET_EVENTS_BY_CASAL_ID);
+            stmt.setString(1, casalid);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return true;
+            } else
+                return false;
+        } catch (SQLException e) {
+            throw e;
+        } finally {
+            if (stmt != null) stmt.close();
+            if (connection != null) connection.close();
+        }
+    }
 }

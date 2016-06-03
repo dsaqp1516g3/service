@@ -16,6 +16,7 @@ public class Comments_EventosDAOImpl implements Comments_EventosDAO {
         try {
             connection = Database.getConnection();
 
+
             stmt = connection.prepareStatement(Comments_EventosDAOQuery.UUID);
             ResultSet rs = stmt.executeQuery();
             if (rs.next())
@@ -31,6 +32,9 @@ public class Comments_EventosDAOImpl implements Comments_EventosDAO {
             stmt.setString(2, creatorid);
             stmt.setString(3, eventoid);
             stmt.setString(4, content);
+            stmt.executeUpdate();
+
+            connection.commit();
         } catch (SQLException e) {
             throw e;
         } finally {
