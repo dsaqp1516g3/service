@@ -22,23 +22,23 @@ public class LoginResource {
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     @Produces(OkupaInfoMediaType.OKUPAINFO_AUTH_TOKEN)
     public AuthToken login(@FormParam("loginid") String loginid, @FormParam("password") String password) {
-        if (loginid == null || password == null)
+        if(loginid == null || password == null)
             throw new BadRequestException("all parameters are mandatory");
 
-        User user = null;
-        AuthToken authToken = null;
-        try {
+        User user;
+        AuthToken authToken;
+        try{
             UserDAO userDAO = new UserDAOImpl();
             user = userDAO.getUserByLoginid(loginid);
-            if (user == null)
+            if(user == null)
                 throw new BadRequestException("loginid " + loginid + " not found.");
-            if (!userDAO.checkPassword(user.getId(), password))
+            if(!userDAO.checkPassword(user.getId(), password))
                 throw new BadRequestException("incorrect password");
 
             AuthTokenDAO authTokenDAO = new AuthTokenDAOImpl();
             authTokenDAO.deleteToken(user.getId());
             authToken = authTokenDAO.createAuthToken(user.getId());
-        } catch (SQLException e) {
+        }catch(SQLException e){
             throw new InternalServerErrorException();
         }
         return authToken;

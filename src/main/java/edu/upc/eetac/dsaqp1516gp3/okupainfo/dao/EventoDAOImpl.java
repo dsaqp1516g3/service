@@ -5,7 +5,6 @@ import edu.upc.eetac.dsaqp1516gp3.okupainfo.entity.Event;
 import edu.upc.eetac.dsaqp1516gp3.okupainfo.entity.EventCollection;
 
 import java.sql.*;
-import java.util.Calendar;
 
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -36,11 +35,6 @@ public class EventoDAOImpl implements EventoDAO {
             stmt.setString(5, localization);
             stmt.setDouble(6, latitude);
             stmt.setDouble(7, longitude);
-
-            long l = Calendar.getInstance().getTimeInMillis();
-            Timestamp ts = new Timestamp(l);
-            String tss = ts.toString();
-
             stmt.setTimestamp(8, new Timestamp(eventdate * 1000));
             stmt.executeUpdate();
 
@@ -59,7 +53,7 @@ public class EventoDAOImpl implements EventoDAO {
     }
 
     @Override
-    public Event updateProfile(String id, String title, String description, long eventdate, String localization, double latitude, double longitude) throws SQLException {
+    public Event updateProfile(String id, String title, String description, Timestamp eventdate, String localization, double latitude, double longitude) throws SQLException {
         Event event = null;
 
         Connection connection = null;
@@ -70,7 +64,7 @@ public class EventoDAOImpl implements EventoDAO {
             stmt = connection.prepareStatement(EventoDAOQuery.UPDATE_EVENT);
             stmt.setString(1, title);
             stmt.setString(2, description);
-            stmt.setTimestamp(3, new Timestamp(eventdate * 1000));
+            stmt.setTimestamp(3, eventdate);
             stmt.setString(4, localization);
             stmt.setDouble(5, latitude);
             stmt.setDouble(6, longitude);
@@ -115,7 +109,9 @@ public class EventoDAOImpl implements EventoDAO {
                 event.setLocalization(rs.getString("localization"));
                 event.setLatitude(rs.getDouble("latitude"));
                 event.setLongitude(rs.getDouble("longitude"));
-                event.setEventdate(rs.getLong("eventdate"));
+                event.setEventdate(rs.getTimestamp("eventdate"));
+                event.setCreationTimestamp(rs.getTimestamp("creation_timestamp"));
+                event.setLastModified(rs.getTimestamp("last_modified"));
             }
         } catch (SQLException e) {
             throw e;
@@ -178,19 +174,19 @@ public class EventoDAOImpl implements EventoDAO {
                 event.setCasalid(rs.getString("casalid"));
                 event.setTitle(rs.getString("title"));
                 event.setDescription(rs.getString("description"));
-                event.setEventdate(rs.getLong("eventdate"));
+                event.setEventdate(rs.getTimestamp("eventdate"));
                 event.setLocalization(rs.getString("localization"));
                 event.setLatitude(rs.getDouble("latitude"));
                 event.setLongitude(rs.getDouble("longitude"));
                 eventCollection.getEvents().add(event);
-                event.setCreationTimestamp(rs.getTimestamp("creation_timestamp").getTime());
-                event.setLastModified(rs.getTimestamp("last_modified").getTime());
+                event.setCreationTimestamp(rs.getTimestamp("creation_timestamp"));
+                event.setLastModified(rs.getTimestamp("last_modified"));
 
                 if (first) {
-                    eventCollection.setNewestTimestamp(event.getLastModified());
+                    eventCollection.setNewestTimestamp(event.getLastModified().getTime());
                     first = false;
                 }
-                eventCollection.setOldestTimestamp(event.getLastModified());
+                eventCollection.setOldestTimestamp(event.getLastModified().getTime());
                 eventCollection.getEvents().add(event);
             }
         } catch (SQLException e) {
@@ -228,18 +224,18 @@ public class EventoDAOImpl implements EventoDAO {
                 event.setCasalid(rs.getString("casalid"));
                 event.setTitle(rs.getString("title"));
                 event.setDescription(rs.getString("description"));
-                event.setEventdate(rs.getLong("eventdate"));
+                event.setEventdate(rs.getTimestamp("eventdate"));
                 event.setLocalization(rs.getString("localization"));
                 event.setLatitude(rs.getDouble("latitude"));
                 event.setLongitude(rs.getDouble("longitude"));
                 eventCollection.getEvents().add(event);
-                event.setCreationTimestamp(rs.getTimestamp("creation_timestamp").getTime());
-                event.setLastModified(rs.getTimestamp("last_modified").getTime());
+                event.setCreationTimestamp(rs.getTimestamp("creation_timestamp"));
+                event.setLastModified(rs.getTimestamp("last_modified"));
                 if (first) {
-                    eventCollection.setNewestTimestamp(event.getLastModified());
+                    eventCollection.setNewestTimestamp(event.getLastModified().getTime());
                     first = false;
                 }
-                eventCollection.setOldestTimestamp(event.getLastModified());
+                eventCollection.setOldestTimestamp(event.getLastModified().getTime());
             }
         } catch (SQLException e) {
             throw e;
@@ -277,12 +273,14 @@ public class EventoDAOImpl implements EventoDAO {
                 event.setLocalization(rs.getString("localization"));
                 event.setLatitude(rs.getDouble("latitude"));
                 event.setLongitude(rs.getDouble("longitude"));
-                event.setEventdate(rs.getLong("eventdate"));
+                event.setEventdate(rs.getTimestamp("eventdate"));
+                event.setCreationTimestamp(rs.getTimestamp("creation_timestamp"));
+                event.setLastModified(rs.getTimestamp("last_modified"));
                 if (first) {
-                    eventCollection.setNewestTimestamp(event.getLastModified());
+                    eventCollection.setNewestTimestamp(event.getLastModified().getTime());
                     first = false;
                 }
-                eventCollection.setOldestTimestamp(event.getLastModified());
+                eventCollection.setOldestTimestamp(event.getLastModified().getTime());
                 eventCollection.getEvents().add(event);
             }
         } catch (SQLException e) {

@@ -16,6 +16,7 @@ public class User {
             @InjectLink(resource = CasalResource.class, style = InjectLink.Style.ABSOLUTE, rel = "current-casals", title = "Current casals", type = OkupaInfoMediaType.OKUPAINFO_CASAL_COLLECTION),
             @InjectLink(resource = LoginResource.class, style = InjectLink.Style.ABSOLUTE, rel = "logout", title = "Logout"),
             @InjectLink(resource = EventResource.class, style = InjectLink.Style.ABSOLUTE, rel = "create-event", title = "Create Event", type = OkupaInfoMediaType.OKUPAINFO_EVENTS),
+            @InjectLink(resource = EventResource.class, style = InjectLink.Style.ABSOLUTE, rel = "current-events", title = "Current Events", type = OkupaInfoMediaType.OKUPAINFO_EVENTS_COLLECTION),
             @InjectLink(resource = UserResource.class, method = "getUser", style = InjectLink.Style.ABSOLUTE, rel = "self user-profile", title = "User profile", type = OkupaInfoMediaType.OKUPAINFO_USER, bindings = @Binding(name = "id", value = "${instance.id}"))
     })
     private List<Link> links;

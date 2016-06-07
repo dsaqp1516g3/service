@@ -46,7 +46,8 @@ public class CasalResource {
             e.printStackTrace();
         }
         URI uri = new URI(uriInfo.getAbsolutePath().toString() + "/" + casal.getCasalid());
-        return Response.created(uri).build();
+        return Response.created(uri).type(OkupaInfoMediaType.OKUPAINFO_CASAL).entity(casal).build();
+
     }
 
     /**

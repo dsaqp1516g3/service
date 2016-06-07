@@ -5,12 +5,13 @@ import edu.upc.eetac.dsaqp1516gp3.okupainfo.entity.Event;
 import edu.upc.eetac.dsaqp1516gp3.okupainfo.entity.EventCollection;
 
 import java.sql.SQLException;
+import java.sql.Timestamp;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public interface EventoDAO
 {
     Event createEvent(String casalid, String title, String description, String localization, double latitude, double longitude, long eventdate)throws SQLException;
-    Event updateProfile(String id, String title, String description, long eventdate, String localization, double latitude, double longitude)throws SQLException;
+    Event updateProfile(String id, String title, String description, Timestamp eventdate, String localization, double latitude, double longitude)throws SQLException;
     Event getEventById(String id) throws SQLException;
     void addUserAssistance(String userid, String eventid) throws SQLException;
     EventCollection getEventsByCasalId(String casalid, long timestamp, boolean before)throws SQLException;

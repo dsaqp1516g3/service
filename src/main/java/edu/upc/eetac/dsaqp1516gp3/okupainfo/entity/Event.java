@@ -1,14 +1,13 @@
 package edu.upc.eetac.dsaqp1516gp3.okupainfo.entity;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import edu.upc.eetac.dsaqp1516gp3.okupainfo.CasalResource;
-import edu.upc.eetac.dsaqp1516gp3.okupainfo.EventResource;
-import edu.upc.eetac.dsaqp1516gp3.okupainfo.OkupaInfoMediaType;
-import edu.upc.eetac.dsaqp1516gp3.okupainfo.OkupaInfoRootAPIResource;
+import edu.upc.eetac.dsaqp1516gp3.okupainfo.*;
+import org.glassfish.jersey.linking.Binding;
 import org.glassfish.jersey.linking.InjectLink;
 import org.glassfish.jersey.linking.InjectLinks;
 
 import javax.ws.rs.core.Link;
+import java.sql.Timestamp;
 import java.util.List;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -18,6 +17,7 @@ public class Event {
             @InjectLink(resource = OkupaInfoRootAPIResource.class, style = InjectLink.Style.ABSOLUTE, rel = "home", title = "OkupaInfo Root API"),
             @InjectLink(resource = EventResource.class, style = InjectLink.Style.ABSOLUTE, rel = "current-events", title = "Current Events", type = OkupaInfoMediaType.OKUPAINFO_EVENTS_COLLECTION),
             @InjectLink(resource = CasalResource.class, style = InjectLink.Style.ABSOLUTE, rel = "current-casals", title = "Current Casals", type = OkupaInfoMediaType.OKUPAINFO_CASAL_COLLECTION),
+            @InjectLink(resource = UserResource.class, method = "getEvent", style = InjectLink.Style.ABSOLUTE, rel = "self event-profile", title = "Event profile", type = OkupaInfoMediaType.OKUPAINFO_EVENTS, bindings = @Binding(name = "id", value = "${instance.id}"))
     })
     private List<Link> links;
     private String id;
@@ -27,9 +27,9 @@ public class Event {
     private String localization;
     private double latitude;
     private double longitude;
-    private long eventdate;
-    private long creationTimestamp;
-    private long lastModified;
+    private Timestamp eventdate;
+    private Timestamp creationTimestamp;
+    private Timestamp lastModified;
 
 
     public List<Link> getLinks() {
@@ -96,27 +96,27 @@ public class Event {
         this.longitude = longitude;
     }
 
-    public long getEventdate() {
+    public Timestamp getEventdate() {
         return eventdate;
     }
 
-    public void setEventdate(long eventdate) {
+    public void setEventdate(Timestamp eventdate) {
         this.eventdate = eventdate;
     }
 
-    public long getCreationTimestamp() {
+    public Timestamp getCreationTimestamp() {
         return creationTimestamp;
     }
 
-    public void setCreationTimestamp(long creationTimestamp) {
+    public void setCreationTimestamp(Timestamp creationTimestamp) {
         this.creationTimestamp = creationTimestamp;
     }
 
-    public long getLastModified() {
+    public Timestamp getLastModified() {
         return lastModified;
     }
 
-    public void setLastModified(long lastModified) {
+    public void setLastModified(Timestamp lastModified) {
         this.lastModified = lastModified;
     }
 
