@@ -47,7 +47,6 @@ public class CasalResource {
         }
         URI uri = new URI(uriInfo.getAbsolutePath().toString() + "/" + casal.getCasalid());
         return Response.created(uri).type(OkupaInfoMediaType.OKUPAINFO_CASAL).entity(casal).build();
-
     }
 
     /**
@@ -198,7 +197,7 @@ public class CasalResource {
         }
 
         EventoDAO EventoDAO = new EventoDAOImpl();
-        Event Event;
+        Event event;
         OpenStreetMapUtils openStreetMapUtils = new OpenStreetMapUtils();
 
         try {
@@ -208,12 +207,12 @@ public class CasalResource {
             double lon = coo.get("lon");
             double lat = coo.get("lat");
             /**Asignaremos el valor devuelto por OpenStreetMap a nuestros valores de longitud y latitud**/
-            Event = EventoDAO.createEvent(casalid, title, description, localization, lat, lon, eventdate);
+            event = EventoDAO.createEvent(casalid, title, description, localization, lat, lon, eventdate);
         } catch (SQLException e) {
             throw new InternalServerErrorException();
         }
-        URI uri = new URI(uriInfo.getAbsolutePath().toString() + "/" + Event.getId());
-        return Response.created(uri).build();
+        URI uri = new URI(uriInfo.getAbsolutePath().toString() + "/events/" + event.getId());
+        return Response.created(uri).type(OkupaInfoMediaType.OKUPAINFO_EVENTS).entity(event).build();
     }
 
     /**
