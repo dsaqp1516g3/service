@@ -1,15 +1,13 @@
 package edu.upc.eetac.dsaqp1516gp3.okupainfo;
 
-import edu.upc.eetac.dsaqp1516gp3.okupainfo.dao.Comments_EventosDAO;
-import edu.upc.eetac.dsaqp1516gp3.okupainfo.dao.Comments_EventosDAOImpl;
-import edu.upc.eetac.dsaqp1516gp3.okupainfo.dao.EventoDAO;
-import edu.upc.eetac.dsaqp1516gp3.okupainfo.dao.EventoDAOImpl;
+import edu.upc.eetac.dsaqp1516gp3.okupainfo.dao.*;
 import edu.upc.eetac.dsaqp1516gp3.okupainfo.entity.Comments_EventsCollection;
 import edu.upc.eetac.dsaqp1516gp3.okupainfo.entity.EventCollection;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Request;
+import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import java.net.URISyntaxException;
 import java.sql.SQLException;
@@ -63,13 +61,16 @@ public class EventResource {
     @Path("/{eventid}/{userid}")
     @POST
     @Produces(OkupaInfoMediaType.OKUPAINFO_EVENTS)//Miramos la asistencia de un usuario a varios eventos
-    public void addAssistanceToEvent(@PathParam("userid") String userid, @PathParam("eventid") String eventid, @Context UriInfo uriInfo) throws URISyntaxException {
+    public boolean addAssistanceToEvent(@PathParam("userid") String userid, @PathParam("eventid") String eventid, @Context UriInfo uriInfo) throws URISyntaxException {
         if (userid == null || eventid == null)
             throw new BadRequestException("all parameters are mandatory");
         EventoDAO eventoDAO = new EventoDAOImpl();
 
         try {
             eventoDAO.addUserAssistance(userid, eventid);
+            return true;
+        } catch (UserAlreadyAssists e) {
+            throw new WebApplicationException("The user " + userid + " has already confirmed assistance to " + eventid, Response.Status.CONFLICT);
         } catch (SQLException e) {
             throw new InternalServerErrorException();
         }

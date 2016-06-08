@@ -125,7 +125,7 @@ public class UserDAOImpl implements UserDAO {
         return user;
     }
 
-    @Override
+    /*@Override
     public User getIdByUser(String loginid) throws SQLException {
         User user = null;
 
@@ -150,7 +150,7 @@ public class UserDAOImpl implements UserDAO {
             if (connection != null) connection.close();
         }
         return user;
-    }
+    }*/
 
     @Override
     public User getUserByLoginid(String loginid) throws SQLException {
@@ -214,7 +214,7 @@ public class UserDAOImpl implements UserDAO {
         return userCollection;
     }
 
-    @Override
+   /* @Override
     public User getUsersByEventoId(String eventoid) throws SQLException {
         User user = null;
 
@@ -241,7 +241,7 @@ public class UserDAOImpl implements UserDAO {
             if (connection != null) connection.close();
         }
         return user;
-    }
+    }*/
 
     @Override
     public boolean deleteUser(String id) throws SQLException {

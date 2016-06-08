@@ -29,12 +29,17 @@ public class UserResource {
         UserDAO userDAO = new UserDAOImpl();
         User user;
         AuthToken authenticationToken;
-        try {
+        try
+        {
             user = userDAO.createUser(loginid, password, email, fullname, description);
             authenticationToken = (new AuthTokenDAOImpl()).createAuthToken(user.getId());
-        } catch (UserAlreadyExistsException e) {
+        }
+        catch (UserAlreadyExistsException e)
+        {
             throw new WebApplicationException("loginid already exists", Response.Status.CONFLICT);
-        } catch (SQLException e) {
+        }
+        catch (SQLException e)
+        {
             throw new InternalServerErrorException();
         }
         URI uri = new URI(uriInfo.getAbsolutePath().toString() + "/" + user.getId());

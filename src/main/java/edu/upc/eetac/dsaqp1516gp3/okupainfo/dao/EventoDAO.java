@@ -13,7 +13,7 @@ public interface EventoDAO
     Event createEvent(String casalid, String title, String description, String localization, double latitude, double longitude, long eventdate)throws SQLException;
     Event updateProfile(String id, String title, String description, Timestamp eventdate, String localization, double latitude, double longitude)throws SQLException;
     Event getEventById(String id) throws SQLException;
-    void addUserAssistance(String userid, String eventid) throws SQLException;
+    void addUserAssistance(String userid, String eventid) throws SQLException, UserAlreadyAssists;
     EventCollection getEventsByCasalId(String casalid, long timestamp, boolean before)throws SQLException;
     EventCollection getEventsByUserId(String userid, long timestamp, boolean before) throws SQLException;
     EventCollection getAllEvents(long timestamp, boolean before)throws SQLException;

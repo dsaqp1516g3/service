@@ -12,10 +12,8 @@ public interface UserDAO
     User createUser(String loginid, String password, String email, String fullname, String description) throws SQLException, UserAlreadyExistsException;
     User updateProfile(String id, String email, String fullname, String description) throws SQLException;
     User getUserById(String id) throws SQLException;
-    User getIdByUser(String loginid) throws SQLException;
     User getUserByLoginid(String loginid) throws SQLException;
     UserCollection getAllUsers() throws SQLException;
-    User getUsersByEventoId(String eventoid) throws SQLException;
     boolean deleteUser(String id) throws SQLException;
     boolean checkPassword(String id, String password) throws SQLException;
 }

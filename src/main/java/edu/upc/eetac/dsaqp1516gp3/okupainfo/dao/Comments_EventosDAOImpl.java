@@ -94,6 +94,8 @@ public class Comments_EventosDAOImpl implements Comments_EventosDAO {
                 comments_events.setCreatorid(rs.getString("creatorid"));
                 comments_events.setEventoid(rs.getString("eventoid"));
                 comments_events.setContent(rs.getString("content"));
+                comments_events.setCreationTimestamp(rs.getTimestamp("creation_timestamp").getTime());
+                comments_events.setLastModified(rs.getTimestamp("last_modified").getTime());
             }
         } catch (SQLException e) {
             throw e;
@@ -202,9 +204,11 @@ public class Comments_EventosDAOImpl implements Comments_EventosDAO {
             connection = Database.getConnection();
             if (before) {
                 stmt = connection.prepareStatement(Comments_EventosDAOQuery.GET_ALL_COMMENTS);
-            } else
+                System.out.println("llista COMMENTS_EVENTS servida");
+            } else {
                 stmt = connection.prepareStatement(Comments_EventosDAOQuery.GET_COMMENT_EVENTS_AFTER);
-            stmt.setTimestamp(1, new Timestamp(timestamp));
+                stmt.setTimestamp(1, new Timestamp(timestamp));
+            }
 
             ResultSet rs = stmt.executeQuery();
             boolean first = true;
@@ -215,7 +219,6 @@ public class Comments_EventosDAOImpl implements Comments_EventosDAO {
                 Comments_Events.setCreatorid(rs.getString("creatorid"));
                 Comments_Events.setEventoid(rs.getString("eventoid"));
                 Comments_Events.setContent(rs.getString("content"));
-                Comments_Events.setCreationTimestamp(rs.getLong("description"));
                 Comments_Events.setCreationTimestamp(rs.getTimestamp("creation_timestamp").getTime());
                 Comments_Events.setLastModified(rs.getTimestamp("last_modified").getTime());
                 if (first) {

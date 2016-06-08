@@ -3,6 +3,7 @@ package edu.upc.eetac.dsaqp1516gp3.okupainfo.entity;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 import javax.ws.rs.core.Link;
+import java.sql.Timestamp;
 import java.util.List;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -13,8 +14,8 @@ public class Comments_Casals
     private String creatorid;
     private String casalid;
     private String Content;
-    private long creationTimestamp;
-    private long lastModified;
+    private Timestamp creationTimestamp;
+    private Timestamp lastModified;
 
     public List<Link> getLinks() {
         return links;
@@ -56,19 +57,19 @@ public class Comments_Casals
         Content = content;
     }
 
-    public long getCreationTimestamp() {
+    public Timestamp getCreationTimestamp() {
         return creationTimestamp;
     }
 
-    public void setCreationTimestamp(long creationTimestamp) {
+    public void setCreationTimestamp(Timestamp creationTimestamp) {
         this.creationTimestamp = creationTimestamp;
     }
 
-    public long getLastModified() {
+    public Timestamp getLastModified() {
         return lastModified;
     }
 
-    public void setLastModified(long lastModified) {
+    public void setLastModified(Timestamp lastModified) {
         this.lastModified = lastModified;
     }
 }

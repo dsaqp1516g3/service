@@ -87,12 +87,14 @@ public class Comments_CasalsDAOImpl implements Comments_CasalsDAO {
             stmt.setString(1, id);
 
             ResultSet rs = stmt.executeQuery();
-            while (rs.next()) {
+            if (rs.next()) {
                 comments_casals = new Comments_Casals();
                 comments_casals.setId(rs.getString("id"));
                 comments_casals.setCreatorid(rs.getString("creatorid"));
                 comments_casals.setCasalid(rs.getString("casalid"));
                 comments_casals.setContent(rs.getString("content"));
+                comments_casals.setCreationTimestamp(rs.getTimestamp("creation_timestamp"));
+                comments_casals.setLastModified(rs.getTimestamp("last_modified"));
             }
         } catch (SQLException e) {
             throw e;
@@ -128,13 +130,14 @@ public class Comments_CasalsDAOImpl implements Comments_CasalsDAO {
                 comments_Casals.setCreatorid(rs.getString("creatorid"));
                 comments_Casals.setCasalid(rs.getString("casalid"));
                 comments_Casals.setContent(rs.getString("content"));
-                comments_Casals.setCreationTimestamp(rs.getLong("creation_timestamp"));
+                comments_Casals.setCreationTimestamp(rs.getTimestamp("creation_timestamp"));
+                comments_Casals.setLastModified(rs.getTimestamp("last_modified"));
 
                 if (first) {
-                    comments_CasalsCollection.setNewestTimestamp(comments_Casals.getLastModified());
+                    comments_CasalsCollection.setNewestTimestamp(comments_Casals.getLastModified().getTime());
                     first = false;
                 }
-                comments_CasalsCollection.setOldestTimestamp(comments_Casals.getLastModified());
+                comments_CasalsCollection.setOldestTimestamp(comments_Casals.getLastModified().getTime());
                 comments_CasalsCollection.getComments_casals().add(comments_Casals);
             }
         } catch (SQLException e) {
@@ -171,13 +174,14 @@ public class Comments_CasalsDAOImpl implements Comments_CasalsDAO {
                 comments_Casals.setCreatorid(rs.getString("creatorid"));
                 comments_Casals.setCasalid(rs.getString("casalid"));
                 comments_Casals.setContent(rs.getString("content"));
-                comments_Casals.setCreationTimestamp(rs.getLong("creation_timestamp"));
+                comments_Casals.setCreationTimestamp(rs.getTimestamp("creation_timestamp"));
+                comments_Casals.setLastModified(rs.getTimestamp("last_modified"));
 
                 if (first) {
-                    comments_CasalsCollection.setNewestTimestamp(comments_Casals.getLastModified());
+                    comments_CasalsCollection.setNewestTimestamp(comments_Casals.getLastModified().getTime());
                     first = false;
                 }
-                comments_CasalsCollection.setOldestTimestamp(comments_Casals.getLastModified());
+                comments_CasalsCollection.setOldestTimestamp(comments_Casals.getLastModified().getTime());
                 comments_CasalsCollection.getComments_casals().add(comments_Casals);
             }
         } catch (SQLException e) {
@@ -214,13 +218,14 @@ public class Comments_CasalsDAOImpl implements Comments_CasalsDAO {
                 comments_Casals.setCreatorid(rs.getString("creatorid"));
                 comments_Casals.setCasalid(rs.getString("casalid"));
                 comments_Casals.setContent(rs.getString("content"));
-                comments_Casals.setCreationTimestamp(rs.getLong("creation_timestamp"));
+                comments_Casals.setCreationTimestamp(rs.getTimestamp("creation_timestamp"));
+                comments_Casals.setLastModified(rs.getTimestamp("last_modified"));
 
                 if (first) {
-                    comments_CasalsCollection.setNewestTimestamp(comments_Casals.getLastModified());
+                    comments_CasalsCollection.setNewestTimestamp(comments_Casals.getLastModified().getTime());
                     first = false;
                 }
-                comments_CasalsCollection.setOldestTimestamp(comments_Casals.getLastModified());
+                comments_CasalsCollection.setOldestTimestamp(comments_Casals.getLastModified().getTime());
                 comments_CasalsCollection.getComments_casals().add(comments_Casals);
             }
         } catch (SQLException e) {

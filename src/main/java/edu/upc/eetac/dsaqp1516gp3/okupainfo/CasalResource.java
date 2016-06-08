@@ -361,7 +361,7 @@ public class CasalResource {
     @PUT
     @Consumes(OkupaInfoMediaType.OKUPAINFO_COMMENTS_EVENTS)
     @Produces(OkupaInfoMediaType.OKUPAINFO_COMMENTS_EVENTS)
-    public Comments_Events updateCommentEvent(@PathParam("commentid") String commentid, @FormParam("content") String content, Comments_Events Comments_Events) {
+    public Comments_Events updateCommentEvent(@PathParam("commentid") String commentid, Comments_Events Comments_Events) {
         if (Comments_Events == null)
             throw new BadRequestException("entity is null");
         if (!commentid.equals(Comments_Events.getId()))

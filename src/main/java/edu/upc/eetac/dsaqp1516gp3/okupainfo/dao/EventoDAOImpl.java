@@ -123,11 +123,17 @@ public class EventoDAOImpl implements EventoDAO {
     }
 
     @Override
-    public void addUserAssistance(String userid, String eventid) throws SQLException {
+    public void addUserAssistance(String userid, String eventid) throws SQLException, UserAlreadyAssists {
         PreparedStatement stmt = null;
         Connection connection = null;
 
         try {
+
+            EventCollection eventCollection = null;
+            eventCollection = getEventsByUserId(userid, 0, true);
+            if (eventCollection != null)
+                throw new UserAlreadyAssists();
+
             connection = Database.getConnection();
 
             connection.setAutoCommit(false);
