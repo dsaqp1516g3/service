@@ -48,7 +48,7 @@ public class Comments_EventosDAOImpl implements Comments_EventosDAO {
     }
 
     @Override
-    public Comments_Events updateComment(String id, String creatorid, String content) throws SQLException {
+    public Comments_Events updateComment(String id, String content) throws SQLException {
         Comments_Events comments_events = null;
 
         Connection connection = null;
@@ -58,6 +58,7 @@ public class Comments_EventosDAOImpl implements Comments_EventosDAO {
 
             stmt = connection.prepareStatement(Comments_EventosDAOQuery.UPDATE_COMMENT);
             stmt.setString(1, content);
+            stmt.setString(2, id);
 
             int rows = stmt.executeUpdate();
             if (rows == 1) {

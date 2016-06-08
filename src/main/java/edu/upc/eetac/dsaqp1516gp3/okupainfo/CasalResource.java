@@ -369,7 +369,7 @@ public class CasalResource {
 
         Comments_EventosDAO Comments_EventosDAO = new Comments_EventosDAOImpl();
         try {
-            Comments_Events = Comments_EventosDAO.updateComment(commentid, Comments_Events.getCreatorid(), Comments_Events.getContent());
+            Comments_Events = Comments_EventosDAO.updateComment(commentid, Comments_Events.getContent());
             if (Comments_Events == null)
                 throw new NotFoundException("El comentario con la id " + commentid + " no existe");
         } catch (SQLException e) {
