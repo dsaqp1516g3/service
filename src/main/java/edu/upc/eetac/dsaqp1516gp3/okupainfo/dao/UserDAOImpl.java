@@ -279,7 +279,6 @@ public class UserDAOImpl implements UserDAO {
                 try {
                     MessageDigest md = MessageDigest.getInstance("MD5");
                     md.update(password.getBytes());
-                    md.update(password.getBytes());
                     String passedPassword = new BigInteger(1, md.digest()).toString(16);
 
                     return passedPassword.equalsIgnoreCase(storedPassword);
