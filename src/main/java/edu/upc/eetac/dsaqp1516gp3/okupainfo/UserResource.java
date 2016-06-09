@@ -84,8 +84,6 @@ public class UserResource {
         if (!id.equals(user.getId()))
             throw new BadRequestException("path parameter id and entity parameter id doesn't match");
 
-        System.out.println(securityContext.getUserPrincipal());
-        System.out.println(securityContext.getUserPrincipal().getName());
         String userid = securityContext.getUserPrincipal().getName();
         if (!userid.equals(id))
             throw new ForbiddenException("operation not allowed");

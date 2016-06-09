@@ -261,7 +261,6 @@ public class EventoDAOImpl implements EventoDAO {
             connection = Database.getConnection();
             if (before) {
                 stmt = connection.prepareStatement(EventoDAOQuery.GET_ALL_EVENTS);
-                System.out.println("llista EVENTS servida");
             } else {
                 stmt = connection.prepareStatement(EventoDAOQuery.GET_EVENTS_AFTER);
                 stmt.setTimestamp(1, new Timestamp(timestamp));

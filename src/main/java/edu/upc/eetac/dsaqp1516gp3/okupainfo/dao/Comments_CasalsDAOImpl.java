@@ -116,7 +116,6 @@ public class Comments_CasalsDAOImpl implements Comments_CasalsDAO {
             if (before) {
                 stmt = connection.prepareStatement(Comments_CasalsDAOQuery.GET_COMMENTS_BY_CASALID);
                 stmt.setString(1, casalid);
-                System.out.println("llista COMMENTS_CASALS_BY_CASALID servida");
             } else {
                 stmt = connection.prepareStatement(Comments_CasalsDAOQuery.GET_COMMENT_CASALS_AFTER);
                 stmt.setTimestamp(2, new Timestamp(timestamp));
@@ -160,7 +159,6 @@ public class Comments_CasalsDAOImpl implements Comments_CasalsDAO {
             connection = Database.getConnection();
             if (before) {
                 stmt = connection.prepareStatement(Comments_CasalsDAOQuery.GET_ALL_COMMENTS);
-                System.out.println("llista COMMENTS_CASALS servida");
             } else {
                 stmt = connection.prepareStatement(Comments_CasalsDAOQuery.GET_COMMENT_CASALS_AFTER);
                 stmt.setTimestamp(1, new Timestamp(timestamp));
@@ -204,7 +202,7 @@ public class Comments_CasalsDAOImpl implements Comments_CasalsDAO {
             if (before) {
                 stmt = connection.prepareStatement(Comments_CasalsDAOQuery.GET_COMMENT_BY_CREATORID);
                 stmt.setString(1, creatorid);
-                System.out.println("llista COMMENTS_CASALS_BY_CREATORID servida");
+
             } else {
                 stmt = connection.prepareStatement(Comments_CasalsDAOQuery.GET_COMMENT_CASALS_AFTER);
                 stmt.setTimestamp(3, new Timestamp(timestamp));

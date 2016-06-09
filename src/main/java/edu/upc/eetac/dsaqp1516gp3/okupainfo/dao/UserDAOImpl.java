@@ -193,9 +193,8 @@ public class UserDAOImpl implements UserDAO {
             connection = Database.getConnection();
 
             stmt = connection.prepareStatement(UserDAOQuery.GET_ALL_USERS);
-
             ResultSet rs = stmt.executeQuery();
-            System.out.println("llista USERS servida");
+
             while (rs.next()) {
                 User user = new User();
                 user.setId(rs.getString("Id"));

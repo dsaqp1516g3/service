@@ -205,7 +205,6 @@ public class Comments_EventosDAOImpl implements Comments_EventosDAO {
             connection = Database.getConnection();
             if (before) {
                 stmt = connection.prepareStatement(Comments_EventosDAOQuery.GET_ALL_COMMENTS);
-                System.out.println("llista COMMENTS_EVENTS servida");
             } else {
                 stmt = connection.prepareStatement(Comments_EventosDAOQuery.GET_COMMENT_EVENTS_AFTER);
                 stmt.setTimestamp(1, new Timestamp(timestamp));
