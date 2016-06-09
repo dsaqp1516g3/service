@@ -12,11 +12,15 @@
     "methods": ["POST"]
   },
   {
-    "path": "casals/validated",
+    "path": "(?i)users/([0-9a-f]{32})?",
     "methods": ["GET"]
   },
   {
-    "path": "(?i)users/([0-9a-f]{32})?",
+    "path": "(?i)casals/([0-9a-f]{32})?",
+    "methods": ["GET"]
+  },
+  {
+    "path": "(?i)casals/([0-9a-f]{32})?/(?i)events/([0-9a-f]{32})?/comments",
     "methods": ["GET"]
   },
   {

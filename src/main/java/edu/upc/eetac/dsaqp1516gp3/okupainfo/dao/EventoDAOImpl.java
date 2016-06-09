@@ -4,15 +4,25 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import edu.upc.eetac.dsaqp1516gp3.okupainfo.entity.Event;
 import edu.upc.eetac.dsaqp1516gp3.okupainfo.entity.EventCollection;
 
+import javax.imageio.ImageIO;
+import javax.ws.rs.InternalServerErrorException;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.sql.*;
+import java.util.PropertyResourceBundle;
+import java.util.ResourceBundle;
+import java.util.UUID;
 
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class EventoDAOImpl implements EventoDAO {
     @Override
-    public Event createEvent(String casalid, String title, String description, String localization, double latitude, double longitude, long eventdate) throws SQLException {
+    public Event createEvent(String casalid, String title, String description, String localization, double latitude, double longitude, long eventdate, InputStream image) throws SQLException {
         Connection connection = null;
         PreparedStatement stmt = null;
+        String uuid = writeAndConvertImage(image);
         String id = null;
         try {
             connection = Database.getConnection();
@@ -36,6 +46,7 @@ public class EventoDAOImpl implements EventoDAO {
             stmt.setDouble(6, latitude);
             stmt.setDouble(7, longitude);
             stmt.setTimestamp(8, new Timestamp(eventdate * 1000));
+            stmt.setString(9, uuid);
             stmt.executeUpdate();
 
             connection.commit();
@@ -50,6 +61,32 @@ public class EventoDAOImpl implements EventoDAO {
             }
         }
         return getEventById(id);
+    }
+
+    private String writeAndConvertImage(InputStream file){
+        BufferedImage image;
+        try{
+            image = ImageIO.read(file);
+        }catch(IOException E){
+            throw new InternalServerErrorException("error");
+        }
+        if(image==null){
+            return null;
+        }
+        else {
+            UUID uuid = UUID.randomUUID();
+            String filename = uuid.toString() + ".png";
+            try {
+                PropertyResourceBundle prb = (PropertyResourceBundle) ResourceBundle.getBundle("okupadb");
+
+                ImageIO.write(image, "png", new File(prb.getString("uploadFolder") + filename));
+
+            } catch (IOException e) {
+                throw new InternalServerErrorException("error");
+            }
+            String respuesta = uuid.toString();
+            return respuesta;
+        }
     }
 
     @Override
@@ -112,6 +149,7 @@ public class EventoDAOImpl implements EventoDAO {
                 event.setEventdate(rs.getTimestamp("eventdate"));
                 event.setCreationTimestamp(rs.getTimestamp("creation_timestamp"));
                 event.setLastModified(rs.getTimestamp("last_modified"));
+                event.setImage(rs.getString("image"));
             }
         } catch (SQLException e) {
             throw e;
@@ -183,9 +221,11 @@ public class EventoDAOImpl implements EventoDAO {
                 event.setLocalization(rs.getString("localization"));
                 event.setLatitude(rs.getDouble("latitude"));
                 event.setLongitude(rs.getDouble("longitude"));
+                event.setImage(rs.getString("image"));
                 eventCollection.getEvents().add(event);
                 event.setCreationTimestamp(rs.getTimestamp("creation_timestamp"));
                 event.setLastModified(rs.getTimestamp("last_modified"));
+
 
                 if (first) {
                     eventCollection.setNewestTimestamp(event.getLastModified().getTime());
@@ -233,6 +273,7 @@ public class EventoDAOImpl implements EventoDAO {
                 event.setLocalization(rs.getString("localization"));
                 event.setLatitude(rs.getDouble("latitude"));
                 event.setLongitude(rs.getDouble("longitude"));
+                event.setImage(rs.getString("image"));
                 eventCollection.getEvents().add(event);
                 event.setCreationTimestamp(rs.getTimestamp("creation_timestamp"));
                 event.setLastModified(rs.getTimestamp("last_modified"));
@@ -280,6 +321,7 @@ public class EventoDAOImpl implements EventoDAO {
                 event.setEventdate(rs.getTimestamp("eventdate"));
                 event.setCreationTimestamp(rs.getTimestamp("creation_timestamp"));
                 event.setLastModified(rs.getTimestamp("last_modified"));
+                event.setImage(rs.getString("image"));
                 if (first) {
                     eventCollection.setNewestTimestamp(event.getLastModified().getTime());
                     first = false;

@@ -25,6 +25,7 @@ public class Event {
     private String title;
     private String description;
     private String localization;
+    private String image;
     private double latitude;
     private double longitude;
     private Timestamp eventdate;
@@ -120,4 +121,11 @@ public class Event {
         this.lastModified = lastModified;
     }
 
+    public void setImage(String image) {
+        this.image = image;
+    }
+
+    public String getImage() {
+        return image;
+    }
 }

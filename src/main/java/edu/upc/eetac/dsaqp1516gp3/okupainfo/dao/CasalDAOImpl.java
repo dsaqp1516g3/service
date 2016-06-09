@@ -4,17 +4,27 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import edu.upc.eetac.dsaqp1516gp3.okupainfo.entity.Casal;
 import edu.upc.eetac.dsaqp1516gp3.okupainfo.entity.CasalCollection;
 
+import javax.imageio.ImageIO;
+import javax.ws.rs.InternalServerErrorException;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.PropertyResourceBundle;
+import java.util.ResourceBundle;
+import java.util.UUID;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class CasalDAOImpl implements CasalDAO {
     @Override
-    public Casal createCasal(String adminid, String email, String name, String description, String localization, double latitude, double longitude, boolean validated) throws SQLException, CasalAlreadyExistsException {
+    public Casal createCasal(String adminid, String email, String name, String description, String localization, double latitude, double longitude, boolean validated, InputStream image) throws SQLException, CasalAlreadyExistsException {
         Connection connection = null;
         PreparedStatement stmt = null;
+        String uuid = writeAndConvertImage(image);
         String casalid = null;
         try {
             Casal casal = getCasalByEmail(email);
@@ -44,6 +54,7 @@ public class CasalDAOImpl implements CasalDAO {
             stmt.setDouble(7, latitude);
             stmt.setDouble(8, longitude);
             stmt.setString(9, String.valueOf(false));
+            stmt.setString(10, uuid);
             stmt.executeUpdate();
 
             connection.commit();
@@ -57,6 +68,32 @@ public class CasalDAOImpl implements CasalDAO {
             }
         }
         return getCasalByCasalid(casalid);
+    }
+
+    private String writeAndConvertImage(InputStream file){
+        BufferedImage image;
+        try{
+            image = ImageIO.read(file);
+        }catch(IOException E){
+            throw new InternalServerErrorException("error");
+        }
+        if(image==null){
+            return null;
+        }
+        else {
+            UUID uuid = UUID.randomUUID();
+            String filename = uuid.toString() + ".png";
+            try {
+                PropertyResourceBundle prb = (PropertyResourceBundle) ResourceBundle.getBundle("okupadb");
+
+                    ImageIO.write(image, "png", new File(prb.getString("uploadFolder") + filename));
+
+            } catch (IOException e) {
+                throw new InternalServerErrorException("error");
+            }
+            String respuesta = uuid.toString();
+            return respuesta;
+        }
     }
 
     @Override
@@ -93,21 +130,6 @@ public class CasalDAOImpl implements CasalDAO {
         }
         return casal;
     }
-    /*
-       try {
-            connection = Database.getConnection();
-
-            stmt = connection.prepareStatement(UserDAOQuery.UPDATE_USER);
-            stmt.setString(1, email);
-            stmt.setString(2, fullname);
-            stmt.setString(3, description);
-            stmt.setString(4, id);
-
-            int rows = stmt.executeUpdate();
-            if (rows == 1) {
-                user = getUserById(id);
-            }
-     */
 
     @Override
     public Casal getCasalByCasalid(String casalid) throws SQLException {
@@ -134,6 +156,7 @@ public class CasalDAOImpl implements CasalDAO {
                 casal.setLatitude(rs.getDouble("latitude"));
                 casal.setLongitude(rs.getDouble("longitude"));
                 casal.setValidated(rs.getBoolean("validado"));
+                casal.setImage(rs.getString("image"));
             }
         } catch (SQLException e) {
             throw e;
@@ -164,6 +187,7 @@ public class CasalDAOImpl implements CasalDAO {
                 casal.setEmail(rs.getString("email"));
                 casal.setName(rs.getString("name"));
                 casal.setDescription(rs.getString("description"));
+
             }
         } catch (SQLException e) {
             throw e;
@@ -252,6 +276,7 @@ public class CasalDAOImpl implements CasalDAO {
                 casal.setDescription(rs.getString("description"));
                 casal.setLatitude(rs.getDouble("latitude"));
                 casal.setLongitude(rs.getDouble("longitude"));
+                casal.setImage(rs.getString("image"));
                 casalCollection.getCasals().add(casal);
             }
         } catch (SQLException e) {

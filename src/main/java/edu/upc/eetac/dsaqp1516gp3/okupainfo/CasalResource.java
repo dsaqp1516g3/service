@@ -1,11 +1,14 @@
 package edu.upc.eetac.dsaqp1516gp3.okupainfo;
 
+import com.sun.jersey.multipart.FormDataParam;
+import com.sun.xml.internal.messaging.saaj.packaging.mime.internet.ContentDisposition;
 import edu.upc.eetac.dsaqp1516gp3.okupainfo.dao.*;
 import edu.upc.eetac.dsaqp1516gp3.okupainfo.entity.*;
 
 import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
+import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.sql.SQLException;
@@ -19,11 +22,12 @@ public class CasalResource {
     /**
      * Creamos un casal
      **/
+    @RolesAllowed("[admin, registered]")
     @POST
-    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
     @Produces(OkupaInfoMediaType.OKUPAINFO_AUTH_TOKEN)
-    public Response createCasal(@FormParam("adminid") String adminid, @FormParam("email") String email, @FormParam("name") String name, @FormParam("description") String description,
-                                @FormParam("localization") String localization, @FormParam("validated") boolean validated, @Context UriInfo uriInfo) throws URISyntaxException {
+    public Response createCasal(@FormDataParam("adminid") String adminid, @FormDataParam("email") String email, @FormDataParam("name") String name, @FormDataParam("description") String description,
+                                @FormDataParam("localization") String localization, @FormDataParam("validated") boolean validated, @FormDataParam("image") InputStream image, @FormDataParam("image") ContentDisposition fileDetail, @Context UriInfo uriInfo) throws URISyntaxException {
         if (adminid == null || email == null || name == null || description == null || localization == null)
             throw new BadRequestException("all parameters are mandatory");
         CasalDAO casalDAO = new CasalDAOImpl();
@@ -37,7 +41,7 @@ public class CasalResource {
             double lon = coo.get("lon");
             double lat = coo.get("lat");
             /**Asignaremos el valor devuelto por OpenStreetMap a nuestros valores de longitud y latitud**/
-            casal = casalDAO.createCasal(adminid, email, name, description, localization, lon, lat, validated);
+            casal = casalDAO.createCasal(adminid, email, name, description, localization, lon, lat, validated, image);
         } catch (CasalAlreadyExistsException e) {
             throw new WebApplicationException("Casalid already exists", Response.Status.CONFLICT);
         } catch (SQLException e) {
@@ -68,10 +72,12 @@ public class CasalResource {
     /**
      * Obtenemos una lista de todos los casales que SI esten validados
      **/
+    @RolesAllowed("[admin]")
     @GET
     @Path("/validated")
     @Produces(OkupaInfoMediaType.OKUPAINFO_CASAL_COLLECTION)
     public CasalCollection getAllValidatedCasals() {
+
         CasalCollection CasalCollection;
         CasalDAO casalDAO = new CasalDAOImpl();
         try {
@@ -85,6 +91,7 @@ public class CasalResource {
     /**
      * Obtenemos una lista de todos los casales que NO esten validados
      **/
+    @RolesAllowed("[admin]")
     @GET
     @Path("/unvalidated")
     @Produces(OkupaInfoMediaType.OKUPAINFO_CASAL_COLLECTION)
@@ -102,6 +109,7 @@ public class CasalResource {
     /**
      * Actualizamos el perfil de un casal
      **/
+    @RolesAllowed("[admin, registered]")
     @Path("/{casalid}")
     @PUT
     @Consumes(OkupaInfoMediaType.OKUPAINFO_CASAL)
@@ -154,6 +162,7 @@ public class CasalResource {
     /**
      * Eliminamos un casal
      **/
+    @RolesAllowed("[admin, registered]")
     @Path("/{casalid}")
     @DELETE
     public void deleteCasal(@PathParam("casalid") String casalid) {
@@ -178,12 +187,13 @@ public class CasalResource {
     /**
      * Creamos un evento siendo un casal
      **/
+    @RolesAllowed("[admin, registered]")
     @POST
     @Path("/{casalid}")
-    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
     @Produces(OkupaInfoMediaType.OKUPAINFO_AUTH_TOKEN)
-    public Response createEvent(@PathParam("casalid") String casalid, @FormParam("title") String title, @FormParam("description") String description,
-                                @FormParam("localization") String localization, @FormParam("eventdate") long eventdate, @Context UriInfo uriInfo) throws URISyntaxException {
+    public Response createEvent(@FormDataParam("casalid") String casalid, @FormDataParam("title") String title, @FormDataParam("description") String description,
+                                @FormDataParam("localization") String localization, @FormDataParam("eventdate") long eventdate,@FormDataParam("image") InputStream file, @FormDataParam("image") ContentDisposition fileDetail,  @Context UriInfo uriInfo) throws URISyntaxException {
         if (title == null || description == null || localization == null || eventdate == 0)
             throw new BadRequestException("all parameters are mandatory");
         CasalDAO casalDAO = new CasalDAOImpl();
@@ -207,7 +217,7 @@ public class CasalResource {
             double lon = coo.get("lon");
             double lat = coo.get("lat");
             /**Asignaremos el valor devuelto por OpenStreetMap a nuestros valores de longitud y latitud**/
-            event = EventoDAO.createEvent(casalid, title, description, localization, lat, lon, eventdate);
+            event = EventoDAO.createEvent(casalid, title, description, localization, lat, lon, eventdate, file);
         } catch (SQLException e) {
             throw new InternalServerErrorException();
         }
@@ -236,6 +246,7 @@ public class CasalResource {
     /**
      * Actualizamos el perfil de un evento
      **/
+    @RolesAllowed("[admin, registered]")
     @Path("/{casalid}/events/{eventid}")
     @PUT
     @Consumes(OkupaInfoMediaType.OKUPAINFO_EVENTS)
@@ -271,6 +282,7 @@ public class CasalResource {
     /**
      * Eliminamos un evento
      **/
+    @RolesAllowed("[admin, registered]")
     @Path("/{casalid}/events/{eventid}")
     @DELETE
     public void deleteEvent(@PathParam("eventid") String eventid) {
@@ -308,6 +320,7 @@ public class CasalResource {
     /**
      * Creamos un comentario acerca de un evento
      **/
+    @RolesAllowed("[admin, registered]")
     @Path("/{casalid}/events/{eventid}/comments")
     @POST
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
@@ -357,6 +370,7 @@ public class CasalResource {
     /**
      * Actualizamos el comentario de un evento
      **/
+    @RolesAllowed("[admin, registered]")
     @Path("/{casalid}/events/{eventid}/comments/{commentid}")
     @PUT
     @Consumes(OkupaInfoMediaType.OKUPAINFO_COMMENTS_EVENTS)
@@ -401,6 +415,7 @@ public class CasalResource {
     /**
      * Eliminamos el comentario de un evento
      **/
+    @RolesAllowed("[admin, registered]")
     @Path("/{casalid}/events/{eventid}/comments/{commentid}")
     @DELETE
     public void deleteCommentEvent(@PathParam("commentid") String id) {
@@ -438,6 +453,7 @@ public class CasalResource {
     /**
      * Comentamos sobre un casal
      **/
+    @RolesAllowed("[admin, registered]")
     @POST
     @Path("/{casalid}/comments")
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
@@ -495,6 +511,7 @@ public class CasalResource {
     /**
      * Modificamos un comentario
      **/
+    @RolesAllowed("[admin, registered]")
     @Path("/{casalid}/comments/{commentid}")
     @PUT
     @Consumes(OkupaInfoMediaType.OKUPAINFO_COMMENTS_CASALS)
@@ -554,6 +571,7 @@ public class CasalResource {
     /**
      * Creamos una valoración de un casal
      **/
+    @RolesAllowed("[admin, registered]")
     @Path("/{casalid}/valoracion")
     @POST
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
@@ -592,6 +610,7 @@ public class CasalResource {
     /**
      * Modificamos la valoración de un casal
      **/
+    @RolesAllowed("[admin, registered]")
     @Path("/{casalid}/valoracion/{valoracionid}")
     @PUT
     @Consumes(OkupaInfoMediaType.OKUPAINFO_CASALS_VALORACION)
@@ -636,6 +655,7 @@ public class CasalResource {
     /**
      * Eliminamos una Valoración
      **/
+    @RolesAllowed("[admin, registered]")
     @Path("/{casalid}/valoracion/{valoracionid}")
     @DELETE
     public void deleteValoracionCasal(@PathParam("valoracionid") String valoracionid) {

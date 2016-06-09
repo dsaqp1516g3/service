@@ -27,8 +27,10 @@ public class Casal {
     private String description;
     private Boolean validated;
     private String localization;
+    private String image;
     private double latitude;
     private double longitude;
+
 
     public List<Link> getLinks() {
         return links;
@@ -108,5 +110,13 @@ public class Casal {
 
     public void setLongitude(double longitude) {
         this.longitude = longitude;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
+    }
+
+    public String getImage() {
+        return image;
     }
 }
