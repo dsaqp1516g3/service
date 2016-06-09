@@ -1,7 +1,7 @@
 package edu.upc.eetac.dsaqp1516gp3.okupainfo;
 
-import com.sun.jersey.core.header.FormDataContentDisposition;
-import com.sun.jersey.multipart.FormDataParam;
+import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
+import org.glassfish.jersey.media.multipart.FormDataParam;
 import edu.upc.eetac.dsaqp1516gp3.okupainfo.dao.*;
 import edu.upc.eetac.dsaqp1516gp3.okupainfo.entity.*;
 
