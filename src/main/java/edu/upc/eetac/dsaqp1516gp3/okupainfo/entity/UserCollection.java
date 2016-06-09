@@ -1,7 +1,5 @@
 package edu.upc.eetac.dsaqp1516gp3.okupainfo.entity;
 
-import org.glassfish.jersey.linking.InjectLinks;
-
 import javax.ws.rs.core.Link;
 import java.util.ArrayList;
 import java.util.List;
@@ -11,7 +9,6 @@ import java.util.List;
  */
 public class UserCollection {
 
-    @InjectLinks({})
     private List<Link> links;
     private List<User> Users = new ArrayList<>();
 

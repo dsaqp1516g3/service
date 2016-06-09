@@ -8,6 +8,7 @@ import java.util.List;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ValoracionCollection {
+
     private List<Link> links;
     private List<Valoracion> Valoracion = new ArrayList<>();
 

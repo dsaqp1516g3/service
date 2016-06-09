@@ -112,7 +112,7 @@ public class ValoracionDAOImpl implements ValoracionDAO {
 
     @Override
     public ValoracionCollection getValoracionesByCasalId(String casalid) throws SQLException {
-        ValoracionCollection ValoracionCollection = null;
+        ValoracionCollection valoracionCollection = new ValoracionCollection();
 
         Connection connection = null;
         PreparedStatement stmt = null;
@@ -123,12 +123,12 @@ public class ValoracionDAOImpl implements ValoracionDAO {
 
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
-                Valoracion Valoracion = new Valoracion();
-                Valoracion.setId(rs.getString("id"));
-                Valoracion.setLoginid(rs.getString("loginid"));
-                Valoracion.setCasalid(rs.getString("casalid"));
-                Valoracion.setValoracion(rs.getString("valoracion"));
-                ValoracionCollection.getValoraciones().add(Valoracion);
+                Valoracion valoracion = new Valoracion();
+                valoracion.setId(rs.getString("id"));
+                valoracion.setLoginid(rs.getString("loginid"));
+                valoracion.setCasalid(rs.getString("casalid"));
+                valoracion.setValoracion(rs.getString("valoracion"));
+                valoracionCollection.getValoraciones().add(valoracion);
             }
         } catch (SQLException e) {
             throw e;
@@ -136,12 +136,12 @@ public class ValoracionDAOImpl implements ValoracionDAO {
             if (stmt != null) stmt.close();
             if (connection != null) connection.close();
         }
-        return ValoracionCollection;
+        return valoracionCollection;
     }
 
     @Override
     public ValoracionCollection getValoracionesByUserId(String userid) throws SQLException {
-        ValoracionCollection ValoracionCollection = null;
+        ValoracionCollection valoracionCollection = new ValoracionCollection();
 
         Connection connection = null;
         PreparedStatement stmt = null;
@@ -152,12 +152,12 @@ public class ValoracionDAOImpl implements ValoracionDAO {
 
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
-                Valoracion Valoracion = new Valoracion();
-                Valoracion.setId(rs.getString("id"));
-                Valoracion.setLoginid(rs.getString("loginid"));
-                Valoracion.setCasalid(rs.getString("casalid"));
-                Valoracion.setValoracion(rs.getString("valoracion"));
-                ValoracionCollection.getValoraciones().add(Valoracion);
+                Valoracion valoracion = new Valoracion();
+                valoracion.setId(rs.getString("id"));
+                valoracion.setLoginid(rs.getString("loginid"));
+                valoracion.setCasalid(rs.getString("casalid"));
+                valoracion.setValoracion(rs.getString("valoracion"));
+                valoracionCollection.getValoraciones().add(valoracion);
             }
         } catch (SQLException e) {
             throw e;
@@ -165,7 +165,7 @@ public class ValoracionDAOImpl implements ValoracionDAO {
             if (stmt != null) stmt.close();
             if (connection != null) connection.close();
         }
-        return ValoracionCollection;
+        return valoracionCollection;
     }
 
     @Override

@@ -171,7 +171,6 @@ public class EventoDAOImpl implements EventoDAO {
                 stmt.setTimestamp(1, new Timestamp(timestamp));
             }
 
-
             ResultSet rs = stmt.executeQuery();
             boolean first = true;
             while (rs.next()) {
