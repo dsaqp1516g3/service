@@ -22,12 +22,11 @@ public class CasalResource {
     /**
      * Creamos un casal
      **/
-    @RolesAllowed("[admin, registered]")
     @POST
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     @Produces(OkupaInfoMediaType.OKUPAINFO_AUTH_TOKEN)
     public Response createCasal(@FormDataParam("adminid") String adminid, @FormDataParam("email") String email, @FormDataParam("name") String name, @FormDataParam("description") String description,
-                                @FormDataParam("localization") String localization, @FormDataParam("validated") boolean validated, @FormDataParam("image") InputStream image, @FormDataParam("image") FormDataContentDisposition fileDetail, @Context UriInfo uriInfo) throws URISyntaxException {
+                                @FormDataParam("localization") String localization, @FormDataParam("validated") boolean validated, @FormDataParam("image") InputStream file, @FormDataParam("image") FormDataContentDisposition fileDetail, @Context UriInfo uriInfo) throws URISyntaxException {
         if (adminid == null || email == null || name == null || description == null || localization == null)
             throw new BadRequestException("all parameters are mandatory");
         CasalDAO casalDAO = new CasalDAOImpl();
@@ -41,7 +40,7 @@ public class CasalResource {
             double lon = coo.get("lon");
             double lat = coo.get("lat");
             /**Asignaremos el valor devuelto por OpenStreetMap a nuestros valores de longitud y latitud**/
-            casal = casalDAO.createCasal(adminid, email, name, description, localization, lon, lat, validated, image);
+            casal = casalDAO.createCasal(adminid, email, name, description, localization, lon, lat, validated, file);
         } catch (CasalAlreadyExistsException e) {
             throw new WebApplicationException("Casalid already exists", Response.Status.CONFLICT);
         } catch (SQLException e) {
@@ -192,7 +191,7 @@ public class CasalResource {
     @Path("/{casalid}")
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     @Produces(OkupaInfoMediaType.OKUPAINFO_AUTH_TOKEN)
-    public Response createEvent(@FormDataParam("casalid") String casalid, @FormDataParam("title") String title, @FormDataParam("description") String description,
+    public Response createEvent(@PathParam("casalid") String casalid, @FormDataParam("title") String title, @FormDataParam("description") String description,
                                 @FormDataParam("localization") String localization, @FormDataParam("eventdate") long eventdate,@FormDataParam("image") InputStream file, @FormDataParam("image") FormDataContentDisposition fileDetail,  @Context UriInfo uriInfo) throws URISyntaxException {
         if (title == null || description == null || localization == null || eventdate == 0)
             throw new BadRequestException("all parameters are mandatory");

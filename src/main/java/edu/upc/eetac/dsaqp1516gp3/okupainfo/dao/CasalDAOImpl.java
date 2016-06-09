@@ -84,7 +84,7 @@ public class CasalDAOImpl implements CasalDAO {
             UUID uuid = UUID.randomUUID();
             String filename = uuid.toString() + ".png";
             try {
-                PropertyResourceBundle prb = (PropertyResourceBundle) ResourceBundle.getBundle("okupadb");
+                PropertyResourceBundle prb = (PropertyResourceBundle) ResourceBundle.getBundle("okupainfo");
 
                     ImageIO.write(image, "png", new File(prb.getString("uploadFolder") + filename));
 

@@ -2,6 +2,7 @@ package edu.upc.eetac.dsaqp1516gp3.okupainfo;
 
 import org.glassfish.jersey.jackson.JacksonFeature;
 import org.glassfish.jersey.linking.DeclarativeLinkingFeature;
+import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.server.filter.RolesAllowedDynamicFeature;
 
@@ -15,5 +16,6 @@ public class OkupaInfoResourceConfig extends ResourceConfig
         register(RolesAllowedDynamicFeature.class);
         register(DeclarativeLinkingFeature.class);
         register(JacksonFeature.class);
+        register(MultiPartFeature.class);
     }
 }
