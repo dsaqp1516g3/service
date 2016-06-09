@@ -1,7 +1,7 @@
 package edu.upc.eetac.dsaqp1516gp3.okupainfo;
 
+import com.sun.jersey.core.header.FormDataContentDisposition;
 import com.sun.jersey.multipart.FormDataParam;
-import com.sun.xml.internal.messaging.saaj.packaging.mime.internet.ContentDisposition;
 import edu.upc.eetac.dsaqp1516gp3.okupainfo.dao.*;
 import edu.upc.eetac.dsaqp1516gp3.okupainfo.entity.*;
 
@@ -27,7 +27,7 @@ public class CasalResource {
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     @Produces(OkupaInfoMediaType.OKUPAINFO_AUTH_TOKEN)
     public Response createCasal(@FormDataParam("adminid") String adminid, @FormDataParam("email") String email, @FormDataParam("name") String name, @FormDataParam("description") String description,
-                                @FormDataParam("localization") String localization, @FormDataParam("validated") boolean validated, @FormDataParam("image") InputStream image, @FormDataParam("image") ContentDisposition fileDetail, @Context UriInfo uriInfo) throws URISyntaxException {
+                                @FormDataParam("localization") String localization, @FormDataParam("validated") boolean validated, @FormDataParam("image") InputStream image, @FormDataParam("image") FormDataContentDisposition fileDetail, @Context UriInfo uriInfo) throws URISyntaxException {
         if (adminid == null || email == null || name == null || description == null || localization == null)
             throw new BadRequestException("all parameters are mandatory");
         CasalDAO casalDAO = new CasalDAOImpl();
@@ -193,7 +193,7 @@ public class CasalResource {
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     @Produces(OkupaInfoMediaType.OKUPAINFO_AUTH_TOKEN)
     public Response createEvent(@FormDataParam("casalid") String casalid, @FormDataParam("title") String title, @FormDataParam("description") String description,
-                                @FormDataParam("localization") String localization, @FormDataParam("eventdate") long eventdate,@FormDataParam("image") InputStream file, @FormDataParam("image") ContentDisposition fileDetail,  @Context UriInfo uriInfo) throws URISyntaxException {
+                                @FormDataParam("localization") String localization, @FormDataParam("eventdate") long eventdate,@FormDataParam("image") InputStream file, @FormDataParam("image") FormDataContentDisposition fileDetail,  @Context UriInfo uriInfo) throws URISyntaxException {
         if (title == null || description == null || localization == null || eventdate == 0)
             throw new BadRequestException("all parameters are mandatory");
         CasalDAO casalDAO = new CasalDAOImpl();
