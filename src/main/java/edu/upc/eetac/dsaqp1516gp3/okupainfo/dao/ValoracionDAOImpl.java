@@ -10,17 +10,14 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class ValoracionDAOImpl implements ValoracionDAO
-{
+public class ValoracionDAOImpl implements ValoracionDAO {
 
     @Override
-    public Valoracion createValoracion(String loginid, String casalid, Boolean valoracion) throws SQLException, UserAlreadyExistsException
-    {
+    public Valoracion createValoracion(String loginid, String casalid, boolean valoracion) throws SQLException {
         Connection connection = null;
         PreparedStatement stmt = null;
         String id = null;
-        try
-        {
+        try {
             connection = Database.getConnection();
 
             stmt = connection.prepareStatement(ValoracionDAOQuery.UUID);
@@ -38,16 +35,14 @@ public class ValoracionDAOImpl implements ValoracionDAO
             stmt.setString(2, loginid);
             stmt.setString(3, casalid);
             stmt.setBoolean(4, valoracion);
-        }
-        catch (SQLException e)
-        {
+            stmt.executeUpdate();
+
+            connection.commit();
+        } catch (SQLException e) {
             throw e;
-        }
-        finally
-        {
+        } finally {
             if (stmt != null) stmt.close();
-            if (connection != null)
-            {
+            if (connection != null) {
                 connection.setAutoCommit(true);
                 connection.close();
             }
@@ -56,14 +51,12 @@ public class ValoracionDAOImpl implements ValoracionDAO
     }
 
     @Override
-    public Valoracion updateValoracion(String id, String loginid, String casalid, Boolean valoracion) throws SQLException
-    {
+    public Valoracion updateValoracion(String id, String loginid, String casalid, boolean valoracion) throws SQLException {
         Valoracion Valoracion = null;
 
         Connection connection = null;
         PreparedStatement stmt = null;
-        try
-        {
+        try {
             connection = Database.getConnection();
 
             stmt = connection.prepareStatement(ValoracionDAOQuery.UPDATE_VALORACION);
@@ -72,20 +65,14 @@ public class ValoracionDAOImpl implements ValoracionDAO
             stmt.setBoolean(3, valoracion);
 
             int rows = stmt.executeUpdate();
-            if (rows == 1)
-            {
+            if (rows == 1) {
                 Valoracion = getValoracionById(id);
             }
-        }
-        catch (SQLException e)
-        {
+        } catch (SQLException e) {
             throw e;
-        }
-        finally
-        {
+        } finally {
             if (stmt != null) stmt.close();
-            if (connection != null)
-            {
+            if (connection != null) {
                 connection.setAutoCommit(true);
                 connection.close();
             }
@@ -94,163 +81,33 @@ public class ValoracionDAOImpl implements ValoracionDAO
     }
 
     @Override
-    public Valoracion getValoracionById(String id) throws SQLException
-    {
+    public Valoracion getValoracionById(String id) throws SQLException {
         Valoracion Valoracion = null;
 
         Connection connection = null;
         PreparedStatement stmt = null;
-        try
-        {
-            // Obtiene la conexión del DataSource
+        try {
             connection = Database.getConnection();
 
-            // Prepara la consulta
             stmt = connection.prepareStatement(ValoracionDAOQuery.GET_VALORACION_BY_ID);
-            // Da valor a los parámetros de la consulta
             stmt.setString(1, id);
 
-            // Ejecuta la consulta
             ResultSet rs = stmt.executeQuery();
-            // Procesa los resultados
-            if (rs.next())
-            {
+            if (rs.next()) {
                 Valoracion = new Valoracion();
                 Valoracion.setId(rs.getString("id"));
                 Valoracion.setLoginid(rs.getString("loginid"));
                 Valoracion.setCasalid(rs.getString("casalid"));
                 Valoracion.setValoracion(rs.getString("valoracion"));
             }
-        }
-        catch (SQLException e)
-        {
-            // Relanza la excepción
+        } catch (SQLException e) {
             throw e;
-        }
-        finally
-        {
+        } finally {
             // Libera la conexión
             if (stmt != null) stmt.close();
             if (connection != null) connection.close();
         }
-        // Devuelve el modelo
         return Valoracion;
-    }
-
-    @Override
-    public Valoracion getValoracionByLoginid(String loginid) throws SQLException
-    {
-        Valoracion Valoracion = null;
-
-        Connection connection = null;
-        PreparedStatement stmt = null;
-        try
-        {
-            // Obtiene la conexión del DataSource
-            connection = Database.getConnection();
-
-            // Prepara la consulta
-            stmt = connection.prepareStatement(ValoracionDAOQuery.GET_VALORACION_BY_LOGINID);
-            // Da valor a los parámetros de la consulta
-            stmt.setString(1, loginid);
-
-            // Ejecuta la consulta
-            ResultSet rs = stmt.executeQuery();
-            // Procesa los resultados
-            if (rs.next())
-            {
-                Valoracion = new Valoracion();
-                Valoracion.setId(rs.getString("id"));
-                Valoracion.setLoginid(rs.getString("loginid"));
-                Valoracion.setCasalid(rs.getString("casalid"));
-                Valoracion.setValoracion(rs.getString("valoracion"));
-            }
-        }
-        catch (SQLException e)
-        {
-            // Relanza la excepción
-            throw e;
-        }
-        finally
-        {
-            // Libera la conexión
-            if (stmt != null) stmt.close();
-            if (connection != null) connection.close();
-        }
-        // Devuelve el modelo
-        return Valoracion;
-    }
-
-
-    @Override
-    public Valoracion getValoracionByCasalid(String casalid) throws SQLException
-    {
-        Valoracion Valoracion = null;
-
-        Connection connection = null;
-        PreparedStatement stmt = null;
-        try
-        {
-            connection = Database.getConnection();
-
-
-            stmt = connection.prepareStatement(ValoracionDAOQuery.GET_VALORACION_BY_CASALID);
-            stmt.setString(1, casalid);
-
-            ResultSet rs = stmt.executeQuery();
-            if (rs.next())
-            {
-                Valoracion = new Valoracion();
-                Valoracion.setId(rs.getString("id"));
-                Valoracion.setLoginid(rs.getString("loginid"));
-                Valoracion.setCasalid(rs.getString("casalid"));
-                Valoracion.setValoracion(rs.getString("valoracion"));
-            }
-        }
-        catch (SQLException e)
-        {
-            throw e;
-        }
-        finally
-        {
-            if (stmt != null) stmt.close();
-            if (connection != null) connection.close();
-        }
-        return Valoracion;
-    }
-
-    @Override
-    public ValoracionCollection getAllValoraciones() throws SQLException
-    {
-        ValoracionCollection ValoracionCollection = null;
-
-        Connection connection = null;
-        PreparedStatement stmt = null;
-        try
-        {
-            connection = Database.getConnection();
-            stmt = connection.prepareStatement(ValoracionDAOQuery.GET_ALL_VALORACIONES);
-            ResultSet rs = stmt.executeQuery();
-            while (rs.next())
-            {
-                Valoracion Valoracion = new Valoracion();
-                Valoracion.setId(rs.getString("id"));
-                Valoracion.setLoginid(rs.getString("loginid"));
-                Valoracion.setCasalid(rs.getString("casalid"));
-                Valoracion.setValoracion(rs.getString("valoracion"));
-                ValoracionCollection.getValoracion().add(Valoracion);
-            }
-        }
-        catch (SQLException e)
-        {
-            throw e;
-        }
-        finally
-        {
-            if (stmt != null) stmt.close();
-            if (connection != null) connection.close();
-        }
-        return ValoracionCollection;
     }
 
     @Override
@@ -259,28 +116,23 @@ public class ValoracionDAOImpl implements ValoracionDAO
 
         Connection connection = null;
         PreparedStatement stmt = null;
-        try
-        {
+        try {
             connection = Database.getConnection();
             stmt = connection.prepareStatement(ValoracionDAOQuery.GET_VALORACION_BY_CASALID);
             stmt.setString(1, casalid);
+
             ResultSet rs = stmt.executeQuery();
-            while (rs.next())
-            {
+            while (rs.next()) {
                 Valoracion Valoracion = new Valoracion();
                 Valoracion.setId(rs.getString("id"));
                 Valoracion.setLoginid(rs.getString("loginid"));
                 Valoracion.setCasalid(rs.getString("casalid"));
                 Valoracion.setValoracion(rs.getString("valoracion"));
-                ValoracionCollection.getValoracion().add(Valoracion);
+                ValoracionCollection.getValoraciones().add(Valoracion);
             }
-        }
-        catch (SQLException e)
-        {
+        } catch (SQLException e) {
             throw e;
-        }
-        finally
-        {
+        } finally {
             if (stmt != null) stmt.close();
             if (connection != null) connection.close();
         }
@@ -288,47 +140,39 @@ public class ValoracionDAOImpl implements ValoracionDAO
     }
 
     @Override
-    public ValoracionCollection getValoracionesByLoginid(String loginid) throws SQLException {
+    public ValoracionCollection getValoracionesByUserId(String userid) throws SQLException {
         ValoracionCollection ValoracionCollection = null;
 
         Connection connection = null;
         PreparedStatement stmt = null;
-        try
-        {
+        try {
             connection = Database.getConnection();
-            stmt = connection.prepareStatement(ValoracionDAOQuery.GET_VALORACION_BY_LOGINID);
-            stmt.setString(1, loginid);
+            stmt = connection.prepareStatement(ValoracionDAOQuery.GET_VALORACION_BY_USERID);
+            stmt.setString(1, userid);
+
             ResultSet rs = stmt.executeQuery();
-            while (rs.next())
-            {
+            while (rs.next()) {
                 Valoracion Valoracion = new Valoracion();
                 Valoracion.setId(rs.getString("id"));
                 Valoracion.setLoginid(rs.getString("loginid"));
                 Valoracion.setCasalid(rs.getString("casalid"));
                 Valoracion.setValoracion(rs.getString("valoracion"));
-                ValoracionCollection.getValoracion().add(Valoracion);
+                ValoracionCollection.getValoraciones().add(Valoracion);
             }
-        }
-        catch (SQLException e)
-        {
+        } catch (SQLException e) {
             throw e;
-        }
-        finally
-        {
+        } finally {
             if (stmt != null) stmt.close();
             if (connection != null) connection.close();
         }
         return ValoracionCollection;
     }
 
-
     @Override
-    public boolean deleteValoracion(String id) throws SQLException
-    {
+    public boolean deleteValoracion(String id) throws SQLException {
         Connection connection = null;
         PreparedStatement stmt = null;
-        try
-        {
+        try {
             connection = Database.getConnection();
 
             stmt = connection.prepareStatement(ValoracionDAOQuery.DELETE_VALORACION);
@@ -336,17 +180,11 @@ public class ValoracionDAOImpl implements ValoracionDAO
 
             int rows = stmt.executeUpdate();
             return (rows == 1);
-        }
-        catch (SQLException e)
-        {
+        } catch (SQLException e) {
             throw e;
-        }
-        finally
-        {
+        } finally {
             if (stmt != null) stmt.close();
             if (connection != null) connection.close();
         }
     }
-
-
 }

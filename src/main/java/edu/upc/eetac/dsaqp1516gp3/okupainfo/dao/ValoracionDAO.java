@@ -6,21 +6,13 @@ import edu.upc.eetac.dsaqp1516gp3.okupainfo.entity.ValoracionCollection;
 
 import java.sql.SQLException;
 
-/**
- * Created by Guillermo on 26/04/2016.
- */
+
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public interface ValoracionDAO {
-
-    Valoracion createValoracion(String loginid, String casalid, Boolean valoracion) throws SQLException, UserAlreadyExistsException;
-    Valoracion updateValoracion(String id, String loginid, String casalid, Boolean valoracion) throws SQLException;
+    Valoracion createValoracion(String loginid, String casalid, boolean valoracion) throws SQLException;
+    Valoracion updateValoracion(String id, String loginid, String casalid, boolean valoracion) throws SQLException;
     Valoracion getValoracionById(String id) throws SQLException;
-    Valoracion getValoracionByCasalid(String casalid) throws SQLException;
-    Valoracion getValoracionByLoginid(String loginid) throws SQLException;
-    ValoracionCollection getAllValoraciones() throws SQLException;
     ValoracionCollection getValoracionesByCasalId(String casalid) throws SQLException;
-    ValoracionCollection getValoracionesByLoginid(String loginid) throws SQLException;
+    ValoracionCollection getValoracionesByUserId(String loginid) throws SQLException;
     boolean deleteValoracion(String id) throws SQLException;
-
-
 }

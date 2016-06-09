@@ -13,5 +13,7 @@ public class OkupaInfoMediaType
     public final static String OKUPAINFO_COMMENTS_CASALS_COLLECTION = "application/vnd.dsa.okupainfo.comments_casals.collection+json";
     public final static String OKUPAINFO_EVENTS = "application/vnd.dsa.okupainfo.casals.events+json";
     public final static String OKUPAINFO_EVENTS_COLLECTION = "application/vnd.dsa.okupainfo.events.collection+json";
+    public final static String OKUPAINFO_CASALS_VALORACION = "application/vnd.dsa.okupainfo.casal_valoracion+json";
+    public final static String OKUPAINFO_CASALS_VALORACION_COLLECTION = "application/vnd.dsa.okupainfo.casal_valoracion.collection+json";
     public final static String OKUPAINFO_ROOT = "application/vnd.dsa.okupainfo.root+json";
 }

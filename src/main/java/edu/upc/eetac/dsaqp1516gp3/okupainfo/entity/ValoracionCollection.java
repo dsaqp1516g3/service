@@ -19,11 +19,11 @@ public class ValoracionCollection {
         this.links = links;
     }
 
-    public List<edu.upc.eetac.dsaqp1516gp3.okupainfo.entity.Valoracion> getValoracion() {
+    public List<Valoracion> getValoraciones() {
         return Valoracion;
     }
 
-    public void setValoracion(List<edu.upc.eetac.dsaqp1516gp3.okupainfo.entity.Valoracion> valoracion) {
+    public void setValoraciones(List<Valoracion> valoracion) {
         Valoracion = valoracion;
     }
 }

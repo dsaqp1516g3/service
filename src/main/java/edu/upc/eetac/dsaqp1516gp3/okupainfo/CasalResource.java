@@ -401,7 +401,6 @@ public class CasalResource {
     /**
      * Eliminamos el comentario de un evento
      **/
-    @RolesAllowed("[admin, casal]")
     @Path("/{casalid}/events/{eventid}/comments/{commentid}")
     @DELETE
     public void deleteCommentEvent(@PathParam("commentid") String id) {
@@ -551,81 +550,120 @@ public class CasalResource {
     /***********************************************************************************************************/
     /*********************************Valoraciones**************************************************************/
     /***********************************************************************************************************/
-//
-//    @Path("/{id}/valoracion")
-//    @POST
-//    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-//    @Produces(OkupaInfoMediaType.OKUPAINFO_AUTH_TOKEN)
-//    public Response createValoracion(@FormParam("loginid") String loginid, @FormParam("casalid") String casalid, @FormParam("valoracion") boolean valoracion, @Context UriInfo uriInfo) throws URISyntaxException {
-//        if (loginid == null || casalid == null)
-//            throw new BadRequestException("all parameters are mandatory");
-//        ValoracionDAO ValoracionDAO = new ValoracionDAOImpl();
-//        Valoracion Valoracion = null;
-//        AuthToken authenticationToken;
-//        try {
-//        /*Aqui atacamos a la API externa para obtener las longitudes y latitudes*/
-//            try {
-//                Valoracion = ValoracionDAO.createValoracion(loginid, casalid, valoracion);
-//            } catch (UserAlreadyExistsException e) {
-//                e.printStackTrace();
-//            }
-//            authenticationToken = (new AuthTokenDAOImpl()).createAuthToken(Valoracion.getId());
-//        } catch (SQLException e) {
-//            throw new InternalServerErrorException();
-//        }
-//        URI uri = new URI(uriInfo.getAbsolutePath().toString() + "/" + Valoracion.getId());
-//        return Response.created(uri).type(OkupaInfoMediaType.OKUPAINFO_AUTH_TOKEN).entity(authenticationToken).build();
-//    }
-//
-//    @Path("/{id}/valoracion/{id}")
-//    @PUT
-//    @Consumes(OkupaInfoMediaType.OKUPAINFO_EVENTS)
-//    @Produces(OkupaInfoMediaType.OKUPAINFO_EVENTS)
-//    public Valoracion updateValoracion(@PathParam("id") String id, @PathParam("loginid") String loginid, @PathParam("casalid") String casalid, @PathParam("valoracion") boolean valoracion, Valoracion Valoracion) {
-//        if (Valoracion == null)
-//            throw new BadRequestException("entity is null");
-//        if (!id.equals(Valoracion.getId()))
-//            throw new BadRequestException("path parameter id and entity parameter id doesn't match");
-//        String userid = securityContext.getUserPrincipal().getName();
-//        if (!userid.equals(Valoracion.getCasalid()))
-//            throw new ForbiddenException("operation not allowed");
-//        ValoracionDAO ValoracionDAO = new ValoracionDAOImpl();
-//        try {
-//            Valoracion = ValoracionDAO.updateValoracion(id, loginid, casalid, valoracion);
-//            if (Valoracion == null)
-//                throw new NotFoundException("La valoracion con la id " + id + " no existe");
-//        } catch (SQLException e) {
-//            throw new InternalServerErrorException();
-//        }
-//        return Valoracion;
-//    }
-//
-//    @Path("/{id}/valoracion/{id}")
-//    @GET
-//    @Produces(OkupaInfoMediaType.OKUPAINFO_EVENTS_COLLECTION)
-//    public Valoracion getValoracionByLoginid(@PathParam("loginid") String loginid) {
-//        Valoracion Valoracion;
-//        try {
-//            Valoracion = (new ValoracionDAOImpl().getValoracionByLoginid(loginid));
-//        } catch (SQLException e) {
-//            throw new InternalServerErrorException(e.getMessage());
-//        }
-//        if (Valoracion == null)
-//            throw new NotFoundException("Event with id = " + loginid + "doesn't exist");
-//        return Valoracion;
-//    }
-//
-//    @Path("/{id}/valoracion/")
-//    @GET
-//    @Produces(OkupaInfoMediaType.OKUPAINFO_EVENTS_COLLECTION)
-//    public ValoracionCollection getAllValoraciones() {
-//        ValoracionCollection ValoracionCollection;
-//        ValoracionDAO ValoracionDAO = new ValoracionDAOImpl();
-//        try {
-//            ValoracionCollection = ValoracionDAO.getAllValoraciones();
-//        } catch (SQLException e) {
-//            throw new InternalServerErrorException();
-//        }
-//        return ValoracionCollection;
-//    }
+
+    /**
+     * Creamos una valoración de un casal
+     **/
+    @Path("/{casalid}/valoracion")
+    @POST
+    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+    public Response createValoracion(@FormParam("loginid") String loginid, @PathParam("casalid") String casalid, @FormParam("valoracion") boolean valoracion, @Context UriInfo uriInfo) throws URISyntaxException {
+        if (loginid == null || casalid == null)
+            throw new BadRequestException("all parameters are mandatory");
+        ValoracionDAO ValoracionDAO = new ValoracionDAOImpl();
+        Valoracion Valoracion;
+        try {
+                Valoracion = ValoracionDAO.createValoracion(loginid, casalid, valoracion);
+
+        } catch (SQLException e) {
+            throw new InternalServerErrorException();
+        }
+        URI uri = new URI(uriInfo.getAbsolutePath().toString() + "/valoracion/" + Valoracion.getId());
+        return Response.created(uri).type(OkupaInfoMediaType.OKUPAINFO_CASALS_VALORACION).entity(Valoracion).build();
+    }
+
+    /**
+     * Obtenemos todas las valoraciones de un casal
+     **/
+    @Path("/{casalid}/valoracion")
+    @GET
+    @Produces(OkupaInfoMediaType.OKUPAINFO_CASALS_VALORACION_COLLECTION)
+    public ValoracionCollection getAllValoracionesOfCasal(@PathParam("casalid") String casalid) {
+        ValoracionCollection ValoracionCollection;
+        ValoracionDAO ValoracionDAO = new ValoracionDAOImpl();
+        try {
+            ValoracionCollection = ValoracionDAO.getValoracionesByCasalId(casalid);
+        } catch (SQLException e) {
+            throw new InternalServerErrorException();
+        }
+        return ValoracionCollection;
+    }
+
+    /**
+     * Modificamos la valoración de un casal
+     **/
+    @Path("/{casalid}/valoracion/{valoracionid}")
+    @PUT
+    @Consumes(OkupaInfoMediaType.OKUPAINFO_CASALS_VALORACION)
+    @Produces(OkupaInfoMediaType.OKUPAINFO_CASALS_VALORACION)
+    public Valoracion updateValoracion(@PathParam("casalid") String id, @FormParam("loginid") String loginid, @PathParam("valoracionid") String casalid, @FormParam("valoracion") boolean valoracion, Valoracion Valoracion) {
+        if (Valoracion == null)
+            throw new BadRequestException("entity is null");
+        if (!id.equals(Valoracion.getId()))
+            throw new BadRequestException("path parameter id and entity parameter id doesn't match");
+        String userid = securityContext.getUserPrincipal().getName();
+        if (!userid.equals(Valoracion.getCasalid()))
+            throw new ForbiddenException("operation not allowed");
+        ValoracionDAO ValoracionDAO = new ValoracionDAOImpl();
+        try {
+            Valoracion = ValoracionDAO.updateValoracion(id, loginid, casalid, valoracion);
+            if (Valoracion == null)
+                throw new NotFoundException("La valoracion con la id " + id + " no existe");
+        } catch (SQLException e) {
+            throw new InternalServerErrorException();
+        }
+        return Valoracion;
+    }
+
+    /**
+     * Obtenemos la valoración segun la ID
+     **/
+    @Path("/{casalid}/valoracion/{valoracionid}")
+    @GET
+    @Produces(OkupaInfoMediaType.OKUPAINFO_CASALS_VALORACION)
+    public Valoracion getValoracionById(@PathParam("valoracionid") String valoracionid) {
+        Valoracion Valoracion;
+        try {
+            Valoracion = (new ValoracionDAOImpl().getValoracionById(valoracionid));
+        } catch (SQLException e) {
+            throw new InternalServerErrorException(e.getMessage());
+        }
+        if (Valoracion == null)
+            throw new NotFoundException("Event with id = " + valoracionid + "doesn't exist");
+        return Valoracion;
+    }
+
+    /**
+     * Eliminamos una Valoración
+     **/
+    @Path("/{casalid}/valoracion/{valoracionid}")
+    @DELETE
+    public void deleteValoracionCasal(@PathParam("valoracionid") String valoracionid) {
+        ValoracionDAO valoracionDAO = new ValoracionDAOImpl();
+
+        try {
+            if (!valoracionDAO.deleteValoracion(valoracionid))
+                throw new NotFoundException("La valoración con la id " + valoracionid + " no existe");
+        } catch (SQLException e) {
+            throw new InternalServerErrorException();
+        }
+    }
+
+    /**
+     * Obtenemos todos las valoraciones a casals hechos por un usuario
+     **/
+    @Path("/{casalid}/valoracion/user/{creatorid}")
+    @GET
+    @Produces(OkupaInfoMediaType.OKUPAINFO_CASALS_VALORACION_COLLECTION)
+    public ValoracionCollection getValoracionesByUserId(@PathParam("creatorid") String creatorid) {
+        ValoracionCollection valoracionCollection;
+        ValoracionDAO valoracionDAO = new ValoracionDAOImpl();
+
+        try {
+            valoracionCollection = valoracionDAO.getValoracionesByUserId(creatorid);
+        } catch (SQLException e) {
+            throw new InternalServerErrorException();
+        }
+        return valoracionCollection;
+    }
 }
