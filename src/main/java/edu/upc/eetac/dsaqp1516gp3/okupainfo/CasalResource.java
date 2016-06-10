@@ -182,12 +182,12 @@ public class CasalResource {
     /**
      * Creamos un evento siendo un casal
      **/
-    @POST
     @Path("/{casalid}")
+    @POST
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     @Produces(OkupaInfoMediaType.OKUPAINFO_AUTH_TOKEN)
     public Response createEvent(@PathParam("casalid") String casalid, @FormDataParam("title") String title, @FormDataParam("description") String description,
-                                @FormDataParam("localization") String localization, @FormDataParam("eventdate") long eventdate,@FormDataParam("image") InputStream file, @FormDataParam("image") FormDataContentDisposition fileDetail,  @Context UriInfo uriInfo) throws URISyntaxException {
+                                @FormDataParam("localization") String localization, @FormDataParam("eventdate") long eventdate, @FormDataParam("image") InputStream file, @FormDataParam("image") FormDataContentDisposition fileDetail, @Context UriInfo uriInfo) throws URISyntaxException {
         if (title == null || description == null || localization == null || eventdate == 0)
             throw new BadRequestException("all parameters are mandatory");
         CasalDAO casalDAO = new CasalDAOImpl();

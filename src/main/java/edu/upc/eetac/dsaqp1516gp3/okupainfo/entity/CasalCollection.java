@@ -3,7 +3,6 @@ package edu.upc.eetac.dsaqp1516gp3.okupainfo.entity;
 import edu.upc.eetac.dsaqp1516gp3.okupainfo.CasalResource;
 import edu.upc.eetac.dsaqp1516gp3.okupainfo.OkupaInfoMediaType;
 import edu.upc.eetac.dsaqp1516gp3.okupainfo.OkupaInfoRootAPIResource;
-import org.glassfish.jersey.linking.Binding;
 import org.glassfish.jersey.linking.InjectLink;
 import org.glassfish.jersey.linking.InjectLinks;
 
@@ -15,8 +14,7 @@ public class CasalCollection
 {
     @InjectLinks({
             @InjectLink(resource = OkupaInfoRootAPIResource.class, style = InjectLink.Style.ABSOLUTE, rel = "home", title = "OkupaInfo Root API"),
-            @InjectLink(resource = CasalResource.class, style = InjectLink.Style.ABSOLUTE, rel = "current-casals", title = "Current casals", type = OkupaInfoMediaType.OKUPAINFO_CASAL_COLLECTION),
-            @InjectLink(resource = CasalResource.class, method = "getCasal", style = InjectLink.Style.ABSOLUTE, rel = "self", title = "Casal profile", type = OkupaInfoMediaType.OKUPAINFO_CASAL, bindings = @Binding(name = "id", value = "${instance.id}"))
+            @InjectLink(resource = CasalResource.class, style = InjectLink.Style.ABSOLUTE, rel = "current-casals", title = "Current casals", type = OkupaInfoMediaType.OKUPAINFO_CASAL_COLLECTION)
     })
     private List<Link> links;
     private List<Casal> Casals = new ArrayList<>();

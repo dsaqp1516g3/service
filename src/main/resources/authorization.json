@@ -24,13 +24,21 @@
     "methods": ["GET"]
   },
   {
+    "path": "casals/validated",
+    "methods": ["GET"]
+  },
+  {
+    "path": "casals/unvalidated",
+    "methods": ["GET"]
+  },
+  {
     "path": "casals/comments",
     "methods": ["GET"]
   },
   {
   "path": "users",
   "methods": ["GET"]
- },
+  },
   {
     "path": "events",
     "methods": ["GET"]

@@ -17,7 +17,7 @@ public class AuthToken
             @InjectLink(resource = CasalResource.class, style = InjectLink.Style.ABSOLUTE, rel = "create-casal", title = "Create Casal", type = OkupaInfoMediaType.OKUPAINFO_CASAL),
             @InjectLink(resource = UserResource.class, style = InjectLink.Style.ABSOLUTE, rel = "create-user", title = "Create Event", type = OkupaInfoMediaType.OKUPAINFO_USER),
             @InjectLink(resource = CasalResource.class, style = InjectLink.Style.ABSOLUTE, rel = "create-commentcasal", title = "Create CommentCasal", type = OkupaInfoMediaType.OKUPAINFO_COMMENTS_CASALS),
-            @InjectLink(resource = CasalResource.class, style = InjectLink.Style.ABSOLUTE, rel = "create-commentevent", title = "Create CommentEvent", type = OkupaInfoMediaType.OKUPAINFO_COMMENTS_EVENTS),
+            @InjectLink(resource = CasalResource.class, style = InjectLink.Style.ABSOLUTE, rel = "create-commentevent", title = "Create CommentEvent", type = OkupaInfoMediaType.OKUPAINFO_COMMENTS_EVENTS)
     })
     private List<Link> links;
 
