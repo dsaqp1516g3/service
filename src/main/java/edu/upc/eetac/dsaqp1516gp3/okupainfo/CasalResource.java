@@ -343,6 +343,7 @@ public class CasalResource {
     /**
      * Vemos todos los comentarios de un evento
      **/
+    @Path("{casalid}/events/{eventid}/comments")
     @GET
     @Produces(OkupaInfoMediaType.OKUPAINFO_COMMENTS_EVENTS_COLLECTION)
     public Comments_EventsCollection getAllEventComments(@QueryParam("timestamp") long timestamp, @DefaultValue("true") @QueryParam("before") boolean before) {

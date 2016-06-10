@@ -24,6 +24,10 @@
     "methods": ["GET"]
   },
   {
+    "path": "casals/comments",
+    "methods": ["GET"]
+  },
+  {
   "path": "users",
   "methods": ["GET"]
  },
