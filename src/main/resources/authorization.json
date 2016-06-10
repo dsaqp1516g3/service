@@ -20,10 +20,6 @@
     "methods": ["GET"]
   },
   {
-    "path": "casals/comments",
-    "methods": ["GET"]
-  },
-  {
     "path": "casals",
     "methods": ["GET"]
   },
