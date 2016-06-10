@@ -1,6 +1,7 @@
 package edu.upc.eetac.dsaqp1516gp3.okupainfo.entity;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import edu.upc.eetac.dsaqp1516gp3.okupainfo.CasalResource;
 import edu.upc.eetac.dsaqp1516gp3.okupainfo.EventResource;
 import edu.upc.eetac.dsaqp1516gp3.okupainfo.OkupaInfoMediaType;
 import edu.upc.eetac.dsaqp1516gp3.okupainfo.OkupaInfoRootAPIResource;
@@ -17,7 +18,7 @@ public class EventCollection {
     @InjectLinks({
             @InjectLink(resource = OkupaInfoRootAPIResource.class, style = InjectLink.Style.ABSOLUTE, rel = "home", title = "OkupaInfo Root API"),
             @InjectLink(resource = EventResource.class, style = InjectLink.Style.ABSOLUTE, rel = "current-events", title = "Current Events", type = OkupaInfoMediaType.OKUPAINFO_EVENTS_COLLECTION),
-            @InjectLink(resource = EventResource.class, method = "getEvent", style = InjectLink.Style.ABSOLUTE, rel = "self", title = "Event profile", type = OkupaInfoMediaType.OKUPAINFO_EVENTS, bindings = @Binding(name = "id", value = "${instance.id}"))
+            @InjectLink(resource = CasalResource.class, method = "getEvent", style = InjectLink.Style.ABSOLUTE, rel = "self", title = "Event profile", type = OkupaInfoMediaType.OKUPAINFO_EVENTS, bindings = @Binding(name = "id", value = "${instance.id}"))
     })
     private List<Link> links;
     private long newestTimestamp;

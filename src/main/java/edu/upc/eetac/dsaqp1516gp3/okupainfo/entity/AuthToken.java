@@ -1,10 +1,7 @@
 package edu.upc.eetac.dsaqp1516gp3.okupainfo.entity;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import edu.upc.eetac.dsaqp1516gp3.okupainfo.CasalResource;
-import edu.upc.eetac.dsaqp1516gp3.okupainfo.EventResource;
-import edu.upc.eetac.dsaqp1516gp3.okupainfo.OkupaInfoMediaType;
-import edu.upc.eetac.dsaqp1516gp3.okupainfo.OkupaInfoRootAPIResource;
+import edu.upc.eetac.dsaqp1516gp3.okupainfo.*;
 import org.glassfish.jersey.linking.InjectLink;
 import org.glassfish.jersey.linking.InjectLinks;
 
@@ -16,8 +13,11 @@ public class AuthToken
 {
     @InjectLinks({
             @InjectLink(resource = OkupaInfoRootAPIResource.class, style = InjectLink.Style.ABSOLUTE, rel = "home", title = "OkupaInfo Root API"),
-            @InjectLink(resource = EventResource.class, style = InjectLink.Style.ABSOLUTE, rel = "create-event", title = "Create Event", type = OkupaInfoMediaType.OKUPAINFO_EVENTS),
+            @InjectLink(resource = CasalResource.class, style = InjectLink.Style.ABSOLUTE, rel = "create-event", title = "Create Event", type = OkupaInfoMediaType.OKUPAINFO_EVENTS),
             @InjectLink(resource = CasalResource.class, style = InjectLink.Style.ABSOLUTE, rel = "create-casal", title = "Create Casal", type = OkupaInfoMediaType.OKUPAINFO_CASAL),
+            @InjectLink(resource = UserResource.class, style = InjectLink.Style.ABSOLUTE, rel = "create-user", title = "Create Event", type = OkupaInfoMediaType.OKUPAINFO_USER),
+            @InjectLink(resource = CasalResource.class, style = InjectLink.Style.ABSOLUTE, rel = "create-commentcasal", title = "Create CommentCasal", type = OkupaInfoMediaType.OKUPAINFO_COMMENTS_CASALS),
+            @InjectLink(resource = CasalResource.class, style = InjectLink.Style.ABSOLUTE, rel = "create-commentevent", title = "Create CommentEvent", type = OkupaInfoMediaType.OKUPAINFO_COMMENTS_EVENTS),
     })
     private List<Link> links;
 
