@@ -1,11 +1,10 @@
 package edu.upc.eetac.dsaqp1516gp3.okupainfo;
 
-import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
-import org.glassfish.jersey.media.multipart.FormDataParam;
 import edu.upc.eetac.dsaqp1516gp3.okupainfo.dao.*;
 import edu.upc.eetac.dsaqp1516gp3.okupainfo.entity.*;
+import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
+import org.glassfish.jersey.media.multipart.FormDataParam;
 
-import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
 import java.io.InputStream;
@@ -72,7 +71,6 @@ public class CasalResource {
     /**
      * Obtenemos una lista de todos los casales que SI esten validados
      **/
-    @RolesAllowed("[admin]")
     @GET
     @Path("/validated")
     @Produces(OkupaInfoMediaType.OKUPAINFO_CASAL_COLLECTION)
@@ -91,7 +89,6 @@ public class CasalResource {
     /**
      * Obtenemos una lista de todos los casales que NO esten validados
      **/
-    @RolesAllowed("[admin]")
     @GET
     @Path("/unvalidated")
     @Produces(OkupaInfoMediaType.OKUPAINFO_CASAL_COLLECTION)
@@ -109,7 +106,6 @@ public class CasalResource {
     /**
      * Actualizamos el perfil de un casal
      **/
-    @RolesAllowed("[admin, registered]")
     @Path("/{casalid}")
     @PUT
     @Consumes(OkupaInfoMediaType.OKUPAINFO_CASAL)
@@ -162,7 +158,6 @@ public class CasalResource {
     /**
      * Eliminamos un casal
      **/
-    @RolesAllowed("[admin, registered]")
     @Path("/{casalid}")
     @DELETE
     public void deleteCasal(@PathParam("casalid") String casalid) {
@@ -187,7 +182,6 @@ public class CasalResource {
     /**
      * Creamos un evento siendo un casal
      **/
-    @RolesAllowed("[admin, registered]")
     @POST
     @Path("/{casalid}")
     @Consumes(MediaType.MULTIPART_FORM_DATA)
@@ -246,7 +240,6 @@ public class CasalResource {
     /**
      * Actualizamos el perfil de un evento
      **/
-    @RolesAllowed("[admin, registered]")
     @Path("/{casalid}/events/{eventid}")
     @PUT
     @Consumes(OkupaInfoMediaType.OKUPAINFO_EVENTS)
@@ -282,7 +275,6 @@ public class CasalResource {
     /**
      * Eliminamos un evento
      **/
-    @RolesAllowed("[admin, registered]")
     @Path("/{casalid}/events/{eventid}")
     @DELETE
     public void deleteEvent(@PathParam("eventid") String eventid) {
@@ -320,7 +312,6 @@ public class CasalResource {
     /**
      * Creamos un comentario acerca de un evento
      **/
-    @RolesAllowed("[admin, registered]")
     @Path("/{casalid}/events/{eventid}/comments")
     @POST
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
@@ -352,7 +343,6 @@ public class CasalResource {
     /**
      * Vemos todos los comentarios de un evento
      **/
-    @Path("{casalid}/events/{eventid}/comments")
     @GET
     @Produces(OkupaInfoMediaType.OKUPAINFO_COMMENTS_EVENTS_COLLECTION)
     public Comments_EventsCollection getAllEventComments(@QueryParam("timestamp") long timestamp, @DefaultValue("true") @QueryParam("before") boolean before) {
@@ -370,7 +360,6 @@ public class CasalResource {
     /**
      * Actualizamos el comentario de un evento
      **/
-    @RolesAllowed("[admin, registered]")
     @Path("/{casalid}/events/{eventid}/comments/{commentid}")
     @PUT
     @Consumes(OkupaInfoMediaType.OKUPAINFO_COMMENTS_EVENTS)
@@ -415,7 +404,6 @@ public class CasalResource {
     /**
      * Eliminamos el comentario de un evento
      **/
-    @RolesAllowed("[admin, registered]")
     @Path("/{casalid}/events/{eventid}/comments/{commentid}")
     @DELETE
     public void deleteCommentEvent(@PathParam("commentid") String id) {
@@ -453,7 +441,6 @@ public class CasalResource {
     /**
      * Comentamos sobre un casal
      **/
-    @RolesAllowed("[admin, registered]")
     @POST
     @Path("/{casalid}/comments")
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
@@ -511,7 +498,6 @@ public class CasalResource {
     /**
      * Modificamos un comentario
      **/
-    @RolesAllowed("[admin, registered]")
     @Path("/{casalid}/comments/{commentid}")
     @PUT
     @Consumes(OkupaInfoMediaType.OKUPAINFO_COMMENTS_CASALS)
@@ -533,7 +519,6 @@ public class CasalResource {
         return Comments_Casals;
     }
 
-    @RolesAllowed("[admin, registered]")
     @Path("/{casalid}/comments/{commentid}")
     @DELETE
     public void deleteCommentCasal(@PathParam("commentid") String id) {
@@ -571,7 +556,6 @@ public class CasalResource {
     /**
      * Creamos una valoración de un casal
      **/
-    @RolesAllowed("[admin, registered]")
     @Path("/{casalid}/valoracion")
     @POST
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
@@ -610,7 +594,6 @@ public class CasalResource {
     /**
      * Modificamos la valoración de un casal
      **/
-    @RolesAllowed("[admin, registered]")
     @Path("/{casalid}/valoracion/{valoracionid}")
     @PUT
     @Consumes(OkupaInfoMediaType.OKUPAINFO_CASALS_VALORACION)
@@ -655,7 +638,6 @@ public class CasalResource {
     /**
      * Eliminamos una Valoración
      **/
-    @RolesAllowed("[admin, registered]")
     @Path("/{casalid}/valoracion/{valoracionid}")
     @DELETE
     public void deleteValoracionCasal(@PathParam("valoracionid") String valoracionid) {

@@ -4,7 +4,6 @@ import edu.upc.eetac.dsaqp1516gp3.okupainfo.dao.*;
 import edu.upc.eetac.dsaqp1516gp3.okupainfo.entity.Comments_EventsCollection;
 import edu.upc.eetac.dsaqp1516gp3.okupainfo.entity.EventCollection;
 
-import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Request;
@@ -39,7 +38,6 @@ public class EventResource {
     /**
      * Comprobamos a que eventos asiste el usuario
      **/
-    @RolesAllowed("[admin, registered]")
     @Path("assistance/{userid}")
     @GET
     @Produces(OkupaInfoMediaType.OKUPAINFO_EVENTS)//Miramos la asistencia de un usuario a varios eventos
@@ -60,7 +58,6 @@ public class EventResource {
     /**
      * Añadimos la asistencia del usuario al evento
      **/
-    @RolesAllowed("[admin, registered]")
     @Path("/{eventid}/{userid}")
     @POST
     @Produces(OkupaInfoMediaType.OKUPAINFO_EVENTS)//Miramos la asistencia de un usuario a varios eventos
@@ -82,7 +79,6 @@ public class EventResource {
     /**
      * Eliminamos la asistencia del usuario al evento
      **/
-    @RolesAllowed("[admin, registered]")
     @Path("/{eventid}/{userid}")
     @DELETE
     @Produces(OkupaInfoMediaType.OKUPAINFO_EVENTS)
