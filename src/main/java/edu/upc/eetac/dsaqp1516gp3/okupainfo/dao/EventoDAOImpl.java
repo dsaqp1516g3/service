@@ -167,10 +167,11 @@ public class EventoDAOImpl implements EventoDAO {
 
         try {
 
-            EventCollection eventCollection = null;
+            /*EventCollection eventCollection;
             eventCollection = getEventsByUserId(userid, 0, true);
-            if (eventCollection != null)
+            if (eventCollection != null) {
                 throw new UserAlreadyAssists();
+            }*/
 
             connection = Database.getConnection();
 

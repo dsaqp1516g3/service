@@ -44,6 +44,14 @@
     "methods": ["PUT"]
   },
   {
+    "path": "(?i)events/([0-9a-f]{32})?/([0-9a-f]{32})?",
+    "methods": ["GET"]
+  },
+  {
+    "path": "(?i)events/([0-9a-f]{32})?/([0-9a-f]{32})?",
+    "methods": ["POST"]
+  },
+  {
     "path": "casals",
     "methods": ["GET"]
   },
