@@ -7,6 +7,7 @@ public interface UserDAOQuery
 {
     String UUID = "select REPLACE(UUID(),'-','')";
     String CREATE_USER = "insert into users (id, loginid, password, email, fullname, description,image) values (UNHEX(?), ?, UNHEX(MD5(?)), ?, ?, ?, ?)";
+    String CREATE_ANDROID_USER = "insert into users (id, loginid, password, email, fullname, description) values (UNHEX(?), ?, UNHEX(MD5(?)), ?, ?, ?)";
     String UPDATE_USER = "update users set email=?, fullname=?, description=? where id=unhex(?)";
     String ASSIGN_ROLE_REGISTERED = "insert into user_roles(userid,role) values (UNHEX(?), 'registered')";
     String GET_USER_BY_ID = "select hex(u.id) as id, u.loginid, u.email, u.fullname, u.description, u.image from users u where id=unhex(?)";

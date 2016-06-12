@@ -75,6 +75,56 @@ public class UserDAOImpl implements UserDAO {
     }
 
     @Override
+    public User createAndroidUser(String loginid, String password, String email, String fullname, String description) throws SQLException, UserAlreadyExistsException {
+        Connection connection = null;
+        PreparedStatement stmt = null;
+        String id = null;
+        try {
+            User user = getUserByLoginid(loginid);
+            if (user != null)
+                throw new UserAlreadyExistsException();
+
+            connection = Database.getConnection();
+
+            stmt = connection.prepareStatement(UserDAOQuery.UUID);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next())
+                id = rs.getString(1);
+            else
+                throw new SQLException();
+
+            connection.setAutoCommit(false);
+
+            stmt.close();
+            stmt = connection.prepareStatement(UserDAOQuery.CREATE_ANDROID_USER);
+            stmt.setString(1, id);
+            stmt.setString(2, loginid);
+            stmt.setString(3, password);
+            stmt.setString(4, email);
+            stmt.setString(5, fullname);
+            stmt.setString(6, description);
+            stmt.executeUpdate();
+
+            stmt.close();
+            stmt = connection.prepareStatement(UserDAOQuery.ASSIGN_ROLE_REGISTERED);
+            stmt.setString(1, id);
+            stmt.executeUpdate();
+
+            connection.commit();
+        } catch (SQLException e) {
+            throw e;
+        } finally {
+            if (stmt != null) stmt.close();
+            if (connection != null) {
+                connection.setAutoCommit(true);
+                connection.close();
+            }
+        }
+        return getUserById(id);
+    }
+
+
+    @Override
     public User updateProfile(String id, String email, String fullname, String description) throws SQLException {
         User user = null;
 

@@ -11,6 +11,7 @@ import java.sql.SQLException;
 public interface UserDAO
 {
     User createUser(String loginid, String password, String email, String fullname, String description, InputStream image) throws SQLException, UserAlreadyExistsException;
+    User createAndroidUser(String loginid, String password, String email, String fullname, String description) throws SQLException, UserAlreadyExistsException;
     User updateProfile(String id, String email, String fullname, String description) throws SQLException;
     User getUserById(String id) throws SQLException;
     User getUserByLoginid(String loginid) throws SQLException;
