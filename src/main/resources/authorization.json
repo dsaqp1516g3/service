@@ -24,6 +24,14 @@
     "methods": ["GET"]
   },
   {
+    "path": "(?i)casals/([0-9a-f]{32})?/(?i)valoracion",
+    "methods": ["GET"]
+  },
+  {
+    "path": "(?i)casals/([0-9a-f]{32})?/(?i)valoracion",
+    "methods": ["POST"]
+  },
+  {
     "path": "(?i)casals/([0-9a-f]{32})?/(?i)events/([0-9a-f]{32})?",
     "methods": ["GET"]
   },

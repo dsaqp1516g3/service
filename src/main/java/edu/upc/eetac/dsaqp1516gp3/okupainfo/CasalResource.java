@@ -445,14 +445,13 @@ public class CasalResource {
     @POST
     @Path("/{casalid}/comments")
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-    public Response createCasalComment(@PathParam("casalid") String casalid, @FormParam("content") String content, @Context UriInfo uriInfo) throws URISyntaxException {
+    public Response createCasalComment(@FormParam("creatorid") String creatorid, @PathParam("casalid") String casalid, @FormParam("content") String content, @Context UriInfo uriInfo) throws URISyntaxException {
         if (casalid == null || content == null)
             throw new BadRequestException("all parameters are mandatory");
         Comments_CasalsDAO Comments_CasalsDAO = new Comments_CasalsDAOImpl();
         Comments_Casals Comments_Casals;
         CasalDAO casalDAO = new CasalDAOImpl();
         try {
-            String creatorid = casalDAO.getAdminId(casalid);
             Comments_Casals = Comments_CasalsDAO.createComment(creatorid, casalid, content);
         } catch (SQLException e) {
             throw new InternalServerErrorException();
