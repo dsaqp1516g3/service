@@ -16,8 +16,8 @@ public class Comments_Events
 {
     @InjectLinks({
             @InjectLink(resource = OkupaInfoRootAPIResource.class, style = InjectLink.Style.ABSOLUTE, rel = "home", title = "OkupaInfo Root API"),
-            @InjectLink(resource = CasalResource.class, style = InjectLink.Style.ABSOLUTE, rel = "current-commentevents", title = "Current commentevents", type = OkupaInfoMediaType.OKUPAINFO_COMMENTS_EVENTS_COLLECTION),
-            @InjectLink(resource = CasalResource.class, method = "getCommentEvent", style = InjectLink.Style.ABSOLUTE, rel = "self", title = "CommentEvent profile", type = OkupaInfoMediaType.OKUPAINFO_COMMENTS_EVENTS, bindings = @Binding(name = "id", value = "${instance.id}"))
+            @InjectLink(resource = CasalResource.class, style = InjectLink.Style.ABSOLUTE, rel = "current-commentevents", title = "Current commentevents", type = OkupaInfoMediaType.OKUPAINFO_CASAL),
+            @InjectLink(resource = CasalResource.class, method = "getCommentEventById", style = InjectLink.Style.ABSOLUTE, rel = "self", title = "CommentEvent profile", type = OkupaInfoMediaType.OKUPAINFO_CASAL, bindings = {@Binding(name = "casalid", value = "${instance.casalid}"), @Binding(name = "eventid", value = "${instance.id}"), @Binding(name = "commentid", value = "${instance.id}")})
     })
     private List<Link> links;
     private String id;

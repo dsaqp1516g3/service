@@ -13,11 +13,11 @@ public class AuthToken
 {
     @InjectLinks({
             @InjectLink(resource = OkupaInfoRootAPIResource.class, style = InjectLink.Style.ABSOLUTE, rel = "home", title = "OkupaInfo Root API"),
-            @InjectLink(resource = CasalResource.class, style = InjectLink.Style.ABSOLUTE, rel = "create-event", title = "Create Event", type = OkupaInfoMediaType.OKUPAINFO_EVENTS),
+            @InjectLink(resource = CasalResource.class, style = InjectLink.Style.ABSOLUTE, rel = "create-event", title = "Create Event", type = OkupaInfoMediaType.OKUPAINFO_CASAL),
             @InjectLink(resource = CasalResource.class, style = InjectLink.Style.ABSOLUTE, rel = "create-casal", title = "Create Casal", type = OkupaInfoMediaType.OKUPAINFO_CASAL),
-            @InjectLink(resource = UserResource.class, style = InjectLink.Style.ABSOLUTE, rel = "create-user", title = "Create Event", type = OkupaInfoMediaType.OKUPAINFO_USER),
-            @InjectLink(resource = CasalResource.class, style = InjectLink.Style.ABSOLUTE, rel = "create-commentcasal", title = "Create CommentCasal", type = OkupaInfoMediaType.OKUPAINFO_COMMENTS_CASALS),
-            @InjectLink(resource = CasalResource.class, style = InjectLink.Style.ABSOLUTE, rel = "create-commentevent", title = "Create CommentEvent", type = OkupaInfoMediaType.OKUPAINFO_COMMENTS_EVENTS)
+            @InjectLink(resource = UserResource.class, style = InjectLink.Style.ABSOLUTE, rel = "current-users", title = "Current Users", type = OkupaInfoMediaType.OKUPAINFO_USER_COLLECTION),
+            @InjectLink(resource = CasalResource.class, style = InjectLink.Style.ABSOLUTE, rel = "create-commentcasal", title = "Create CommentCasal", type = OkupaInfoMediaType.OKUPAINFO_CASAL),
+            @InjectLink(resource = CasalResource.class, style = InjectLink.Style.ABSOLUTE, rel = "create-commentevent", title = "Create CommentEvent", type = OkupaInfoMediaType.OKUPAINFO_CASAL)
     })
     private List<Link> links;
 

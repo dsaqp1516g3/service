@@ -14,9 +14,9 @@ public class Casal {
 
     @InjectLinks({
             @InjectLink(resource = OkupaInfoRootAPIResource.class, style = InjectLink.Style.ABSOLUTE, rel = "home", title = "OkupaInfo Root API"),
-            @InjectLink(resource = EventResource.class, style = InjectLink.Style.ABSOLUTE, rel = "current-events", title = "Current Events", type = OkupaInfoMediaType.OKUPAINFO_EVENTS_COLLECTION),
-            @InjectLink(resource = CasalResource.class, style = InjectLink.Style.ABSOLUTE, rel = "current-casals", title = "Current Casals", type = OkupaInfoMediaType.OKUPAINFO_CASAL_COLLECTION),
-            @InjectLink(resource = CasalResource.class, method = "getCasal", style = InjectLink.Style.ABSOLUTE, rel = "self", title = "Casal profile", type = OkupaInfoMediaType.OKUPAINFO_CASAL, bindings = @Binding(name = "id", value = "${instance.id}"))
+            @InjectLink(resource = EventResource.class, style = InjectLink.Style.ABSOLUTE, rel = "current-events", title = "Current Events", type = OkupaInfoMediaType.OKUPAINFO_EVENTS),
+            @InjectLink(resource = CasalResource.class, style = InjectLink.Style.ABSOLUTE, rel = "current-casals", title = "Current Casals", type = OkupaInfoMediaType.OKUPAINFO_CASAL),
+            @InjectLink(resource = CasalResource.class, method = "getCasalByCasalid", style = InjectLink.Style.ABSOLUTE, rel = "self", title = "Casal profile", type = OkupaInfoMediaType.OKUPAINFO_CASAL, bindings = @Binding(name = "id", value = "${instance.id}"))
     })
     private List<Link> links;
     private String casalid;

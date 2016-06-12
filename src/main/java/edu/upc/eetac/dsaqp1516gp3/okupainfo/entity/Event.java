@@ -17,7 +17,7 @@ public class Event {
             @InjectLink(resource = OkupaInfoRootAPIResource.class, style = InjectLink.Style.ABSOLUTE, rel = "home", title = "OkupaInfo Root API"),
             @InjectLink(resource = EventResource.class, style = InjectLink.Style.ABSOLUTE, rel = "current-events", title = "Current Events", type = OkupaInfoMediaType.OKUPAINFO_EVENTS_COLLECTION),
             @InjectLink(resource = CasalResource.class, style = InjectLink.Style.ABSOLUTE, rel = "current-casals", title = "Current Casals", type = OkupaInfoMediaType.OKUPAINFO_CASAL_COLLECTION),
-            @InjectLink(resource = CasalResource.class, method = "getEvent", style = InjectLink.Style.ABSOLUTE, rel = "self", title = "Event profile", type = OkupaInfoMediaType.OKUPAINFO_EVENTS, bindings = @Binding(name = "id", value = "${instance.id}"))
+            @InjectLink(resource = CasalResource.class, method = "getEvents", style = InjectLink.Style.ABSOLUTE, rel = "self", title = "Event profile", type = OkupaInfoMediaType.OKUPAINFO_EVENTS, bindings = {@Binding(name = "casalid", value = "${instance.casalid}"), @Binding(name = "id", value = "${instance.id}")})
     })
     private List<Link> links;
     private String id;
