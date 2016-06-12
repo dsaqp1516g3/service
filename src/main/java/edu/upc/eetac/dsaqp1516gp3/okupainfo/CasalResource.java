@@ -116,9 +116,9 @@ public class CasalResource {
         if (!casalid.equals(casal.getCasalid()))
             throw new BadRequestException("path parameter id and entity parameter id doesn't match");
 
-        String userid = securityContext.getUserPrincipal().getName();
+        /*String userid = securityContext.getUserPrincipal().getName();
         if (!userid.equals(casal.getAdminid()))
-            throw new ForbiddenException("operation not allowed");
+            throw new ForbiddenException("operation not allowed");*/
 
         OpenStreetMapUtils openStreetMapUtils = new OpenStreetMapUtils();
         /**Aqui atacamos a la API externa para obtener las longitudes y latitudes**/

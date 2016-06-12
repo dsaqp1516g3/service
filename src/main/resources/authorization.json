@@ -20,6 +20,22 @@
     "methods": ["GET"]
   },
   {
+    "path": "(?i)casals/([0-9a-f]{32})?/(?i)events",
+    "methods": ["GET"]
+  },
+  {
+    "path": "(?i)casals/([0-9a-f]{32})?/(?i)events/([0-9a-f]{32})?",
+    "methods": ["GET"]
+  },
+  {
+    "path": "(?i)casals/([0-9a-f]{32})?/(?i)events/([0-9a-f]{32})?",
+    "methods": ["PUT"]
+  },
+  {
+    "path": "(?i)casals/([0-9a-f]{32})?",
+    "methods": ["PUT"]
+  },
+  {
     "path": "casals",
     "methods": ["GET"]
   },
