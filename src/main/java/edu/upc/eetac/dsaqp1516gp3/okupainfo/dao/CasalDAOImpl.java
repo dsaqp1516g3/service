@@ -216,6 +216,7 @@ public class CasalDAOImpl implements CasalDAO {
                 casal.setEmail(rs.getString("email"));
                 casal.setName(rs.getString("name"));
                 casal.setDescription(rs.getString("description"));
+                casal.setLocalization(rs.getString("localization"));
                 casal.setValidated(rs.getBoolean("validado"));
                 casalCollection.getCasals().add(casal);
             }
@@ -245,6 +246,7 @@ public class CasalDAOImpl implements CasalDAO {
                 casal.setEmail(rs.getString("email"));
                 casal.setName(rs.getString("name"));
                 casal.setDescription(rs.getString("description"));
+                casal.setLocalization(rs.getString("localization"));
                 casal.setValidated(rs.getBoolean("validado"));
                 casalCollection.getCasals().add(casal);
             }
