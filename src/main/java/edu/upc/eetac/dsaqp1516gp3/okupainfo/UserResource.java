@@ -7,9 +7,12 @@ import edu.upc.eetac.dsaqp1516gp3.okupainfo.dao.UserDAOImpl;
 import edu.upc.eetac.dsaqp1516gp3.okupainfo.entity.AuthToken;
 import edu.upc.eetac.dsaqp1516gp3.okupainfo.entity.User;
 import edu.upc.eetac.dsaqp1516gp3.okupainfo.entity.UserCollection;
+import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
+import org.glassfish.jersey.media.multipart.FormDataParam;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
+import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.sql.SQLException;
@@ -20,10 +23,10 @@ public class UserResource {
     private SecurityContext securityContext;
 
     @POST
-    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
     @Produces(OkupaInfoMediaType.OKUPAINFO_AUTH_TOKEN)
-    public Response registerUser(@FormParam("loginid") String loginid, @FormParam("password") String password, @FormParam("email") String email,
-                                 @FormParam("fullname") String fullname, @FormParam("description") String description, @Context UriInfo uriInfo) throws URISyntaxException {
+    public Response registerUser(@FormDataParam("loginid") String loginid, @FormDataParam("password") String password, @FormDataParam("email") String email,
+                                 @FormDataParam("fullname") String fullname, @FormDataParam("description") String description, @FormDataParam("image") InputStream file, @FormDataParam("image") FormDataContentDisposition fileDetail, @Context UriInfo uriInfo) throws URISyntaxException {
         if (loginid == null || password == null || email == null || fullname == null || description == null)
             throw new BadRequestException("all parameters are mandatory");
         UserDAO userDAO = new UserDAOImpl();
@@ -31,7 +34,7 @@ public class UserResource {
         AuthToken authenticationToken;
         try
         {
-            user = userDAO.createUser(loginid, password, email, fullname, description);
+            user = userDAO.createUser(loginid, password, email, fullname, description, file);
             authenticationToken = (new AuthTokenDAOImpl()).createAuthToken(user.getId());
         }
         catch (UserAlreadyExistsException e)
@@ -100,7 +103,6 @@ public class UserResource {
     }
 
     @Path("/{id}")
-    //@RolesAllowed("[admin, registered]")/*admin estara por encima de registered y de casal, administrara por encima de todos y habrá solo 3*/
     @DELETE
     public void deleteUser(@PathParam("id") String id) {
         String userid = securityContext.getUserPrincipal().getName();

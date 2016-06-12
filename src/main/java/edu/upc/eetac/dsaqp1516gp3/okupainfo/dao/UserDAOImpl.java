@@ -4,6 +4,12 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import edu.upc.eetac.dsaqp1516gp3.okupainfo.entity.User;
 import edu.upc.eetac.dsaqp1516gp3.okupainfo.entity.UserCollection;
 
+import javax.imageio.ImageIO;
+import javax.ws.rs.InternalServerErrorException;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -11,13 +17,17 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.PropertyResourceBundle;
+import java.util.ResourceBundle;
+import java.util.UUID;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class UserDAOImpl implements UserDAO {
     @Override
-    public User createUser(String loginid, String password, String email, String fullname, String description) throws SQLException, UserAlreadyExistsException {
+    public User createUser(String loginid, String password, String email, String fullname, String description, InputStream image) throws SQLException, UserAlreadyExistsException {
         Connection connection = null;
         PreparedStatement stmt = null;
+        String uuid = writeAndConvertImage(image);
         String id = null;
         try {
             User user = getUserByLoginid(loginid);
@@ -43,6 +53,7 @@ public class UserDAOImpl implements UserDAO {
             stmt.setString(4, email);
             stmt.setString(5, fullname);
             stmt.setString(6, description);
+            stmt.setString(7, uuid);
             stmt.executeUpdate();
 
             stmt.close();
@@ -115,6 +126,7 @@ public class UserDAOImpl implements UserDAO {
                 user.setEmail(rs.getString("email"));
                 user.setFullname(rs.getString("fullname"));
                 user.setDescription(rs.getString("description"));
+                user.setImage(rs.getString("image"));
             }
         } catch (SQLException e) {
             throw e;
@@ -125,32 +137,30 @@ public class UserDAOImpl implements UserDAO {
         return user;
     }
 
-    /*@Override
-    public User getIdByUser(String loginid) throws SQLException {
-        User user = null;
-
-        Connection connection = null;
-        PreparedStatement stmt = null;
+    private String writeAndConvertImage(InputStream file) {
+        BufferedImage image;
         try {
-            connection = Database.getConnection();
-
-            stmt = connection.prepareStatement(UserDAOQuery.GET_ID_BY_USER);
-            stmt.setString(1, loginid);
-
-            ResultSet rs = stmt.executeQuery();
-            if (rs.next()) {
-                user = new User();
-                user.setId(rs.getString("id"));
-                user.setLoginid(rs.getString("loginid"));
-            }
-        } catch (SQLException e) {
-            throw e;
-        } finally {
-            if (stmt != null) stmt.close();
-            if (connection != null) connection.close();
+            image = ImageIO.read(file);
+        } catch (IOException E) {
+            throw new InternalServerErrorException("error");
         }
-        return user;
-    }*/
+        if (image == null) {
+            return null;
+        } else {
+            UUID uuid = UUID.randomUUID();
+            String filename = uuid.toString() + ".png";
+            try {
+                PropertyResourceBundle prb = (PropertyResourceBundle) ResourceBundle.getBundle("okupainfo");
+
+                ImageIO.write(image, "png", new File(prb.getString("uploadFolder") + filename));
+
+            } catch (IOException e) {
+                throw new InternalServerErrorException("error");
+            }
+            String respuesta = uuid.toString();
+            return respuesta;
+        }
+    }
 
     @Override
     public User getUserByLoginid(String loginid) throws SQLException {
@@ -160,7 +170,6 @@ public class UserDAOImpl implements UserDAO {
         PreparedStatement stmt = null;
         try {
             connection = Database.getConnection();
-
 
             stmt = connection.prepareStatement(UserDAOQuery.GET_USER_BY_USERNAME);
             stmt.setString(1, loginid);
@@ -173,6 +182,7 @@ public class UserDAOImpl implements UserDAO {
                 user.setEmail(rs.getString("email"));
                 user.setFullname(rs.getString("fullname"));
                 user.setDescription(rs.getString("description"));
+                user.setImage(rs.getString("image"));
             }
         } catch (SQLException e) {
             throw e;
@@ -202,6 +212,7 @@ public class UserDAOImpl implements UserDAO {
                 user.setEmail(rs.getString("email"));
                 user.setFullname(rs.getString("Fullname"));
                 user.setDescription(rs.getString("description"));
+                user.setImage(rs.getString("image"));
                 userCollection.getUsers().add(user);
             }
         } catch (SQLException e) {
@@ -212,35 +223,6 @@ public class UserDAOImpl implements UserDAO {
         }
         return userCollection;
     }
-
-   /* @Override
-    public User getUsersByEventoId(String eventoid) throws SQLException {
-        User user = null;
-
-        Connection connection = null;
-        PreparedStatement stmt = null;
-        try {
-            connection = Database.getConnection();
-
-            stmt = connection.prepareStatement(UserDAOQuery.GET_USERS_BY_EVENT_ID);
-            stmt.setString(2, eventoid);
-
-            ResultSet rs = stmt.executeQuery();
-            if (rs.next()) {
-                user.setId(rs.getString("id"));
-                user.setLoginid(rs.getString("loginid"));
-                user.setEmail(rs.getString("email"));
-                user.setFullname(rs.getString("fullname"));
-                user.setDescription(rs.getString("description"));
-            }
-        } catch (SQLException e) {
-            throw e;
-        } finally {
-            if (stmt != null) stmt.close();
-            if (connection != null) connection.close();
-        }
-        return user;
-    }*/
 
     @Override
     public boolean deleteUser(String id) throws SQLException {

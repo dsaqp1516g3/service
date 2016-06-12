@@ -22,6 +22,7 @@ public class User {
     private String email;
     private String fullname;
     private String description;
+    private String image;
 
     public List<Link> getLinks() {
         return links;
@@ -71,4 +72,11 @@ public class User {
         this.description = description;
     }
 
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
+    }
 }
