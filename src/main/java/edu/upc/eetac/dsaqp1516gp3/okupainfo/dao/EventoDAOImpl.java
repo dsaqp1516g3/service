@@ -217,16 +217,13 @@ public class EventoDAOImpl implements EventoDAO {
                 event.setCasalid(rs.getString("casalid"));
                 event.setTitle(rs.getString("title"));
                 event.setDescription(rs.getString("description"));
-                event.setEventdate(rs.getTimestamp("eventdate"));
                 event.setLocalization(rs.getString("localization"));
                 event.setLatitude(rs.getDouble("latitude"));
                 event.setLongitude(rs.getDouble("longitude"));
-                event.setImage(rs.getString("image"));
-                eventCollection.getEvents().add(event);
+                event.setEventdate(rs.getTimestamp("eventdate"));
                 event.setCreationTimestamp(rs.getTimestamp("creation_timestamp"));
                 event.setLastModified(rs.getTimestamp("last_modified"));
-
-
+                event.setImage(rs.getString("image"));
                 if (first) {
                     eventCollection.setNewestTimestamp(event.getLastModified().getTime());
                     first = false;
