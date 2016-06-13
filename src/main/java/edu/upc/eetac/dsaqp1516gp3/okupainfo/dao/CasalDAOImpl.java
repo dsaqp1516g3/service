@@ -54,7 +54,7 @@ public class CasalDAOImpl implements CasalDAO {
             stmt.setString(6, localization);
             stmt.setDouble(7, latitude);
             stmt.setDouble(8, longitude);
-            stmt.setString(9, String.valueOf(false));
+            stmt.setBoolean(9, false);
             stmt.setString(10, uuid);
             stmt.executeUpdate();
 
