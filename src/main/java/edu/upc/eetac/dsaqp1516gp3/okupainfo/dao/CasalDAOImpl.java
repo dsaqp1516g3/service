@@ -71,6 +71,55 @@ public class CasalDAOImpl implements CasalDAO {
         return getCasalByCasalid(casalid);
     }
 
+    @Override
+    public Casal createAndroidCasal(String adminid, String email, String name, String description, String localization, double latitude, double longitude, boolean validated) throws SQLException, CasalAlreadyExistsException {
+        Connection connection = null;
+        PreparedStatement stmt = null;
+        String casalid = null;
+        try {
+            Casal casal = getCasalByEmail(email);
+            if (casal != null)
+                throw new CasalAlreadyExistsException();
+
+            connection = Database.getConnection();
+
+            stmt = connection.prepareStatement(CasalDAOQuery.UUID);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next())
+                casalid = rs.getString(1);
+            else
+                throw new SQLException();
+
+            connection.setAutoCommit(false);
+
+            stmt.close();
+            stmt = connection.prepareStatement(CasalDAOQuery.CREATE_CASAL);
+
+            stmt.setString(1, adminid);
+            stmt.setString(2, casalid);
+            stmt.setString(3, email);
+            stmt.setString(4, name);
+            stmt.setString(5, description);
+            stmt.setString(6, localization);
+            stmt.setDouble(7, latitude);
+            stmt.setDouble(8, longitude);
+            stmt.setString(9, String.valueOf(false));
+            stmt.executeUpdate();
+
+            connection.commit();
+        } catch (SQLException e) {
+            throw e;
+        } finally {
+            if (stmt != null) stmt.close();
+            if (connection != null) {
+                connection.setAutoCommit(true);
+                connection.close();
+            }
+        }
+        return getCasalByCasalid(casalid);
+    }
+
+
     private String writeAndConvertImage(InputStream file){
         BufferedImage image;
         try{

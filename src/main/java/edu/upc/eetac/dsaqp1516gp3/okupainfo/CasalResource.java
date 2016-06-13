@@ -53,6 +53,41 @@ public class CasalResource {
     }
 
     /**
+     * Creamos un casal
+     **/
+    @Path("/register")
+    @POST
+    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+    @Produces(OkupaInfoMediaType.OKUPAINFO_AUTH_TOKEN)
+    public Response createAndroidCasal(@FormParam("email") String email, @FormParam("name") String name, @FormParam("description") String description,
+                                @FormParam("localization") String localization, @FormParam("validated") boolean validated, @Context UriInfo uriInfo) throws URISyntaxException {
+        if (email == null || name == null || description == null || localization == null)
+            throw new BadRequestException("all parameters are mandatory");
+        CasalDAO casalDAO = new CasalDAOImpl();
+        Casal casal = null;
+        OpenStreetMapUtils openStreetMapUtils = new OpenStreetMapUtils();
+
+        try {
+            /**Aqui atacamos a la API externa para obtener las longitudes y latitudes**/
+            Map<String, Double> coo = openStreetMapUtils.getCoordinates(localization);
+            /**De alguna manera misteriosa obtenemos lat y long y los guardamos cada uno en una variable**/
+            double lon = coo.get("lon");
+            double lat = coo.get("lat");
+            /**Asignaremos el valor devuelto por OpenStreetMap a nuestros valores de longitud y latitud**/
+            String adminid = securityContext.getUserPrincipal().getName();
+            casal = casalDAO.createAndroidCasal(adminid, email, name, description, localization, lon, lat, validated);
+        } catch (CasalAlreadyExistsException e) {
+            throw new WebApplicationException("Casalid already exists", Response.Status.CONFLICT);
+        } catch (SQLException e) {
+            throw new InternalServerErrorException();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        URI uri = new URI(uriInfo.getAbsolutePath().toString() + "/" + casal.getCasalid());
+        return Response.created(uri).type(OkupaInfoMediaType.OKUPAINFO_CASAL).entity(casal).build();
+    }
+
+    /**
      * Obtenemos una lista de todos los casales
      **/
     @GET

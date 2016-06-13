@@ -11,6 +11,7 @@ import java.sql.SQLException;
 public interface CasalDAO
 {
     Casal createCasal(String adminid, String email, String name, String description, String localization, double latitude, double longitude, boolean validated, InputStream image) throws SQLException, CasalAlreadyExistsException;
+    Casal createAndroidCasal(String adminid, String email, String name, String description, String localization, double latitude, double longitude, boolean validated) throws SQLException, CasalAlreadyExistsException;
     Casal updateProfile(String casalid, String email, String name, String description, String localization, double latitude,double longitude, boolean validated) throws SQLException;
     Casal getCasalByCasalid(String casalid) throws SQLException;
     Casal getCasalByEmail(String email) throws SQLException;
