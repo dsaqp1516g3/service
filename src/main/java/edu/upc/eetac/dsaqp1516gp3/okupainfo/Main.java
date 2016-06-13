@@ -1,8 +1,6 @@
 package edu.upc.eetac.dsaqp1516gp3.okupainfo;
 
 import org.glassfish.grizzly.http.server.HttpServer;
-import org.glassfish.grizzly.http.server.NetworkListener;
-import org.glassfish.grizzly.http.server.StaticHttpHandler;
 import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
 import org.glassfish.jersey.server.ResourceConfig;
 
@@ -51,13 +49,6 @@ public class Main {
      */
     public static void main(String[] args) throws IOException {
         final HttpServer server = startServer();
-
-        NetworkListener nl = new NetworkListener("test-listener", "localhost", 8181);
-        server.addListener(nl);
-
-        StaticHttpHandler staticHttpHandler = new StaticHttpHandler("src/main/www");
-        server.getServerConfiguration().addHttpHandler(staticHttpHandler, "/");
-         
     }
 }
 
