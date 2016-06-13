@@ -8,6 +8,10 @@
     "methods": ["POST"]
   },
   {
+    "path": "users/register",
+    "methods": ["POST"]
+  },
+  {
     "path": "(?i)users/([0-9a-f]{32})?",
     "methods": ["GET"]
   },
