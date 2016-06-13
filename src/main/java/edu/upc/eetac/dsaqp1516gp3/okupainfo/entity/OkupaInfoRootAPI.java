@@ -16,7 +16,7 @@ public class OkupaInfoRootAPI
             @InjectLink(resource = OkupaInfoRootAPIResource.class, style = InjectLink.Style.ABSOLUTE, rel = "home", title = "OkupaInfo Root API"),
             @InjectLink(resource = EventResource.class, style = InjectLink.Style.ABSOLUTE, rel = "current-events", title = "Current Events", type = OkupaInfoMediaType.OKUPAINFO_EVENTS_COLLECTION),
             @InjectLink(resource = CasalResource.class, style = InjectLink.Style.ABSOLUTE, rel = "current-casals", title = "Current Casals", type = OkupaInfoMediaType.OKUPAINFO_CASAL_COLLECTION),
-            @InjectLink(resource = UserResource.class, method = "registerAndroidUser", style = InjectLink.Style.ABSOLUTE, rel = "create-userandroid", title = "Create Event", type = OkupaInfoMediaType.OKUPAINFO_USER),
+            @InjectLink(resource = UserResource.class, style = InjectLink.Style.ABSOLUTE, rel = "create-user", title = "Create Event", type = OkupaInfoMediaType.OKUPAINFO_USER),
             @InjectLink(resource = UserResource.class, style = InjectLink.Style.ABSOLUTE, rel = "current-users", title = "Current Users", type = OkupaInfoMediaType.OKUPAINFO_USER_COLLECTION),
             @InjectLink(resource = CasalResource.class, method = "getCommentByCasalId", style = InjectLink.Style.ABSOLUTE, rel = "current-commentcasals", title = "Current commentcasals", type = OkupaInfoMediaType.OKUPAINFO_COMMENTS_CASALS_COLLECTION, bindings = @Binding(name = "casalid", value = "${instance.id}")),
             @InjectLink(resource = LoginResource.class, style = InjectLink.Style.ABSOLUTE, rel = "login", title = "Login", type = OkupaInfoMediaType.OKUPAINFO_AUTH_TOKEN)
