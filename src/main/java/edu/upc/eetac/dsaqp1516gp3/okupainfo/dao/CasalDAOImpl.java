@@ -93,7 +93,7 @@ public class CasalDAOImpl implements CasalDAO {
             connection.setAutoCommit(false);
 
             stmt.close();
-            stmt = connection.prepareStatement(CasalDAOQuery.CREATE_CASAL);
+            stmt = connection.prepareStatement(CasalDAOQuery.CREATE_ANDROID_CASAL);
 
             stmt.setString(1, adminid);
             stmt.setString(2, casalid);
@@ -265,8 +265,9 @@ public class CasalDAOImpl implements CasalDAO {
                 casal.setEmail(rs.getString("email"));
                 casal.setName(rs.getString("name"));
                 casal.setDescription(rs.getString("description"));
-                casal.setLocalization(rs.getString("localization"));
-                casal.setValidated(rs.getBoolean("validado"));
+                casal.setLatitude(rs.getDouble("latitude"));
+                casal.setLongitude(rs.getDouble("longitude"));
+                casal.setImage(rs.getString("image"));
                 casalCollection.getCasals().add(casal);
             }
         } catch (SQLException e) {
