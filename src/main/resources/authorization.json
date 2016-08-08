@@ -72,8 +72,8 @@
     "methods": ["GET"]
   },
   {
-  "path": "users",
-  "methods": ["GET"]
+    "path": "users",
+    "methods": ["GET"]
   },
   {
     "path": "events",
